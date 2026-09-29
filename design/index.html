@@ -38,11 +38,12 @@ body{
   .telefon{border-radius:26px;box-shadow:0 22px 60px rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.12)}
 }
 .skjermrad{
-  flex:none;display:flex;gap:6px;justify-content:center;padding:9px 12px calc(9px + env(safe-area-inset-bottom,0px));
+  flex:none;display:flex;gap:6px;justify-content:flex-start;overflow-x:auto;scrollbar-width:none;padding:9px 12px calc(9px + env(safe-area-inset-bottom,0px));
   border-top:1px solid rgba(255,255,255,.1);
 }
+.skjermrad::-webkit-scrollbar{display:none}
 .skjermrad button{
-  border:1px solid rgba(255,255,255,.16);background:transparent;color:#9FB0C0;border-radius:20px;
+  flex:none;border:1px solid rgba(255,255,255,.16);background:transparent;color:#9FB0C0;border-radius:20px;
   padding:6px 13px;font:600 12px "Archivo",sans-serif;cursor:pointer;
 }
 .skjermrad button[aria-pressed="true"]{background:#fff;color:#0E141B;border-color:#fff}
@@ -620,6 +621,84 @@ const K = {
       </div>
       ${kfane(0)}`,
 
+    "Chat": `${stat}${kbar}
+      <div class="rull">
+        <div class="topp" style="padding-top:12px"><h1 class="turnavn" style="font-size:21px">Chat</h1></div>
+        <div class="post" style="grid-template-columns:1fr auto;padding:14px 20px;border-bottom:1px solid var(--linje)">
+          <div><div class="h">Brussel, Paris og Normandie</div>
+            <div class="s">Marit: Husk å møte 09:15 i lobbyen</div></div>
+          <div style="text-align:right"><div class="s">12:04</div>
+            <span class="pip" style="margin:4px 0 0">3</span></div></div>
+        <div class="post" style="grid-template-columns:1fr auto;padding:14px 20px;border-bottom:1px solid var(--linje)">
+          <div><div class="h">Rom 204</div><div class="s">Leo: noen som har lader?</div></div>
+          <div style="text-align:right"><div class="s">11:41</div></div></div>
+        <div class="post" style="grid-template-columns:1fr auto;padding:14px 20px;border-bottom:1px solid var(--linje)">
+          <div><div class="h">Påmeldte · EU-parlamentet</div><div class="s">Du ble lagt til</div></div>
+          <div style="text-align:right"><div class="s">i går</div></div></div>
+        <div class="post" style="grid-template-columns:1fr auto;padding:14px 20px">
+          <div><div class="h">Reiseledere</div><div class="s">Bare reiseledere</div></div>
+          <div style="text-align:right"><div class="s">i går</div></div></div>
+        <div class="tom"></div>
+      </div>
+      ${kfane(2)}`,
+
+    "Meg": `${stat}${kbar}
+      <div class="rull">
+        <div class="topp" style="padding-top:12px"><h1 class="turnavn" style="font-size:21px">Jonas Robstad</h1>
+          <div class="dato">Deltaker · jonas@eksempel.no</div></div>
+        <div class="post" style="grid-template-columns:1fr auto;padding:15px 20px;border-bottom:1px solid var(--linje)">
+          <div><div class="h">Varsler</div><div class="s">Alt i hele turen</div></div>${IK.hoy}</div>
+        <div class="post" style="grid-template-columns:1fr auto;padding:15px 20px;border-bottom:1px solid var(--linje)">
+          <div><div class="h">Kart</div><div class="s">Google Maps · til fots</div></div>${IK.hoy}</div>
+        <div class="post" style="grid-template-columns:1fr auto;padding:15px 20px;border-bottom:1px solid var(--linje)">
+          <div><div class="h">Konto</div><div class="s">Innlogget med e-post</div></div>${IK.hoy}</div>
+        <div class="post" style="grid-template-columns:1fr auto;padding:15px 20px">
+          <div><div class="h">Om appen og personvern</div></div>${IK.hoy}</div>
+        <div class="tom"></div>
+      </div>
+      ${kfane(3)}`,
+
+    "Deltakere": `${stat}${kbar}
+      <div class="rull">
+        <div class="topp" style="padding-top:12px"><h1 class="turnavn" style="font-size:21px">Deltakere</h1>
+          <div class="dato">28 med · 2 venter på svar</div></div>
+        <div class="bolk">Venter på godkjenning</div>
+        <div class="post" style="grid-template-columns:1fr auto;padding:12px 20px">
+          <div><div class="h">Emma Nygård</div><div class="s">ba om å bli med i går</div></div>
+          <div style="display:flex;gap:6px">
+            <span style="border:1px solid var(--linje);border-radius:9px;padding:6px 10px;font:600 12px 'Archivo',sans-serif">Avslå</span>
+            <span style="background:var(--blaa);color:#fff;border-radius:9px;padding:6px 10px;font:600 12px 'Archivo',sans-serif">Slipp inn</span></div></div>
+        <div class="bolk">Reiseledere</div>
+        <div class="post" style="grid-template-columns:1fr auto;padding:11px 20px"><div><div class="h">Marit Aasen</div></div></div>
+        <div class="post" style="grid-template-columns:1fr auto;padding:11px 20px"><div><div class="h">Per Kvamme</div></div></div>
+        <div class="bolk">Elever</div>
+        <div class="post" style="grid-template-columns:1fr auto;padding:11px 20px"><div><div class="h">Ada Fjell</div></div></div>
+        <div class="post" style="grid-template-columns:1fr auto;padding:11px 20px"><div><div class="h">Jonas Robstad</div><div class="s">deg</div></div></div>
+        <div class="post" style="grid-template-columns:1fr auto;padding:11px 20px"><div><div class="h">Leo Sand</div></div></div>
+        <div class="post" style="grid-template-columns:1fr auto;padding:11px 20px"><div><div class="h">Mia Berge</div></div></div>
+        <div class="tom"></div>
+      </div>
+      ${kfane(0)}`,
+
+    "Pakkeliste": `${stat}${kbar}
+      <div class="rull">
+        <div class="topp" style="padding-top:12px"><h1 class="turnavn" style="font-size:21px">Pakkeliste</h1>
+          <div class="dato">12 av 18 · bare du ser dine kryss</div></div>
+        <div class="bolk">Må ha</div>
+        <div class="pakk ferdig"><span class="hake av">${IK.hake}</span><span class="nv">Pass</span></div>
+        <div class="pakk ferdig"><span class="hake av">${IK.hake}</span><span class="nv">Helsetrygdkort</span></div>
+        <div class="pakk"><span class="hake"></span><span class="nv">Reiseforsikring</span></div>
+        <div class="bolk">Klær</div>
+        <div class="pakk ferdig"><span class="hake av">${IK.hake}</span><span class="nv">Regnjakke</span></div>
+        <div class="pakk"><span class="hake"></span><span class="nv">Gode sko</span></div>
+        <div class="pakk"><span class="hake"></span><span class="nv">Pent antrekk</span></div>
+        <div class="bolk">Annet</div>
+        <div class="pakk ferdig"><span class="hake av">${IK.hake}</span><span class="nv">Lader og powerbank</span></div>
+        <div class="pakk"><span class="hake"></span><span class="nv">Reiseadapter</span></div>
+        <div class="tom"></div>
+      </div>
+      ${kfane(0)}`,
+
     "Filer": `${stat}${kbar}
       <div class="rull">
         <div class="topp" style="padding-top:12px"><h1 class="turnavn" style="font-size:21px">Filer</h1>
@@ -672,6 +751,51 @@ rad.addEventListener("click", e => {
   if (!b) return;
   valgt = b.dataset.u; skjerm = 0; tegn();
 });
+
+/* Knappene inne i utkastet skal virke. Et utkast der ingenting lar seg
+   trykke på forteller deg hvordan det ser ut, ikke hvordan det er å
+   bruke — og det er det siste som avgjør om oppsettet holder.
+
+   Vi leter ikke etter id-er, men etter teksten på knappen: står det
+   «Filer» på den, og utkastet har en Filer-skjerm, går vi dit. */
+const ALIAS = {
+  "i dag": "Hjem", "hjem": "Hjem", "turen": "Program", "hele dagen": "Program",
+  "menyen åpen": "Menyen", "bytt tur": "Hjem", "innstillinger": "Meg"
+};
+
+function finnSkjerm(tekst, navn) {
+  const t = tekst.trim().toLowerCase().split("\n")[0].trim();
+  const treff = navn.find(n => n.toLowerCase() === t);
+  if (treff) return treff;
+  const a = ALIAS[t];
+  if (a && navn.includes(a)) return a;
+  // «Filer 7 stk.» og «Deltakere 28 med» er samme knapp som skjermnavnet
+  return navn.find(n => t.startsWith(n.toLowerCase())) || null;
+}
+
+tlf.addEventListener("click", e => {
+  const u = utkast[valgt];
+  const navn = Object.keys(u.skjermer);
+
+  if (e.target.closest(".slor")) return gaaTil(navn[0]);
+
+  if (e.target.closest(".meny")) {
+    const m = navn.find(n => n.toLowerCase().startsWith("meny"));
+    if (m) return gaaTil(m === navn[skjerm] ? navn[0] : m);
+  }
+
+  const kn = e.target.closest(".fane button, .mrad, .rute, .seg button, .naa .knapper button");
+  if (!kn) return;
+  const mal = finnSkjerm(kn.innerText || kn.textContent || "", navn);
+  if (mal) gaaTil(mal);
+});
+
+function gaaTil(navnet) {
+  const navn = Object.keys(utkast[valgt].skjermer);
+  const i = navn.indexOf(navnet);
+  if (i < 0) return;
+  skjerm = i; tegn();
+}
 srad.addEventListener("click", e => {
   const b = e.target.closest("[data-s]");
   if (!b) return;
