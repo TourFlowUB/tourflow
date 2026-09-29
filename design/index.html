@@ -787,8 +787,27 @@ tlf.addEventListener("click", e => {
   const kn = e.target.closest(".fane button, .mrad, .rute, .seg button, .naa .knapper button");
   if (!kn) return;
   const mal = finnSkjerm(kn.innerText || kn.textContent || "", navn);
-  if (mal) gaaTil(mal);
+  if (mal) return gaaTil(mal);
+  // Bare K er tegnet ferdig. De tre første er til sammenligning, og da
+  // skal en død knapp si fra om det i stedet for å late som ingenting.
+  si("Bare tegnet i K · Kombinert");
 });
+
+let sitimer = null;
+function si(tekst) {
+  let b = document.getElementById("si");
+  if (!b) {
+    b = document.createElement("div");
+    b.id = "si";
+    b.style.cssText = "position:absolute;left:50%;bottom:78px;transform:translateX(-50%);z-index:20;" +
+      "background:#0E141B;color:#fff;border-radius:20px;padding:8px 15px;font:600 12.5px 'Archivo',sans-serif;" +
+      "white-space:nowrap;box-shadow:0 8px 24px rgba(0,0,0,.3)";
+    tlf.appendChild(b);
+  }
+  b.textContent = tekst;
+  clearTimeout(sitimer);
+  sitimer = setTimeout(() => b.remove(), 1600);
+}
 
 function gaaTil(navnet) {
   const navn = Object.keys(utkast[valgt].skjermer);
