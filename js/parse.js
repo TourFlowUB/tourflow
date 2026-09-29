@@ -1,3 +1,8 @@
+/* © 2026 TourFlow UB. Alle rettigheter forbeholdt / All rights reserved.
+   Koden ligger åpent fordi en nettside må sende koden sin til alle som
+   besøker den. Det gir ingen rett til å kopiere, endre eller ta den i
+   bruk. Se LICENSE. */
+
 /* parse.js — leser en melding og finner ut om den avtaler et møte et sted.
    Regelbasert i denne versjonen: alt kjører på telefonen, ingenting sendes ut.
    Når backend er på plass kalles en språkmodell serverside i stedet, og

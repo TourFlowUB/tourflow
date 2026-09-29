@@ -1,3 +1,8 @@
+/* © 2026 TourFlow UB. Alle rettigheter forbeholdt / All rights reserved.
+   Koden ligger åpent fordi en nettside må sende koden sin til alle som
+   besøker den. Det gir ingen rett til å kopiere, endre eller ta den i
+   bruk. Se LICENSE. */
+
 /* templates.js — ferdige turer du kan opprette med ett trykk.
    Brukes bare når noen velger «Lag eksempeltur»; ekte turer bygges i appen.
    Datoene er relative, så en eksempeltur alltid ligger litt fram i tid. */

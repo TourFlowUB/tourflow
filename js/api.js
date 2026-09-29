@@ -1,3 +1,8 @@
+/* © 2026 TourFlow UB. Alle rettigheter forbeholdt / All rights reserved.
+   Koden ligger åpent fordi en nettside må sende koden sin til alle som
+   besøker den. Det gir ingen rett til å kopiere, endre eller ta den i
+   bruk. Se LICENSE. */
+
 /* api.js — all kontakt med databasen.
    Ingen andre filer snakker med Supabase. Skjermene kaller bare herfra.
 
