@@ -65,6 +65,13 @@ svg.ik-s{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.9;s
 [data-d="a"]{--ink:#15202B;--ink2:#5A6B7C;--ink3:#8A9AAA;--linje:#E8EDF1;--flate:#F5F7F9;
   --blaa:#1B4D7E;--sand:#F0E2CB;--sandink:#7A5A22;--gronn:#2E6A4E;background:#fff;color:var(--ink)}
 [data-d="a"] .topp{flex:none;padding:6px 20px 14px}
+/* Topplinja som åpner rullegardinen. Den ligger fast over alt innholdet,
+   så menyen er like nær uansett hvor i turen du står. */
+[data-d="a"] .kbar{flex:none;display:flex;align-items:center;gap:10px;padding:4px 16px 11px;
+  border-bottom:1px solid var(--linje)}
+[data-d="a"] .kbar .ikon{font:600 12.5px "Archivo",sans-serif;color:var(--ink2)}
+[data-d="a"] .kbar .meny .nv{font:700 16.5px "Archivo",sans-serif;letter-spacing:-.01em;
+  display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:240px}
 [data-d="a"] .turnavn{font:700 25px/1.15 "Archivo",sans-serif;letter-spacing:-.02em;margin:0}
 [data-d="a"] .turnavn em{font-style:normal;color:var(--ink3)}
 [data-d="a"] .dato{font-size:13.5px;color:var(--ink2);margin-top:3px}
@@ -106,28 +113,28 @@ svg.ik-s{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.9;s
 [data-d="b"]{--ink:#0F1720;--ink2:#56626E;--ink3:#8E99A4;--linje:#E4E8EC;--flate:#F6F7F8;
   --aksent:#0F1720;background:#fff;color:var(--ink)}
 [data-d="b"] .bar{flex:none;display:flex;align-items:center;gap:10px;padding:4px 16px 12px;border-bottom:1px solid var(--linje)}
-[data-d="b"] .meny{
+.meny{
   flex:1;display:flex;align-items:center;gap:8px;border:0;background:none;padding:6px 0;cursor:pointer;text-align:left}
-[data-d="b"] .meny .nv{font:700 18px "Archivo",sans-serif;letter-spacing:-.01em}
-[data-d="b"] .meny .un{font-size:12px;color:var(--ink3)}
-[data-d="b"] .pil{width:22px;height:22px;border-radius:7px;background:var(--flate);display:grid;place-items:center;color:var(--ink2)}
-[data-d="b"] .ikon{width:36px;height:36px;border-radius:50%;background:var(--flate);display:grid;place-items:center;
+.meny .nv{font:700 18px "Archivo",sans-serif;letter-spacing:-.01em}
+.meny .un{font-size:12px;color:var(--ink3)}
+.pil{width:22px;height:22px;border-radius:7px;background:var(--flate);display:grid;place-items:center;color:var(--ink2)}
+.ikon{width:36px;height:36px;border-radius:50%;background:var(--flate);display:grid;place-items:center;
   border:0;cursor:pointer;color:var(--ink2);position:relative}
-[data-d="b"] .ikon .prikk{position:absolute;top:5px;right:5px;width:8px;height:8px;border-radius:50%;background:#B03A2B;border:2px solid #fff}
-[data-d="b"] .gardin{
+.ikon .prikk{position:absolute;top:5px;right:5px;width:8px;height:8px;border-radius:50%;background:#B03A2B;border:2px solid #fff}
+.gardin{
   position:absolute;left:0;right:0;top:0;background:#fff;z-index:9;border-bottom:1px solid var(--linje);
   box-shadow:0 26px 40px -22px rgba(15,23,32,.4);padding:calc(14px + env(safe-area-inset-top,0px)) 0 10px;
 }
-[data-d="b"] .gardin .tit{font:700 20px "Archivo",sans-serif;padding:4px 20px 2px}
-[data-d="b"] .gardin .sub{font-size:12.5px;color:var(--ink3);padding:0 20px 12px}
-[data-d="b"] .mrad{display:flex;align-items:center;gap:13px;width:100%;border:0;background:none;
+.gardin .tit{font:700 20px "Archivo",sans-serif;padding:4px 20px 2px}
+.gardin .sub{font-size:12.5px;color:var(--ink3);padding:0 20px 12px}
+.mrad{display:flex;align-items:center;gap:13px;width:100%;border:0;background:none;
   padding:12px 20px;font:inherit;color:inherit;text-align:left;cursor:pointer}
-[data-d="b"] .mrad .sym{width:30px;height:30px;border-radius:9px;background:var(--flate);display:grid;place-items:center;color:var(--ink2)}
-[data-d="b"] .mrad .nv{flex:1;font:600 15.5px "Archivo",sans-serif}
-[data-d="b"] .mrad .tall{font:600 12px "Archivo",sans-serif;color:#fff;background:#B03A2B;border-radius:10px;padding:1px 7px}
-[data-d="b"] .mrad.paa{background:var(--flate)}
-[data-d="b"] .mskille{height:1px;background:var(--linje);margin:9px 20px}
-[data-d="b"] .slor{position:absolute;inset:0;background:rgba(15,23,32,.35);z-index:8}
+.mrad .sym{width:30px;height:30px;border-radius:9px;background:var(--flate);display:grid;place-items:center;color:var(--ink2)}
+.mrad .nv{flex:1;font:600 15.5px "Archivo",sans-serif}
+.mrad .tall{font:600 12px "Archivo",sans-serif;color:#fff;background:#B03A2B;border-radius:10px;padding:1px 7px}
+.mrad.paa{background:var(--flate)}
+.mskille{height:1px;background:var(--linje);margin:9px 20px}
+.slor{position:absolute;inset:0;background:rgba(15,23,32,.35);z-index:8}
 [data-d="b"] .dag{display:flex;gap:7px;overflow-x:auto;padding:12px 16px 4px;scrollbar-width:none}
 [data-d="b"] .dag::-webkit-scrollbar{display:none}
 [data-d="b"] .dag button{flex:none;border:1px solid var(--linje);background:#fff;border-radius:10px;
@@ -239,7 +246,7 @@ const A = {
           <div class="merk">Nå snart</div>
           <div class="kl">12:30</div>
           <div class="hva">Lunsj ved Atomium</div>
-          <div class="hvor">Square de l'Atomium, Brussel · 14°, lett regn</div>
+          <div class="hvor">Square de l'Atomium · 14°</div>
           <div class="knapper">
             <button class="lys">${IK.nav} Veibeskrivelse</button>
             <button>Hele dagen</button>
@@ -247,18 +254,18 @@ const A = {
         </div>
         <div class="ruter">
           <button class="rute merket"><span class="sym">${IK.fly}</span>
-            <span><span class="nv">Sitteplasser</span><br><span class="un">Buss · du sitter i 14B</span></span></button>
+            <span><span class="nv">Sitteplasser</span><br><span class="un">Sete 14B</span></span></button>
           <button class="rute"><span class="sym">${IK.sekk}</span>
-            <span><span class="nv">Pakkeliste</span><br><span class="un">12 av 18 krysset av</span></span></button>
+            <span><span class="nv">Pakkeliste</span><br><span class="un">12 av 18</span></span></button>
           <button class="rute"><span class="sym">${IK.fil}</span>
-            <span><span class="nv">Filer</span><br><span class="un">7 dokumenter</span></span></button>
+            <span><span class="nv">Filer</span><br><span class="un">7 stk.</span></span></button>
           <button class="rute"><span class="sym">${IK.folk}</span>
-            <span><span class="nv">Deltakere</span><br><span class="un">28 med på turen<span class="pip">2</span></span></span></button>
+            <span><span class="nv">Deltakere</span><br><span class="un">28 med<span class="pip">2</span></span></span></button>
         </div>
         <div class="bolk">Resten av dagen</div>
         <div class="post ferdig"><div class="t">08:00</div><div><div class="h">Frokost på hotellet</div></div></div>
         <div class="post ferdig"><div class="t">09:30</div><div><div class="h">Avreise med buss</div><div class="s">Fra hotellet</div></div></div>
-        <div class="post"><div class="t">14:00</div><div><div class="h">Omvisning i EU-parlamentet</div><div class="s">Husk legitimasjon</div></div></div>
+        <div class="post"><div class="t">14:00</div><div><div class="h">Omvisning i EU-parlamentet</div><div class="s">Ta med legitimasjon</div></div></div>
         <div class="post"><div class="t">17:30</div><div><div class="h">Fri tid i sentrum</div></div></div>
         <div class="post"><div class="t">20:00</div><div><div class="h">Middag på hotellet</div></div></div>
         <div class="tom"></div>
@@ -272,23 +279,23 @@ const A = {
 
     "Filer": `${stat}
       <div class="topp"><h1 class="turnavn">Filer</h1>
-        <div class="dato">Alt som er lagt ut på turen, samlet</div></div>
+        <div class="dato">Alt som er lagt ut, samlet</div></div>
       <div class="rull">
         <div class="fil"><span class="ft" style="background:#B4402F">PDF</span>
           <div style="flex:1"><div class="nv">Program Brussel–Paris.pdf</div>
-            <div class="un">Lagt ut av Marit · 12. sep</div></div>${IK.hoy}</div>
+            <div class="un">Marit · 12. sep</div></div>${IK.hoy}</div>
         <div class="fil"><span class="ft" style="background:#14508C">DOC</span>
           <div style="flex:1"><div class="nv">Pakkeliste og regler.docx</div>
-            <div class="un">Lagt ut av Marit · 12. sep</div></div>${IK.hoy}</div>
+            <div class="un">Marit · 12. sep</div></div>${IK.hoy}</div>
         <div class="fil"><span class="ft" style="background:#B4402F">PDF</span>
           <div style="flex:1"><div class="nv">Bussbilletter.pdf</div>
-            <div class="un">Lagt ut av Jonas · 16. sep</div></div>${IK.hoy}</div>
+            <div class="un">Jonas · 16. sep</div></div>${IK.hoy}</div>
         <div class="fil"><span class="ft" style="background:#7A4E2D">BIL</span>
           <div style="flex:1"><div class="nv">Romfordeling.png</div>
-            <div class="un">Lagt ut av Marit · i går</div></div>${IK.hoy}</div>
+            <div class="un">Marit · i går</div></div>${IK.hoy}</div>
         <div class="fil"><span class="ft" style="background:#2F6E4E">XLS</span>
           <div style="flex:1"><div class="nv">Kontaktliste foresatte.xlsx</div>
-            <div class="un">Bare reiseledere ser denne</div></div>${IK.hoy}</div>
+            <div class="un">Bare reiseledere</div></div>${IK.hoy}</div>
         <div class="tom"></div>
       </div>
       <div class="fane">
@@ -300,7 +307,7 @@ const A = {
 
     "Pakkeliste": `${stat}
       <div class="topp"><h1 class="turnavn">Pakkeliste</h1>
-        <div class="dato">12 av 18 krysset av · bare du ser dine kryss</div></div>
+        <div class="dato">12 av 18 · bare du ser dine kryss</div></div>
       <div class="rull">
         <div class="bolk">Må ha</div>
         <div class="pakk ferdig"><span class="hake av">${IK.hake}</span><span class="nv">Pass</span></div>
@@ -350,12 +357,12 @@ const B = {
       <div class="rull">
         <div class="linjepost"><div class="t">08:00</div><div><div class="h">Frokost på hotellet</div></div></div>
         <div class="linjepost"><div class="t">09:30</div><div><div class="h">Avreise med buss</div>
-          <div class="s">Fra hotellet · du sitter i 14B</div></div></div>
+          <div class="s">Sete 14B</div></div></div>
         <div class="linjepost naa"><div class="t">12:30</div><div><span class="lapp">Nå snart</span>
           <div class="h">Lunsj ved Atomium</div>
-          <div class="s">Square de l'Atomium · 14°, lett regn</div></div></div>
+          <div class="s">Square de l'Atomium · 14°</div></div></div>
         <div class="linjepost"><div class="t">14:00</div><div><div class="h">Omvisning i EU-parlamentet</div>
-          <div class="s">Husk legitimasjon</div></div></div>
+          <div class="s">Ta med legitimasjon</div></div></div>
         <div class="linjepost"><div class="t">17:30</div><div><div class="h">Fri tid i sentrum</div></div></div>
         <div class="linjepost"><div class="t">20:00</div><div><div class="h">Middag på hotellet</div></div></div>
         <div class="tom"></div>
@@ -380,7 +387,7 @@ const B = {
         <div class="sub">Tryggheim VG2 · 17.–24. september</div>
         ${mrad(IK.kal, "Program", "", "", true)}
         ${mrad(IK.chat, "Chat", "", '<span class="tall">3</span>')}
-        ${mrad(IK.fil, "Filer", "7 dokumenter")}
+        ${mrad(IK.fil, "Filer", "7 stk.")}
         ${mrad(IK.sekk, "Pakkeliste", "12 av 18")}
         ${mrad(IK.fly, "Sitteplasser", "Buss og fly")}
         ${mrad(IK.folk, "Deltakere", "28 med", '<span class="tall">2</span>')}
@@ -398,7 +405,7 @@ const B = {
       </div>
       <div class="rull">
         <div style="padding:14px 20px 4px;font-size:13.5px;color:#56626E">
-          Trykk på et ledig sete for å ta det. Reiselederen kan låse plassene når alle har valgt.</div>
+          Trykk på et ledig sete for å ta det.</div>
         <div style="padding:14px 20px 0;font:600 11px 'Archivo',sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#8E99A4">Rad 13–16</div>
         <div class="sete" style="padding-top:10px">
           <div class="s tatt">13A<br><span style="font-weight:400;font-size:10px">Ada</span></div>
@@ -450,9 +457,9 @@ const C = {
             <div class="s">Sete 14B</div></div></div>
           <div class="kr" style="background:#F7FAF9"><div class="sym">${IK.pin}</div>
             <div style="flex:1"><div class="h">Lunsj ved Atomium</div>
-              <div class="s">12:30 · 14°, lett regn</div></div>${IK.hoy}</div>
+              <div class="s">12:30 · 14°</div></div>${IK.hoy}</div>
           <div class="kr"><div class="t">14:00</div><div><div class="h">Omvisning i EU-parlamentet</div>
-            <div class="s">Husk legitimasjon</div></div></div>
+            <div class="s">Ta med legitimasjon</div></div></div>
           <div class="kr"><div class="t">20:00</div><div><div class="h">Middag på hotellet</div></div></div>
         </div>
         <div class="kort">
@@ -471,7 +478,7 @@ const C = {
           <button style="border:0;background:#3D3A8C;color:#fff;border-radius:18px;padding:7px 14px;font:600 12.5px 'Archivo',sans-serif">Buss</button>
           <button style="border:1px solid #E6E9ED;background:#fff;color:#5C6873;border-radius:18px;padding:7px 14px;font:600 12.5px 'Archivo',sans-serif">Fly hjem</button>
         </div>
-        <div style="padding:14px 16px 10px;font-size:13px;color:#5C6873">Du sitter i <b>14B</b>. Trykk på et ledig sete for å bytte.</div>
+        <div style="padding:14px 16px 10px;font-size:13px;color:#5C6873">Du har <b>14B</b>. Trykk på et ledig sete for å bytte.</div>
         <div class="sete">
           <div class="s tatt">13A</div><div class="s tatt">13B</div><div class="s">13C</div><div class="s">13D</div>
           <div class="gang"></div>
@@ -505,9 +512,142 @@ const C = {
   }
 };
 
+/* ══════════════ K · A OG B SLÅTT SAMMEN ══════════════ */
+const kbar = `<div class="kbar">
+    <button class="meny"><span><span class="nv">Brussel, Paris og Normandie</span><br>
+      <span class="un">Tryggheim VG2 · dag 2 av 8</span></span>
+      <span class="pil">${IK.ned}</span></button>
+    <button class="ikon">JR<span class="prikk"></span></button>
+  </div>`;
+
+const kfane = (n) => `<div class="fane">
+  <button class="${n === 0 ? "paa" : ""}">${IK.hus}<span>I dag</span></button>
+  <button class="${n === 1 ? "paa" : ""}">${IK.kal}<span>Program</span></button>
+  <button class="${n === 2 ? "paa" : ""}">${IK.chat}<span>Chat</span></button>
+  <button class="${n === 3 ? "paa" : ""}">${IK.meg}<span>Meg</span></button>
+</div>`;
+
+const khjem = `${stat}${kbar}
+  <div class="rull">
+    <div class="topp"><h1 class="turnavn">Torsdag <em>· dag 2</em></h1></div>
+    <div class="naa">
+      <div class="merk">Nå snart</div>
+      <div class="kl">12:30</div>
+      <div class="hva">Lunsj ved Atomium</div>
+      <div class="hvor">Square de l'Atomium · 14°</div>
+      <div class="knapper">
+        <button class="lys">${IK.nav} Veibeskrivelse</button>
+        <button>Hele dagen</button>
+      </div>
+    </div>
+    <div class="ruter">
+      <button class="rute merket"><span class="sym">${IK.fly}</span>
+        <span><span class="nv">Sitteplasser</span><br><span class="un">Sete 14B</span></span></button>
+      <button class="rute"><span class="sym">${IK.sekk}</span>
+        <span><span class="nv">Pakkeliste</span><br><span class="un">12 av 18</span></span></button>
+      <button class="rute"><span class="sym">${IK.fil}</span>
+        <span><span class="nv">Filer</span><br><span class="un">7 stk.</span></span></button>
+      <button class="rute"><span class="sym">${IK.folk}</span>
+        <span><span class="nv">Deltakere</span><br><span class="un">28 med<span class="pip">2</span></span></span></button>
+    </div>
+    <div class="bolk">Resten av dagen</div>
+    <div class="post ferdig"><div class="t">08:00</div><div><div class="h">Frokost på hotellet</div></div></div>
+    <div class="post ferdig"><div class="t">09:30</div><div><div class="h">Avreise med buss</div><div class="s">Sete 14B</div></div></div>
+    <div class="post"><div class="t">14:00</div><div><div class="h">Omvisning i EU-parlamentet</div><div class="s">Ta med legitimasjon</div></div></div>
+    <div class="post"><div class="t">17:30</div><div><div class="h">Fri tid i sentrum</div></div></div>
+    <div class="post"><div class="t">20:00</div><div><div class="h">Middag på hotellet</div></div></div>
+    <div class="tom"></div>
+  </div>
+  ${kfane(0)}`;
+
+const K = {
+  navn: "Kombinert", under: "A + rullegardin", stil: "a",
+  skjermer: {
+    "Hjem": khjem,
+
+    "Menyen": `${khjem.replace('<div class="rull">', '<div class="rull" style="filter:blur(1px)">')}
+      <div class="slor"></div>
+      <div class="gardin">
+        <div class="tit">Brussel, Paris og Normandie</div>
+        <div class="sub">Tryggheim VG2 · 17.–24. september</div>
+        ${mrad(IK.hus, "I dag", "", "", true)}
+        ${mrad(IK.kal, "Program", "")}
+        ${mrad(IK.chat, "Chat", "", '<span class="tall">3</span>')}
+        ${mrad(IK.fil, "Filer", "7 stk.")}
+        ${mrad(IK.sekk, "Pakkeliste", "12 av 18")}
+        ${mrad(IK.fly, "Sitteplasser", "Sete 14B")}
+        ${mrad(IK.folk, "Deltakere", "28 med", '<span class="tall">2</span>')}
+        <div class="mskille"></div>
+        ${mrad(IK.tann, "Innstillinger", "")}
+        ${mrad(IK.hus, "Bytt tur", "")}
+      </div>`,
+
+    "Program": `${stat}${kbar}
+      <div class="dag" style="padding:10px 16px 4px">
+        <button>ons<span>17.</span></button>
+        <button class="paa">tor<span>18.</span></button>
+        <button>fre<span>19.</span></button>
+        <button>lør<span>20.</span></button>
+        <button>søn<span>21.</span></button>
+      </div>
+      <div class="rull">
+        <div class="bolk" style="padding-top:12px">Torsdag 18. september</div>
+        <div class="post ferdig"><div class="t">08:00</div><div><div class="h">Frokost på hotellet</div></div></div>
+        <div class="post ferdig"><div class="t">09:30</div><div><div class="h">Avreise med buss</div><div class="s">Sete 14B</div></div></div>
+        <div class="post"><div class="t">12:30</div><div><div class="h">Lunsj ved Atomium</div><div class="s">14°</div></div></div>
+        <div class="post"><div class="t">14:00</div><div><div class="h">Omvisning i EU-parlamentet</div><div class="s">Ta med legitimasjon</div></div></div>
+        <div class="post"><div class="t">17:30</div><div><div class="h">Fri tid i sentrum</div></div></div>
+        <div class="post"><div class="t">20:00</div><div><div class="h">Middag på hotellet</div></div></div>
+        <div class="tom"></div>
+      </div>
+      ${kfane(1)}`,
+
+    "Sitteplasser": `${stat}${kbar}
+      <div class="rull">
+        <div class="topp" style="padding-top:12px"><h1 class="turnavn" style="font-size:21px">Sitteplasser</h1>
+          <div class="dato">Buss · Oslo–Brussel</div></div>
+        <div style="padding:0 20px 12px;font-size:13.5px;color:var(--ink2)">Du har <b>14B</b>. Trykk på et ledig sete for å bytte.</div>
+        <div class="sete" style="padding:0 16px">
+          <div class="s tatt">13A</div><div class="s tatt">13B</div><div class="s">13C</div><div class="s">13D</div>
+          <div class="gang"></div>
+          <div class="s tatt">14A</div><div class="s min">14B</div><div class="s tatt">14C</div><div class="s">14D</div>
+          <div class="gang"></div>
+          <div class="s">15A</div><div class="s">15B</div><div class="s tatt">15C</div><div class="s">15D</div>
+          <div class="gang"></div>
+          <div class="s">16A</div><div class="s">16B</div><div class="s">16C</div><div class="s">16D</div>
+        </div>
+        <div class="tom"></div>
+      </div>
+      ${kfane(0)}`,
+
+    "Filer": `${stat}${kbar}
+      <div class="rull">
+        <div class="topp" style="padding-top:12px"><h1 class="turnavn" style="font-size:21px">Filer</h1>
+          <div class="dato">Alt som er lagt ut, samlet</div></div>
+        <div class="fil"><span class="ft" style="background:#B4402F">PDF</span>
+          <div style="flex:1"><div class="nv">Program Brussel–Paris.pdf</div>
+            <div class="un">Marit · 12. sep</div></div>${IK.hoy}</div>
+        <div class="fil"><span class="ft" style="background:#14508C">DOC</span>
+          <div style="flex:1"><div class="nv">Pakkeliste og regler.docx</div>
+            <div class="un">Marit · 12. sep</div></div>${IK.hoy}</div>
+        <div class="fil"><span class="ft" style="background:#B4402F">PDF</span>
+          <div style="flex:1"><div class="nv">Bussbilletter.pdf</div>
+            <div class="un">Jonas · 16. sep</div></div>${IK.hoy}</div>
+        <div class="fil"><span class="ft" style="background:#7A4E2D">BIL</span>
+          <div style="flex:1"><div class="nv">Romfordeling.png</div>
+            <div class="un">Marit · i går</div></div>${IK.hoy}</div>
+        <div class="fil"><span class="ft" style="background:#2F6E4E">XLS</span>
+          <div style="flex:1"><div class="nv">Kontaktliste foresatte.xlsx</div>
+            <div class="un">Bare reiseledere</div></div>${IK.hoy}</div>
+        <div class="tom"></div>
+      </div>
+      ${kfane(0)}`
+  }
+};
+
 /* ══════════════ motor ══════════════ */
-const utkast = { a: A, b: B, c: C };
-let valgt = "a", skjerm = 0;
+const utkast = { k: K, a: A, b: B, c: C };
+let valgt = "k", skjerm = 0;
 
 const rad = document.getElementById("rad");
 const tlf = document.getElementById("telefon");
@@ -520,7 +660,7 @@ function tegn() {
   const u = utkast[valgt];
   const navn = Object.keys(u.skjermer);
   if (skjerm >= navn.length) skjerm = 0;
-  tlf.innerHTML = `<div class="utkast aktiv" data-d="${valgt}">${u.skjermer[navn[skjerm]]}</div>`;
+  tlf.innerHTML = `<div class="utkast aktiv" data-d="${u.stil || valgt}">${u.skjermer[navn[skjerm]]}</div>`;
   rad.querySelectorAll("button").forEach(b =>
     b.setAttribute("aria-pressed", b.dataset.u === valgt));
   srad.innerHTML = navn.map((n, i) =>
