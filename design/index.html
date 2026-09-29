@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="nb">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>TourFlow — tre designretninger</title>
+<meta name="theme-color" content="#111A26">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=Source+Sans+3:wght@400;600&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>
+/* ══════════════ rammeverk rundt utkastene ══════════════ */
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{
+  font-family:"Source Sans 3",system-ui,sans-serif;background:#0E141B;color:#fff;
+  display:flex;flex-direction:column;height:100dvh;overflow:hidden;
+}
+.velger{
+  flex:none;padding:calc(10px + env(safe-area-inset-top,0px)) 12px 10px;
+  border-bottom:1px solid rgba(255,255,255,.1);
+}
+.velger h1{font-family:"Archivo",sans-serif;font-size:14px;margin:0 0 9px;letter-spacing:.02em}
+.velger h1 span{color:#7C8EA0;font-weight:500}
+.rad{display:flex;gap:6px}
+.rad button{
+  flex:1;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.06);color:#C7D2DD;
+  border-radius:9px;padding:8px 6px;font:600 12px/1.2 "Archivo",sans-serif;cursor:pointer;
+}
+.rad button b{display:block;font-size:13px;color:#fff;margin-bottom:2px}
+.rad button[aria-pressed="true"]{background:#fff;color:#0E141B;border-color:#fff}
+.rad button[aria-pressed="true"] b{color:#0E141B}
+.scene{flex:1;min-height:0;display:grid;place-items:center;padding:14px 0}
+.telefon{
+  width:100%;max-width:392px;height:100%;max-height:820px;background:#fff;color:#111A26;
+  border-radius:0;overflow:hidden;display:flex;flex-direction:column;position:relative;
+}
+@media (min-width:460px){
+  .telefon{border-radius:26px;box-shadow:0 22px 60px rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.12)}
+}
+.skjermrad{
+  flex:none;display:flex;gap:6px;justify-content:center;padding:9px 12px calc(9px + env(safe-area-inset-bottom,0px));
+  border-top:1px solid rgba(255,255,255,.1);
+}
+.skjermrad button{
+  border:1px solid rgba(255,255,255,.16);background:transparent;color:#9FB0C0;border-radius:20px;
+  padding:6px 13px;font:600 12px "Archivo",sans-serif;cursor:pointer;
+}
+.skjermrad button[aria-pressed="true"]{background:#fff;color:#0E141B;border-color:#fff}
+.utkast{display:none;flex-direction:column;height:100%}
+.utkast.aktiv{display:flex}
+.skjerm{display:none;flex-direction:column;height:100%}
+.skjerm.aktiv{display:flex}
+
+/* ══════════════ felles byggeklosser i utkastene ══════════════ */
+.rull{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.stat{
+  flex:none;display:flex;justify-content:space-between;align-items:center;
+  padding:10px 20px 2px;font:600 13px "Archivo",sans-serif;
+}
+.stat i{font-style:normal;letter-spacing:.06em}
+svg.ik{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+svg.ik-s{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+
+/* ─────────── A · I DAG ─────────── */
+[data-d="a"]{--ink:#15202B;--ink2:#5A6B7C;--ink3:#8A9AAA;--linje:#E8EDF1;--flate:#F5F7F9;
+  --blaa:#1B4D7E;--sand:#F0E2CB;--sandink:#7A5A22;--gronn:#2E6A4E;background:#fff;color:var(--ink)}
+[data-d="a"] .topp{flex:none;padding:6px 20px 14px}
+[data-d="a"] .turnavn{font:700 25px/1.15 "Archivo",sans-serif;letter-spacing:-.02em;margin:0}
+[data-d="a"] .turnavn em{font-style:normal;color:var(--ink3)}
+[data-d="a"] .dato{font-size:13.5px;color:var(--ink2);margin-top:3px}
+[data-d="a"] .naa{
+  margin:0 16px 14px;border-radius:20px;background:var(--blaa);color:#fff;padding:18px 18px 16px;
+}
+[data-d="a"] .naa .merk{font:600 11px "Archivo",sans-serif;letter-spacing:.14em;text-transform:uppercase;opacity:.75}
+[data-d="a"] .naa .kl{font:600 34px/1 "IBM Plex Mono",monospace;margin:7px 0 2px}
+[data-d="a"] .naa .hva{font:600 17px "Archivo",sans-serif}
+[data-d="a"] .naa .hvor{font-size:13.5px;opacity:.82;margin-top:2px}
+[data-d="a"] .naa .knapper{display:flex;gap:8px;margin-top:14px}
+[data-d="a"] .naa .knapper button{
+  flex:1;border:0;border-radius:12px;padding:11px;font:600 13.5px "Archivo",sans-serif;cursor:pointer;
+  background:rgba(255,255,255,.18);color:#fff;display:flex;align-items:center;justify-content:center;gap:6px}
+[data-d="a"] .naa .knapper button.lys{background:#fff;color:var(--blaa)}
+[data-d="a"] .ruter{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 16px 16px}
+[data-d="a"] .rute{
+  border:1px solid var(--linje);border-radius:16px;padding:13px;text-align:left;background:#fff;cursor:pointer;
+  display:flex;flex-direction:column;gap:9px;min-height:92px;justify-content:space-between}
+[data-d="a"] .rute .nv{font:600 14.5px "Archivo",sans-serif}
+[data-d="a"] .rute .un{font-size:12.5px;color:var(--ink3)}
+[data-d="a"] .rute .sym{width:34px;height:34px;border-radius:11px;display:grid;place-items:center;background:var(--flate);color:var(--ink2)}
+[data-d="a"] .rute.merket .sym{background:var(--sand);color:var(--sandink)}
+[data-d="a"] .rute .pip{display:inline-block;background:#B03A2B;color:#fff;border-radius:9px;
+  font:600 11px "Archivo",sans-serif;padding:1px 6px;margin-left:5px}
+[data-d="a"] .bolk{font:600 11px "Archivo",sans-serif;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--ink3);padding:4px 20px 8px}
+[data-d="a"] .post{display:grid;grid-template-columns:52px 1fr;gap:12px;padding:11px 20px;align-items:start}
+[data-d="a"] .post .t{font:600 14px "IBM Plex Mono",monospace;color:var(--ink2);padding-top:1px}
+[data-d="a"] .post .h{font:600 15px "Archivo",sans-serif}
+[data-d="a"] .post .s{font-size:13px;color:var(--ink3);margin-top:1px}
+[data-d="a"] .post.ferdig .t,[data-d="a"] .post.ferdig .h{color:var(--ink3);text-decoration:line-through;text-decoration-thickness:1px}
+[data-d="a"] .fane{flex:none;display:flex;border-top:1px solid var(--linje);padding:6px 10px calc(8px + env(safe-area-inset-bottom,0px))}
+[data-d="a"] .fane button{flex:1;border:0;background:none;color:var(--ink3);cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;gap:3px;font:600 10.5px "Archivo",sans-serif;padding:5px 0 0}
+[data-d="a"] .fane button.paa{color:var(--blaa)}
+
+/* ─────────── B · RULLEGARDIN ─────────── */
+[data-d="b"]{--ink:#0F1720;--ink2:#56626E;--ink3:#8E99A4;--linje:#E4E8EC;--flate:#F6F7F8;
+  --aksent:#0F1720;background:#fff;color:var(--ink)}
+[data-d="b"] .bar{flex:none;display:flex;align-items:center;gap:10px;padding:4px 16px 12px;border-bottom:1px solid var(--linje)}
+[data-d="b"] .meny{
+  flex:1;display:flex;align-items:center;gap:8px;border:0;background:none;padding:6px 0;cursor:pointer;text-align:left}
+[data-d="b"] .meny .nv{font:700 18px "Archivo",sans-serif;letter-spacing:-.01em}
+[data-d="b"] .meny .un{font-size:12px;color:var(--ink3)}
+[data-d="b"] .pil{width:22px;height:22px;border-radius:7px;background:var(--flate);display:grid;place-items:center;color:var(--ink2)}
+[data-d="b"] .ikon{width:36px;height:36px;border-radius:50%;background:var(--flate);display:grid;place-items:center;
+  border:0;cursor:pointer;color:var(--ink2);position:relative}
+[data-d="b"] .ikon .prikk{position:absolute;top:5px;right:5px;width:8px;height:8px;border-radius:50%;background:#B03A2B;border:2px solid #fff}
+[data-d="b"] .gardin{
+  position:absolute;left:0;right:0;top:0;background:#fff;z-index:9;border-bottom:1px solid var(--linje);
+  box-shadow:0 26px 40px -22px rgba(15,23,32,.4);padding:calc(14px + env(safe-area-inset-top,0px)) 0 10px;
+}
+[data-d="b"] .gardin .tit{font:700 20px "Archivo",sans-serif;padding:4px 20px 2px}
+[data-d="b"] .gardin .sub{font-size:12.5px;color:var(--ink3);padding:0 20px 12px}
+[data-d="b"] .mrad{display:flex;align-items:center;gap:13px;width:100%;border:0;background:none;
+  padding:12px 20px;font:inherit;color:inherit;text-align:left;cursor:pointer}
+[data-d="b"] .mrad .sym{width:30px;height:30px;border-radius:9px;background:var(--flate);display:grid;place-items:center;color:var(--ink2)}
+[data-d="b"] .mrad .nv{flex:1;font:600 15.5px "Archivo",sans-serif}
+[data-d="b"] .mrad .tall{font:600 12px "Archivo",sans-serif;color:#fff;background:#B03A2B;border-radius:10px;padding:1px 7px}
+[data-d="b"] .mrad.paa{background:var(--flate)}
+[data-d="b"] .mskille{height:1px;background:var(--linje);margin:9px 20px}
+[data-d="b"] .slor{position:absolute;inset:0;background:rgba(15,23,32,.35);z-index:8}
+[data-d="b"] .dag{display:flex;gap:7px;overflow-x:auto;padding:12px 16px 4px;scrollbar-width:none}
+[data-d="b"] .dag::-webkit-scrollbar{display:none}
+[data-d="b"] .dag button{flex:none;border:1px solid var(--linje);background:#fff;border-radius:10px;
+  padding:7px 11px;font:600 12.5px "Archivo",sans-serif;color:var(--ink2);cursor:pointer;line-height:1.25}
+[data-d="b"] .dag button span{display:block;font:500 10.5px "IBM Plex Mono",monospace;color:var(--ink3)}
+[data-d="b"] .dag button.paa{background:var(--aksent);border-color:var(--aksent);color:#fff}
+[data-d="b"] .dag button.paa span{color:rgba(255,255,255,.7)}
+[data-d="b"] .linjepost{display:grid;grid-template-columns:54px 1fr;gap:12px;padding:14px 20px;border-bottom:1px solid var(--linje)}
+[data-d="b"] .linjepost .t{font:600 14.5px "IBM Plex Mono",monospace;color:var(--ink)}
+[data-d="b"] .linjepost .h{font:600 15.5px "Archivo",sans-serif}
+[data-d="b"] .linjepost .s{font-size:13px;color:var(--ink3);margin-top:2px}
+[data-d="b"] .linjepost.naa{background:#FBF6EC;border-left:3px solid #A6791C;padding-left:17px}
+[data-d="b"] .linjepost .lapp{display:inline-block;font:600 10.5px "Archivo",sans-serif;letter-spacing:.1em;
+  text-transform:uppercase;color:#A6791C;margin-bottom:3px}
+
+/* ─────────── C · FANER ─────────── */
+[data-d="c"]{--ink:#101418;--ink2:#5C6873;--ink3:#8B96A1;--linje:#E6E9ED;--flate:#F4F6F8;
+  --lilla:#3D3A8C;--mynte:#E9F1EE;background:#fff;color:var(--ink)}
+[data-d="c"] .hode{flex:none;background:#101418;color:#fff;padding:2px 16px 0}
+[data-d="c"] .hode .rad1{display:flex;align-items:center;justify-content:space-between;padding:6px 0 10px}
+[data-d="c"] .hode .nv{font:700 17px "Archivo",sans-serif}
+[data-d="c"] .hode .un{font-size:11.5px;color:rgba(255,255,255,.6)}
+[data-d="c"] .hode .av{width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.16);
+  display:grid;place-items:center;font:600 12px "Archivo",sans-serif}
+[data-d="c"] .seg{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;padding-bottom:9px}
+[data-d="c"] .seg::-webkit-scrollbar{display:none}
+[data-d="c"] .seg button{flex:none;border:0;background:rgba(255,255,255,.1);color:rgba(255,255,255,.72);
+  border-radius:20px;padding:7px 14px;font:600 13px "Archivo",sans-serif;cursor:pointer}
+[data-d="c"] .seg button.paa{background:#fff;color:#101418}
+[data-d="c"] .kort{margin:14px 16px 0;border:1px solid var(--linje);border-radius:14px;overflow:hidden}
+[data-d="c"] .kort .kt{display:flex;align-items:center;gap:8px;padding:11px 14px;background:var(--flate);
+  font:600 12px "Archivo",sans-serif;letter-spacing:.1em;text-transform:uppercase;color:var(--ink2)}
+[data-d="c"] .kort .kt .n{margin-left:auto;letter-spacing:0;text-transform:none;font-size:12px;color:var(--ink3)}
+[data-d="c"] .kr{display:flex;gap:12px;padding:12px 14px;border-top:1px solid var(--linje);align-items:center}
+[data-d="c"] .kr .t{font:600 13.5px "IBM Plex Mono",monospace;color:var(--ink2);width:44px;flex:none}
+[data-d="c"] .kr .h{font:600 14.5px "Archivo",sans-serif}
+[data-d="c"] .kr .s{font-size:12.5px;color:var(--ink3);margin-top:1px}
+[data-d="c"] .kr .sym{width:32px;height:32px;border-radius:9px;background:var(--mynte);color:#2E6A4E;
+  display:grid;place-items:center;flex:none}
+[data-d="c"] .fane{flex:none;display:flex;border-top:1px solid var(--linje);padding:6px 10px calc(8px + env(safe-area-inset-bottom,0px))}
+[data-d="c"] .fane button{flex:1;border:0;background:none;color:var(--ink3);cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;gap:3px;font:600 10.5px "Archivo",sans-serif;padding:5px 0 0}
+[data-d="c"] .fane button.paa{color:var(--lilla)}
+[data-d="c"] .sete{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;padding:0 16px}
+[data-d="c"] .sete .s{border:1px solid var(--linje);border-radius:9px;padding:9px 4px;text-align:center;
+  font:600 11.5px "Archivo",sans-serif;color:var(--ink2);background:#fff}
+[data-d="c"] .sete .s.min{background:var(--lilla);border-color:var(--lilla);color:#fff}
+[data-d="c"] .sete .s.tatt{background:var(--flate);color:var(--ink3)}
+[data-d="c"] .gang{grid-column:1/-1;height:9px}
+
+/* små felles ting */
+.tom{height:18px}
+.fil{display:flex;gap:12px;align-items:center;padding:13px 20px;border-bottom:1px solid var(--linje)}
+.fil .ft{width:36px;height:44px;border-radius:5px;display:grid;place-items:center;color:#fff;
+  font:700 9.5px "Archivo",sans-serif;flex:none}
+.fil .nv{font:600 14.5px "Archivo",sans-serif}
+.fil .un{font-size:12.5px;color:var(--ink3);margin-top:1px}
+.hake{width:22px;height:22px;border-radius:7px;border:1.6px solid var(--linje);flex:none;display:grid;place-items:center}
+.hake.av{background:#2E6A4E;border-color:#2E6A4E;color:#fff}
+.pakk{display:flex;gap:12px;align-items:center;padding:12px 20px;border-bottom:1px solid var(--linje)}
+.pakk .nv{flex:1;font-size:15px}
+.pakk.ferdig .nv{color:var(--ink3);text-decoration:line-through}
+</style>
+</head>
+<body>
+
+<div class="velger">
+  <h1>TourFlow · tre retninger <span>— trykk rundt i dem</span></h1>
+  <div class="rad" id="rad"></div>
+</div>
+
+<div class="scene">
+  <div class="telefon" id="telefon"></div>
+</div>
+
+<div class="skjermrad" id="skjermrad"></div>
+
+<script>
+const IK = {
+  kal:'<svg class="ik" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2.5"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>',
+  chat:'<svg class="ik" viewBox="0 0 24 24"><path d="M21 12a8 8 0 0 1-8 8H7l-4 3 1.2-4.4A8 8 0 1 1 21 12Z"/></svg>',
+  meg:'<svg class="ik" viewBox="0 0 24 24"><circle cx="12" cy="8.5" r="3.8"/><path d="M4.5 20a7.5 7.5 0 0 1 15 0"/></svg>',
+  hus:'<svg class="ik" viewBox="0 0 24 24"><path d="M4 11.5 12 4l8 7.5"/><path d="M6 10.5V20h12v-9.5"/></svg>',
+  fil:'<svg class="ik" viewBox="0 0 24 24"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8Z"/><path d="M14 3v5h5"/></svg>',
+  sekk:'<svg class="ik" viewBox="0 0 24 24"><path d="M6 8h12v13H6z"/><path d="M9 8V5a3 3 0 0 1 6 0v3M9 12h6"/></svg>',
+  fly:'<svg class="ik" viewBox="0 0 24 24"><path d="M10 4.5 5 12l-3 .5L3 15l4-1 3 6 1.5-.5-.5-6 5-1.5 3 5.5 1.5-.5-1-6 3-1.5-1-2-3 .5-4-6Z"/></svg>',
+  folk:'<svg class="ik" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3 19a6 6 0 0 1 12 0"/><path d="M16 5.5a3.2 3.2 0 0 1 0 5M18 19a6 6 0 0 0-2-4.5"/></svg>',
+  pin:'<svg class="ik-s" viewBox="0 0 24 24"><path d="M12 21s7-6.2 7-11a7 7 0 1 0-14 0c0 4.8 7 11 7 11Z"/><circle cx="12" cy="10" r="2.6"/></svg>',
+  nav:'<svg class="ik-s" viewBox="0 0 24 24"><path d="M3 11 21 3l-8 18-2-7-8-3Z"/></svg>',
+  ned:'<svg class="ik-s" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>',
+  hoy:'<svg class="ik-s" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg>',
+  tann:'<svg class="ik" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-2.7 1.1 2 2 0 0 1-4 0 1.6 1.6 0 0 0-2.7-1.1l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1A1.6 1.6 0 0 0 3 15a2 2 0 0 1 0-4 1.6 1.6 0 0 0 1.7-2.7l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1A1.6 1.6 0 0 0 11 4.6a2 2 0 0 1 4 0 1.6 1.6 0 0 0 2.7 1.1l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1A1.6 1.6 0 0 0 21 11a2 2 0 0 1 0 4Z"/></svg>',
+  hake:'<svg class="ik-s" viewBox="0 0 24 24"><path d="m5 13 4 4 10-10"/></svg>'
+};
+
+const stat = '<div class="stat"><i>09:41</i><i>▮▮▮ 79%</i></div>';
+
+/* ══════════════ A · I DAG ══════════════ */
+const A = {
+  navn: "I dag", under: "Hjem + faner",
+  skjermer: {
+    "Hjem": `${stat}
+      <div class="topp">
+        <h1 class="turnavn">Torsdag <em>· dag 2</em></h1>
+        <div class="dato">Brussel, Paris og Normandie · Tryggheim VG2</div>
+      </div>
+      <div class="rull">
+        <div class="naa">
+          <div class="merk">Nå snart</div>
+          <div class="kl">12:30</div>
+          <div class="hva">Lunsj ved Atomium</div>
+          <div class="hvor">Square de l'Atomium, Brussel · 14°, lett regn</div>
+          <div class="knapper">
+            <button class="lys">${IK.nav} Veibeskrivelse</button>
+            <button>Hele dagen</button>
+          </div>
+        </div>
+        <div class="ruter">
+          <button class="rute merket"><span class="sym">${IK.fly}</span>
+            <span><span class="nv">Sitteplasser</span><br><span class="un">Buss · du sitter i 14B</span></span></button>
+          <button class="rute"><span class="sym">${IK.sekk}</span>
+            <span><span class="nv">Pakkeliste</span><br><span class="un">12 av 18 krysset av</span></span></button>
+          <button class="rute"><span class="sym">${IK.fil}</span>
+            <span><span class="nv">Filer</span><br><span class="un">7 dokumenter</span></span></button>
+          <button class="rute"><span class="sym">${IK.folk}</span>
+            <span><span class="nv">Deltakere</span><br><span class="un">28 med på turen<span class="pip">2</span></span></span></button>
+        </div>
+        <div class="bolk">Resten av dagen</div>
+        <div class="post ferdig"><div class="t">08:00</div><div><div class="h">Frokost på hotellet</div></div></div>
+        <div class="post ferdig"><div class="t">09:30</div><div><div class="h">Avreise med buss</div><div class="s">Fra hotellet</div></div></div>
+        <div class="post"><div class="t">14:00</div><div><div class="h">Omvisning i EU-parlamentet</div><div class="s">Husk legitimasjon</div></div></div>
+        <div class="post"><div class="t">17:30</div><div><div class="h">Fri tid i sentrum</div></div></div>
+        <div class="post"><div class="t">20:00</div><div><div class="h">Middag på hotellet</div></div></div>
+        <div class="tom"></div>
+      </div>
+      <div class="fane">
+        <button class="paa">${IK.hus}<span>I dag</span></button>
+        <button>${IK.kal}<span>Program</span></button>
+        <button>${IK.chat}<span>Chat</span></button>
+        <button>${IK.meg}<span>Meg</span></button>
+      </div>`,
+
+    "Filer": `${stat}
+      <div class="topp"><h1 class="turnavn">Filer</h1>
+        <div class="dato">Alt som er lagt ut på turen, samlet</div></div>
+      <div class="rull">
+        <div class="fil"><span class="ft" style="background:#B4402F">PDF</span>
+          <div style="flex:1"><div class="nv">Program Brussel–Paris.pdf</div>
+            <div class="un">Lagt ut av Marit · 12. sep</div></div>${IK.hoy}</div>
+        <div class="fil"><span class="ft" style="background:#14508C">DOC</span>
+          <div style="flex:1"><div class="nv">Pakkeliste og regler.docx</div>
+            <div class="un">Lagt ut av Marit · 12. sep</div></div>${IK.hoy}</div>
+        <div class="fil"><span class="ft" style="background:#B4402F">PDF</span>
+          <div style="flex:1"><div class="nv">Bussbilletter.pdf</div>
+            <div class="un">Lagt ut av Jonas · 16. sep</div></div>${IK.hoy}</div>
+        <div class="fil"><span class="ft" style="background:#7A4E2D">BIL</span>
+          <div style="flex:1"><div class="nv">Romfordeling.png</div>
+            <div class="un">Lagt ut av Marit · i går</div></div>${IK.hoy}</div>
+        <div class="fil"><span class="ft" style="background:#2F6E4E">XLS</span>
+          <div style="flex:1"><div class="nv">Kontaktliste foresatte.xlsx</div>
+            <div class="un">Bare reiseledere ser denne</div></div>${IK.hoy}</div>
+        <div class="tom"></div>
+      </div>
+      <div class="fane">
+        <button>${IK.hus}<span>I dag</span></button>
+        <button>${IK.kal}<span>Program</span></button>
+        <button>${IK.chat}<span>Chat</span></button>
+        <button>${IK.meg}<span>Meg</span></button>
+      </div>`,
+
+    "Pakkeliste": `${stat}
+      <div class="topp"><h1 class="turnavn">Pakkeliste</h1>
+        <div class="dato">12 av 18 krysset av · bare du ser dine kryss</div></div>
+      <div class="rull">
+        <div class="bolk">Må ha</div>
+        <div class="pakk ferdig"><span class="hake av">${IK.hake}</span><span class="nv">Pass</span></div>
+        <div class="pakk ferdig"><span class="hake av">${IK.hake}</span><span class="nv">Europeisk helsetrygdkort</span></div>
+        <div class="pakk"><span class="hake"></span><span class="nv">Reiseforsikring — bevis</span></div>
+        <div class="bolk">Klær</div>
+        <div class="pakk ferdig"><span class="hake av">${IK.hake}</span><span class="nv">Regnjakke</span></div>
+        <div class="pakk"><span class="hake"></span><span class="nv">Gode sko til mye gåing</span></div>
+        <div class="pakk"><span class="hake"></span><span class="nv">Pent antrekk til middagen</span></div>
+        <div class="bolk">Annet</div>
+        <div class="pakk ferdig"><span class="hake av">${IK.hake}</span><span class="nv">Lader og powerbank</span></div>
+        <div class="pakk"><span class="hake"></span><span class="nv">Reiseadapter</span></div>
+        <div class="tom"></div>
+      </div>
+      <div class="fane">
+        <button>${IK.hus}<span>I dag</span></button>
+        <button>${IK.kal}<span>Program</span></button>
+        <button>${IK.chat}<span>Chat</span></button>
+        <button>${IK.meg}<span>Meg</span></button>
+      </div>`
+  }
+};
+
+/* ══════════════ B · RULLEGARDIN ══════════════ */
+const mrad = (sym, nv, un, ekstra = "", paa = false) => `
+  <button class="mrad ${paa ? "paa" : ""}"><span class="sym">${sym}</span>
+    <span class="nv">${nv}${un ? `<br><span style="font-weight:400;font-size:12.5px;color:#8E99A4">${un}</span>` : ""}</span>
+    ${ekstra}</button>`;
+
+const B = {
+  navn: "Rullegardin", under: "Meny fra toppen",
+  skjermer: {
+    "Program": `${stat}
+      <div class="bar">
+        <button class="meny"><span><span class="nv">Program</span><br>
+          <span class="un">Brussel, Paris og Normandie</span></span>
+          <span class="pil">${IK.ned}</span></button>
+        <button class="ikon">${IK.folk}<span class="prikk"></span></button>
+      </div>
+      <div class="dag">
+        <button>ons<span>17.</span></button>
+        <button class="paa">tor<span>18.</span></button>
+        <button>fre<span>19.</span></button>
+        <button>lør<span>20.</span></button>
+        <button>søn<span>21.</span></button>
+      </div>
+      <div class="rull">
+        <div class="linjepost"><div class="t">08:00</div><div><div class="h">Frokost på hotellet</div></div></div>
+        <div class="linjepost"><div class="t">09:30</div><div><div class="h">Avreise med buss</div>
+          <div class="s">Fra hotellet · du sitter i 14B</div></div></div>
+        <div class="linjepost naa"><div class="t">12:30</div><div><span class="lapp">Nå snart</span>
+          <div class="h">Lunsj ved Atomium</div>
+          <div class="s">Square de l'Atomium · 14°, lett regn</div></div></div>
+        <div class="linjepost"><div class="t">14:00</div><div><div class="h">Omvisning i EU-parlamentet</div>
+          <div class="s">Husk legitimasjon</div></div></div>
+        <div class="linjepost"><div class="t">17:30</div><div><div class="h">Fri tid i sentrum</div></div></div>
+        <div class="linjepost"><div class="t">20:00</div><div><div class="h">Middag på hotellet</div></div></div>
+        <div class="tom"></div>
+      </div>`,
+
+    "Menyen åpen": `${stat}
+      <div class="bar">
+        <button class="meny"><span><span class="nv">Program</span><br>
+          <span class="un">Brussel, Paris og Normandie</span></span>
+          <span class="pil">${IK.ned}</span></button>
+        <button class="ikon">${IK.folk}</button>
+      </div>
+      <div class="dag">
+        <button>ons<span>17.</span></button>
+        <button class="paa">tor<span>18.</span></button>
+        <button>fre<span>19.</span></button>
+      </div>
+      <div class="rull"><div class="linjepost"><div class="t">08:00</div><div><div class="h">Frokost på hotellet</div></div></div></div>
+      <div class="slor"></div>
+      <div class="gardin">
+        <div class="tit">Brussel, Paris og Normandie</div>
+        <div class="sub">Tryggheim VG2 · 17.–24. september</div>
+        ${mrad(IK.kal, "Program", "", "", true)}
+        ${mrad(IK.chat, "Chat", "", '<span class="tall">3</span>')}
+        ${mrad(IK.fil, "Filer", "7 dokumenter")}
+        ${mrad(IK.sekk, "Pakkeliste", "12 av 18")}
+        ${mrad(IK.fly, "Sitteplasser", "Buss og fly")}
+        ${mrad(IK.folk, "Deltakere", "28 med", '<span class="tall">2</span>')}
+        <div class="mskille"></div>
+        ${mrad(IK.tann, "Innstillinger", "")}
+        ${mrad(IK.hus, "Bytt tur", "")}
+      </div>`,
+
+    "Sitteplasser": `${stat}
+      <div class="bar">
+        <button class="meny"><span><span class="nv">Sitteplasser</span><br>
+          <span class="un">Buss · Oslo–Brussel</span></span>
+          <span class="pil">${IK.ned}</span></button>
+        <button class="ikon">${IK.folk}</button>
+      </div>
+      <div class="rull">
+        <div style="padding:14px 20px 4px;font-size:13.5px;color:#56626E">
+          Trykk på et ledig sete for å ta det. Reiselederen kan låse plassene når alle har valgt.</div>
+        <div style="padding:14px 20px 0;font:600 11px 'Archivo',sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#8E99A4">Rad 13–16</div>
+        <div class="sete" style="padding-top:10px">
+          <div class="s tatt">13A<br><span style="font-weight:400;font-size:10px">Ada</span></div>
+          <div class="s tatt">13B<br><span style="font-weight:400;font-size:10px">Noah</span></div>
+          <div class="s">13C</div><div class="s">13D</div>
+          <div class="gang"></div>
+          <div class="s tatt">14A<br><span style="font-weight:400;font-size:10px">Mia</span></div>
+          <div class="s min">14B<br><span style="font-weight:400;font-size:10px">Deg</span></div>
+          <div class="s tatt">14C<br><span style="font-weight:400;font-size:10px">Leo</span></div>
+          <div class="s">14D</div>
+          <div class="gang"></div>
+          <div class="s">15A</div><div class="s">15B</div>
+          <div class="s tatt">15C<br><span style="font-weight:400;font-size:10px">Sara</span></div>
+          <div class="s">15D</div>
+          <div class="gang"></div>
+          <div class="s">16A</div><div class="s">16B</div><div class="s">16C</div><div class="s">16D</div>
+        </div>
+        <div class="tom"></div>
+      </div>`
+  }
+};
+
+/* ══════════════ C · FANER ══════════════ */
+const chode = (aktiv) => `${stat}
+  <div class="hode">
+    <div class="rad1"><div><div class="nv">Brussel, Paris og Normandie</div>
+      <div class="un">Tryggheim VG2 · dag 2 av 8</div></div><div class="av">JR</div></div>
+    <div class="seg">
+      ${["Program","Filer","Pakkeliste","Sitteplasser","Deltakere"].map(n =>
+        `<button class="${n === aktiv ? "paa" : ""}">${n}</button>`).join("")}
+    </div>
+  </div>`;
+
+const cfane = (n) => `<div class="fane">
+  <button class="${n === 0 ? "paa" : ""}">${IK.kal}<span>Turen</span></button>
+  <button class="${n === 1 ? "paa" : ""}">${IK.chat}<span>Chat</span></button>
+  <button class="${n === 2 ? "paa" : ""}">${IK.meg}<span>Meg</span></button>
+</div>`;
+
+const C = {
+  navn: "Faner", under: "Rad på toppen",
+  skjermer: {
+    "Program": `${chode("Program")}
+      <div class="rull">
+        <div class="kort">
+          <div class="kt">Torsdag 18. september <span class="n">6 punkter</span></div>
+          <div class="kr"><div class="t">08:00</div><div><div class="h">Frokost på hotellet</div></div></div>
+          <div class="kr"><div class="t">09:30</div><div><div class="h">Avreise med buss</div>
+            <div class="s">Sete 14B</div></div></div>
+          <div class="kr" style="background:#F7FAF9"><div class="sym">${IK.pin}</div>
+            <div style="flex:1"><div class="h">Lunsj ved Atomium</div>
+              <div class="s">12:30 · 14°, lett regn</div></div>${IK.hoy}</div>
+          <div class="kr"><div class="t">14:00</div><div><div class="h">Omvisning i EU-parlamentet</div>
+            <div class="s">Husk legitimasjon</div></div></div>
+          <div class="kr"><div class="t">20:00</div><div><div class="h">Middag på hotellet</div></div></div>
+        </div>
+        <div class="kort">
+          <div class="kt">Fredag 19. september <span class="n">4 punkter</span></div>
+          <div class="kr"><div class="t">07:15</div><div><div class="h">Frokost og utsjekk</div></div></div>
+          <div class="kr"><div class="t">09:00</div><div><div class="h">Buss til Paris</div>
+            <div class="s">3 t 20 min</div></div></div>
+        </div>
+        <div class="tom"></div>
+      </div>
+      ${cfane(0)}`,
+
+    "Sitteplasser": `${chode("Sitteplasser")}
+      <div class="rull">
+        <div style="padding:14px 16px 0;display:flex;gap:7px">
+          <button style="border:0;background:#3D3A8C;color:#fff;border-radius:18px;padding:7px 14px;font:600 12.5px 'Archivo',sans-serif">Buss</button>
+          <button style="border:1px solid #E6E9ED;background:#fff;color:#5C6873;border-radius:18px;padding:7px 14px;font:600 12.5px 'Archivo',sans-serif">Fly hjem</button>
+        </div>
+        <div style="padding:14px 16px 10px;font-size:13px;color:#5C6873">Du sitter i <b>14B</b>. Trykk på et ledig sete for å bytte.</div>
+        <div class="sete">
+          <div class="s tatt">13A</div><div class="s tatt">13B</div><div class="s">13C</div><div class="s">13D</div>
+          <div class="gang"></div>
+          <div class="s tatt">14A</div><div class="s min">14B</div><div class="s tatt">14C</div><div class="s">14D</div>
+          <div class="gang"></div>
+          <div class="s">15A</div><div class="s">15B</div><div class="s tatt">15C</div><div class="s">15D</div>
+        </div>
+        <div class="tom"></div>
+      </div>
+      ${cfane(0)}`,
+
+    "Filer": `${chode("Filer")}
+      <div class="rull">
+        <div class="kort" style="padding-bottom:2px">
+          <div class="kt">Fra reiselederne <span class="n">5 filer</span></div>
+          <div class="kr"><span class="ft" style="width:32px;height:40px;border-radius:5px;display:grid;place-items:center;color:#fff;font:700 9px 'Archivo',sans-serif;background:#B4402F">PDF</span>
+            <div style="flex:1"><div class="h">Program Brussel–Paris.pdf</div><div class="s">Marit · 12. sep</div></div>${IK.hoy}</div>
+          <div class="kr"><span class="ft" style="width:32px;height:40px;border-radius:5px;display:grid;place-items:center;color:#fff;font:700 9px 'Archivo',sans-serif;background:#14508C">DOC</span>
+            <div style="flex:1"><div class="h">Pakkeliste og regler.docx</div><div class="s">Marit · 12. sep</div></div>${IK.hoy}</div>
+          <div class="kr"><span class="ft" style="width:32px;height:40px;border-radius:5px;display:grid;place-items:center;color:#fff;font:700 9px 'Archivo',sans-serif;background:#B4402F">PDF</span>
+            <div style="flex:1"><div class="h">Bussbilletter.pdf</div><div class="s">Jonas · 16. sep</div></div>${IK.hoy}</div>
+        </div>
+        <div class="kort" style="padding-bottom:2px">
+          <div class="kt">Delt i chatten <span class="n">2 filer</span></div>
+          <div class="kr"><span class="ft" style="width:32px;height:40px;border-radius:5px;display:grid;place-items:center;color:#fff;font:700 9px 'Archivo',sans-serif;background:#7A4E2D">BIL</span>
+            <div style="flex:1"><div class="h">Romfordeling.png</div><div class="s">Marit · i går</div></div>${IK.hoy}</div>
+        </div>
+        <div class="tom"></div>
+      </div>
+      ${cfane(0)}`
+  }
+};
+
+/* ══════════════ motor ══════════════ */
+const utkast = { a: A, b: B, c: C };
+let valgt = "a", skjerm = 0;
+
+const rad = document.getElementById("rad");
+const tlf = document.getElementById("telefon");
+const srad = document.getElementById("skjermrad");
+
+rad.innerHTML = Object.keys(utkast).map(k =>
+  `<button data-u="${k}"><b>${k.toUpperCase()} · ${utkast[k].navn}</b>${utkast[k].under}</button>`).join("");
+
+function tegn() {
+  const u = utkast[valgt];
+  const navn = Object.keys(u.skjermer);
+  if (skjerm >= navn.length) skjerm = 0;
+  tlf.innerHTML = `<div class="utkast aktiv" data-d="${valgt}">${u.skjermer[navn[skjerm]]}</div>`;
+  rad.querySelectorAll("button").forEach(b =>
+    b.setAttribute("aria-pressed", b.dataset.u === valgt));
+  srad.innerHTML = navn.map((n, i) =>
+    `<button data-s="${i}" aria-pressed="${i === skjerm}">${n}</button>`).join("");
+}
+
+rad.addEventListener("click", e => {
+  const b = e.target.closest("[data-u]");
+  if (!b) return;
+  valgt = b.dataset.u; skjerm = 0; tegn();
+});
+srad.addEventListener("click", e => {
+  const b = e.target.closest("[data-s]");
+  if (!b) return;
+  skjerm = Number(b.dataset.s); tegn();
+});
+
+tegn();
+</script>
+</body>
+</html>
