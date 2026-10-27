@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="nb">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>TourFlow — nytt design</title>
+<meta name="theme-color" content="#FFFFFF">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════════════════════
+   TourFlow v2
+
+   Stil: «Editorial greeting», delt ut av taste-skill (frø 1132057274).
+   Hilsenen er h1, tallene står i vanlig vekt på tonede flater, og
+   fargebudsjettet er under 2 %.
+
+   To bevisste avvik fra arket, begge begrunnet i rapporten:
+   · fargen er TourFlow-blå, ikke arkets teal — produktet er i drift
+     og har alt en farge folk kjenner igjen
+   · brødteksten er 16 px, ikke 14 — arket er målt på skjermbord,
+     og Apples retningslinjer gjelder for en telefon i sollys
+   ═══════════════════════════════════════════════════════════════ */
+
+:root{
+  /* flater: hvit grunn, papirtone fra produktets verden på panelene */
+  --ground:#FFFFFF;
+  --paper:#F7F6F2;
+  --raised:#FFFFFF;
+  --border:#E7E4DC;
+  --rule:#F0EDE6;
+
+  --ink:#1C1D1A;
+  --ink-2:#5E5F59;
+  --ink-3:#8A8B84;
+
+  /* fargen brukes på data og én kontroll, ikke på krom */
+  --blaa:#14508C;
+  --blaa-pale:#E4ECF5;
+  --varsel:#9A6B10;
+  --varsel-pale:#FAF1DC;
+  --fare:#9E2B20;
+
+  --r-kort:22px;
+  --r-flate:14px;
+  --r-kontroll:999px;
+
+  --gap:16px;
+  --pad:20px;
+  --marg:20px;
+
+  --fs-hilsen:30px;
+  --fs-tittel:21px;
+  --fs-brod:16px;
+  --fs-sub:13.5px;
+  --fs-liten:12px;
+
+  --safe-t:env(safe-area-inset-top,0px);
+  --safe-b:env(safe-area-inset-bottom,0px);
+  color-scheme:light;
+}
+
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{
+  font-family:"Instrument Sans",-apple-system,system-ui,sans-serif;
+  font-size:var(--fs-brod);line-height:1.45;color:var(--ink);background:var(--ground);
+  -webkit-text-size-adjust:100%;overflow:hidden;
+  font-variant-numeric:tabular-nums;
+}
+button,input{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--blaa);outline-offset:2px;border-radius:8px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* ── stillas rundt prototypen (ikke en del av appen) ───────────── */
+.ramme{display:flex;flex-direction:column;height:100dvh;background:#15161A}
+.telefon{
+  flex:1;min-height:0;width:100%;max-width:412px;margin:0 auto;background:var(--ground);
+  display:flex;flex-direction:column;position:relative;overflow:hidden;
+}
+@media (min-width:480px){
+  .ramme{padding:16px 0}
+  .telefon{border-radius:28px;max-height:880px;box-shadow:0 24px 70px rgba(0,0,0,.45)} /* taste-skill-ignore: stillaset rundt prototypen, ikke appen */
+}
+.notat{
+  flex:none;padding:10px 16px calc(10px + var(--safe-b));background:#15161A;
+  color:#8E9199;font-size:12px;text-align:center;line-height:1.5;
+}
+.notat b{color:#D8DBE0;font-weight:500}
+
+/* ── toppbar: 48 px, navn + meny, én handling ──────────────────── */
+.topp{
+  flex:none;display:flex;align-items:center;gap:10px;height:48px;
+  padding:0 12px 0 var(--marg);margin-top:var(--safe-t);
+}
+.turknapp{
+  flex:1;min-width:0;display:flex;align-items:center;gap:6px;border:0;background:none;
+  padding:6px 4px 6px 0;cursor:pointer;text-align:left;min-height:44px;
+}
+.turknapp .nv{
+  font-size:15px;font-weight:600;letter-spacing:-.01em;white-space:nowrap;
+  overflow:hidden;text-overflow:ellipsis;
+}
+.turknapp svg{width:16px;height:16px;flex:none;stroke:var(--ink-3);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.meg-knapp{
+  width:32px;height:32px;flex:none;border:1px solid var(--border);border-radius:50%;
+  background:var(--paper);color:var(--ink-2);font-size:12px;font-weight:600;cursor:pointer;
+  display:grid;place-items:center;position:relative;
+}
+.meg-knapp .prikk{position:absolute;top:-1px;right:-1px;width:9px;height:9px;border-radius:50%;background:var(--fare);border:2px solid var(--ground)}
+
+/* ── rullende innhold ──────────────────────────────────────────── */
+.rull{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+.rull::-webkit-scrollbar{display:none}
+.inn{padding:0 var(--marg)}
+.luft{height:28px}
+
+/* ── hilsenen: h1 i serif, dato i grå linje under ──────────────── */
+h1.hilsen{
+  font-family:"Instrument Serif",Georgia,serif;font-weight:400;
+  font-size:var(--fs-hilsen);line-height:1.1;letter-spacing:-.01em;margin:10px 0 0;
+}
+.underlinje{font-size:var(--fs-sub);color:var(--ink-2);margin-top:6px}
+h2.sidetittel{font-size:var(--fs-tittel);font-weight:600;letter-spacing:-.01em;margin:10px 0 0}
+
+/* ── dagstripa: TourFlows eget element ─────────────────────────── */
+/* En avgangstavle for dagen. Hvert punkt er et merke på en linje,
+   og «nå» er den eneste blå tingen på skjermen. */
+.stripe{margin:22px 0 0;position:relative}
+.stripe .akse{position:absolute;left:0;right:0;top:19px;height:1px;background:var(--border)}
+.stripe .punkter{display:flex;justify-content:space-between;position:relative}
+.stripe .pk{display:flex;flex-direction:column;align-items:center;gap:7px;flex:1;min-width:0}
+.stripe .kl{font-size:var(--fs-liten);color:var(--ink-3);font-variant-numeric:tabular-nums}
+.stripe .mk{width:9px;height:9px;border-radius:50%;background:var(--border);flex:none}
+.stripe .pk.ferdig .mk{background:var(--ink-3)}
+.stripe .pk.naa .mk{width:13px;height:13px;background:var(--blaa);box-shadow:0 0 0 4px var(--blaa-pale)} /* taste-skill-ignore: ikke en skygge, men en ring som markerer naa */
+.stripe .pk.naa .kl{color:var(--blaa);font-weight:600}
+.stripe .nvn{font-size:11px;color:var(--ink-3);text-align:center;line-height:1.25;
+  max-width:68px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.stripe .pk.naa .nvn{color:var(--ink)}
+
+/* ── «nå»-panelet: tonet flate, ingen skygge ───────────────────── */
+.naa{
+  margin-top:22px;background:var(--paper);border-radius:var(--r-kort);padding:var(--pad);
+}
+.naa .merk{font-size:var(--fs-liten);color:var(--ink-2);margin-bottom:10px}
+.naa .kl{font-size:34px;font-weight:400;line-height:1;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.naa .hva{font-size:19px;font-weight:600;margin-top:8px;letter-spacing:-.01em}
+.naa .hvor{font-size:var(--fs-sub);color:var(--ink-2);margin-top:3px}
+.naa .knapper{display:flex;gap:9px;margin-top:16px}
+.btn{
+  flex:1;min-height:44px;border-radius:var(--r-kontroll);border:1px solid var(--border);
+  background:var(--raised);color:var(--ink);font-size:14.5px;font-weight:500;cursor:pointer;
+  display:inline-flex;align-items:center;justify-content:center;gap:7px;text-decoration:none;
+}
+.btn svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.btn.primar{background:var(--blaa);border-color:var(--blaa);color:#fff}
+
+/* ── ruter: 2×2, tonede flater uten ikonbokser ─────────────────── */
+.ruter{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.rute{
+  text-align:left;border:1px solid var(--border);background:var(--ground);border-radius:var(--r-flate);
+  padding:14px;cursor:pointer;min-height:76px;display:flex;flex-direction:column;justify-content:space-between;
+}
+.rute .nv{font-size:15px;font-weight:500}
+.rute .vr{font-size:var(--fs-sub);color:var(--ink-2);margin-top:3px;font-variant-numeric:tabular-nums}
+.rute .vr b{font-weight:600;color:var(--ink)}
+.merkelapp{
+  display:inline-block;background:var(--varsel-pale);color:var(--varsel);border-radius:var(--r-kontroll);
+  font-size:11.5px;font-weight:600;padding:1px 7px;margin-left:6px;vertical-align:1px;
+}
+
+/* ── seksjoner og rader ────────────────────────────────────────── */
+.bolk{display:flex;align-items:baseline;justify-content:space-between;margin:30px 0 4px}
+.bolk h3{font-size:14px;font-weight:600;margin:0}
+.bolk .lenke{font-size:13.5px;color:var(--blaa);background:none;border:0;cursor:pointer;padding:6px 0;min-height:auto}
+
+.post{
+  display:grid;grid-template-columns:58px 1fr auto;gap:12px;align-items:baseline;
+  padding:13px 0;border-bottom:1px solid var(--rule);width:100%;text-align:left;
+  background:none;border-left:0;border-right:0;border-top:0;cursor:pointer;
+}
+.post:last-child{border-bottom:0}
+.post .t{font-size:14.5px;color:var(--ink-2);font-variant-numeric:tabular-nums}
+.post .h{font-size:var(--fs-brod);font-weight:500}
+.post .s{font-size:var(--fs-sub);color:var(--ink-2);margin-top:2px}
+.post.ferdig .t,.post.ferdig .h{color:var(--ink-3)}
+.post.ferdig .h{text-decoration:line-through;text-decoration-color:var(--border)}
+.post .pil{color:var(--ink-3)}
+.post .pil svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+/* ── dagvelger: egen rad som ruller sidelengs ──────────────────── */
+.dager{display:flex;gap:8px;overflow-x:auto;padding:14px var(--marg) 2px;scrollbar-width:none}
+.dager::-webkit-scrollbar{display:none}
+.dag{
+  flex:none;border:1px solid var(--border);background:var(--ground);border-radius:12px;
+  padding:8px 12px;cursor:pointer;text-align:center;min-width:52px;min-height:52px;
+}
+.dag .d{font-size:var(--fs-liten);color:var(--ink-2)}
+.dag .n{font-size:17px;font-weight:500;font-variant-numeric:tabular-nums;line-height:1.2}
+.dag[aria-selected="true"]{background:var(--ink);border-color:var(--ink);color:var(--ground)}
+.dag[aria-selected="true"] .d{color:rgba(255,255,255,.72)}
+
+/* ── fanelinje: fire faste mål, aldri skjult ───────────────────── */
+.faner{
+  flex:none;display:flex;border-top:1px solid var(--rule);background:var(--ground);
+  padding:6px 8px calc(6px + var(--safe-b));
+}
+.fane{
+  flex:1;border:0;background:none;cursor:pointer;color:var(--ink-3);
+  display:flex;flex-direction:column;align-items:center;gap:3px;
+  padding:6px 0 2px;min-height:48px;font-size:11px;font-weight:500;
+}
+.fane svg{width:23px;height:23px;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.fane[aria-selected="true"]{color:var(--blaa)}
+.fane .tall{
+  position:absolute;transform:translate(13px,-4px);background:var(--fare);color:#fff;
+  border-radius:var(--r-kontroll);font-size:10.5px;font-weight:600;padding:0 5px;min-width:17px;line-height:17px;
+}
+
+/* ── rullegardin ───────────────────────────────────────────────── */
+.slor{position:absolute;inset:0;background:rgba(20,21,18,.32);z-index:8;border:0;width:100%}
+.gardin{
+  position:absolute;left:0;right:0;top:0;z-index:9;background:var(--ground);
+  border-radius:0 0 var(--r-kort) var(--r-kort);padding:calc(14px + var(--safe-t)) 0 10px;
+  box-shadow:0 20px 40px -24px rgba(20,21,18,.5); /* taste-skill-ignore: rullegardinen er et ekte overlegg */
+}
+.gardin .tit{font-size:17px;font-weight:600;padding:2px var(--marg) 0;letter-spacing:-.01em}
+.gardin .sub{font-size:var(--fs-sub);color:var(--ink-2);padding:2px var(--marg) 12px}
+.mrad{
+  display:flex;align-items:center;gap:13px;width:100%;border:0;background:none;
+  padding:11px var(--marg);text-align:left;cursor:pointer;min-height:48px;
+}
+.mrad svg{width:19px;height:19px;flex:none;stroke:var(--ink-2);fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.mrad .nv{flex:1;font-size:15.5px;font-weight:500}
+.mrad .vr{font-size:var(--fs-sub);color:var(--ink-3);font-weight:400}
+.mrad[aria-current="true"]{background:var(--paper)}
+.mrad .tall{background:var(--fare);color:#fff;border-radius:var(--r-kontroll);font-size:11.5px;font-weight:600;padding:1px 7px}
+.mskille{height:1px;background:var(--rule);margin:8px var(--marg)}
+
+/* ── lister: filer, pakkeliste, deltakere ──────────────────────── */
+.rad{
+  display:flex;align-items:center;gap:13px;width:100%;padding:13px 0;text-align:left;
+  border:0;border-bottom:1px solid var(--rule);background:none;cursor:pointer;min-height:56px;
+}
+.rad:last-child{border-bottom:0}
+.rad .nv{font-size:var(--fs-brod);font-weight:500}
+.rad .s{font-size:var(--fs-sub);color:var(--ink-2);margin-top:1px}
+.rad .grow{flex:1;min-width:0}
+.filtype{
+  width:34px;height:42px;flex:none;border:1px solid var(--border);border-radius:5px;
+  display:grid;place-items:center;font-size:9.5px;font-weight:600;color:var(--ink-2);background:var(--paper);
+}
+.hake{width:24px;height:24px;flex:none;border:1.5px solid var(--border);border-radius:7px;display:grid;place-items:center;background:var(--ground)}
+.hake svg{width:14px;height:14px;stroke:#fff;fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.rad.av .hake{background:var(--ink);border-color:var(--ink)}
+.rad.av .nv{color:var(--ink-3);text-decoration:line-through;text-decoration-color:var(--border)}
+.init{
+  width:34px;height:34px;flex:none;border-radius:50%;display:grid;place-items:center;
+  font-size:13px;font-weight:600;color:var(--ink-2);background:var(--paper);border:1px solid var(--border);
+}
+
+/* ── seter ─────────────────────────────────────────────────────── */
+.setekart{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:4px}
+.gang{grid-column:1/-1;height:10px}
+.sete{
+  border:1px solid var(--border);background:var(--ground);border-radius:10px;
+  min-height:52px;padding:6px 2px;cursor:pointer;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:1px;
+}
+.sete .n{font-size:13px;font-weight:500;font-variant-numeric:tabular-nums}
+.sete .hvem{font-size:10.5px;color:var(--ink-3);max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sete.tatt{background:var(--paper);color:var(--ink-3)}
+.sete.min{background:var(--blaa);border-color:var(--blaa);color:#fff}
+.sete.min .hvem{color:rgba(255,255,255,.78)}
+
+/* ── chat ──────────────────────────────────────────────────────── */
+.meldinger{display:flex;flex-direction:column;gap:14px;padding:16px var(--marg) 8px;margin-top:auto}
+.melding{max-width:84%;display:flex;flex-direction:column;gap:3px}
+.melding.min{align-self:flex-end;align-items:flex-end}
+.hvem{font-size:var(--fs-liten);color:var(--ink-2);padding-left:2px}
+.boble{background:var(--paper);border-radius:16px 16px 16px 6px;padding:10px 13px;font-size:15.5px;overflow-wrap:anywhere}
+.melding.min .boble{background:var(--blaa);color:#fff;border-radius:16px 16px 6px 16px}
+.stempel{font-size:11px;color:var(--ink-3);padding:0 3px}
+.skriv{
+  flex:none;display:flex;gap:9px;align-items:flex-end;padding:10px var(--marg) calc(10px + var(--safe-b));
+  border-top:1px solid var(--rule);background:var(--ground);
+}
+.skriv input{
+  flex:1;min-width:0;min-height:44px;border:1px solid var(--border);background:var(--paper);
+  border-radius:var(--r-kontroll);padding:11px 15px;font-size:16px;
+}
+.ikonknapp{
+  width:44px;height:44px;flex:none;border-radius:50%;border:1px solid var(--border);
+  background:var(--ground);cursor:pointer;display:grid;place-items:center;color:var(--ink-2);
+}
+.ikonknapp.send{background:var(--blaa);border-color:var(--blaa);color:#fff}
+.ikonknapp svg{width:19px;height:19px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+
+/* ── tom tilstand ──────────────────────────────────────────────── */
+.tomt{padding:34px 0;text-align:center;color:var(--ink-2);font-size:var(--fs-sub)}
+</style>
+</head>
+<body>
+
+<div class="ramme">
+  <div class="telefon" id="telefon"></div>
+  <div class="notat" id="notat"></div>
+</div>
+
+<script>
+/* ═══ ikoner: ett sett, 1,6 px strek, grå ═══ */
+const I = {
+  hjem:'<svg viewBox="0 0 24 24"><path d="M4 11.2 12 4.5l8 6.7"/><path d="M6.2 10v9.5h11.6V10"/></svg>',
+  program:'<svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M3.5 9.8h17M8.5 3v4M15.5 3v4"/></svg>',
+  chat:'<svg viewBox="0 0 24 24"><path d="M20.5 12a8 8 0 0 1-8 8H7l-3.5 2.5L4.6 18A8 8 0 1 1 20.5 12Z"/></svg>',
+  meg:'<svg viewBox="0 0 24 24"><circle cx="12" cy="8.2" r="3.7"/><path d="M4.8 20a7.2 7.2 0 0 1 14.4 0"/></svg>',
+  ned:'<svg viewBox="0 0 24 24"><path d="m6 9.5 6 6 6-6"/></svg>',
+  hoyre:'<svg viewBox="0 0 24 24"><path d="m9.5 6 6 6-6 6"/></svg>',
+  venstre:'<svg viewBox="0 0 24 24"><path d="m14.5 6-6 6 6 6"/></svg>',
+  nav:'<svg viewBox="0 0 24 24"><path d="M3.5 11.3 20.5 4l-7.3 16.5-2-7.2-7.7-2Z"/></svg>',
+  sete:'<svg viewBox="0 0 24 24"><path d="M8 4.8h1.7a2 2 0 0 1 2 2V13H8z"/><path d="M8 13h7.2a2.6 2.6 0 0 1 2.6 2.6V17H8z"/><path d="M8 4.3v15"/></svg>',
+  sekk:'<svg viewBox="0 0 24 24"><rect x="5.5" y="8" width="13" height="12.5" rx="2.5"/><path d="M9 8V5.5a3 3 0 0 1 6 0V8"/></svg>',
+  fil:'<svg viewBox="0 0 24 24"><path d="M13.5 3.5H7.5a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2V8.5Z"/><path d="M13.5 3.5v5h5"/></svg>',
+  folk:'<svg viewBox="0 0 24 24"><circle cx="9.5" cy="8.5" r="3.3"/><path d="M3.8 19a5.7 5.7 0 0 1 11.4 0"/><path d="M16.2 5.8a3.3 3.3 0 0 1 0 5.4M20.2 19a5.7 5.7 0 0 0-2.3-4.4"/></svg>',
+  tann:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.2 14.7a1.6 1.6 0 0 0 .3 1.8 2 2 0 1 1-2.8 2.8 1.6 1.6 0 0 0-2.7 1.1 2 2 0 0 1-4 0 1.6 1.6 0 0 0-2.7-1.1 2 2 0 1 1-2.8-2.8A1.6 1.6 0 0 0 3 14.7a2 2 0 0 1 0-4 1.6 1.6 0 0 0 1.5-2.6 2 2 0 1 1 2.8-2.8A1.6 1.6 0 0 0 11 4.8a2 2 0 0 1 4 0 1.6 1.6 0 0 0 2.7 1.1 2 2 0 1 1 2.8 2.8A1.6 1.6 0 0 0 21 11.3a2 2 0 0 1 0 4Z"/></svg>',
+  bytt:'<svg viewBox="0 0 24 24"><path d="M4 7.5h13M13.5 4 17 7.5 13.5 11"/><path d="M20 16.5H7M10.5 13 7 16.5 10.5 20"/></svg>',
+  hake:'<svg viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg>',
+  send:'<svg viewBox="0 0 24 24"><path d="M4 12 20 4.5 13 20.5l-2-7-7-1.5Z"/></svg>',
+  bilde:'<svg viewBox="0 0 24 24"><rect x="3.5" y="5.5" width="17" height="13.5" rx="2.5"/><circle cx="12" cy="12.2" r="3.2"/><path d="M8.3 5.5 9.4 3.2h5.2l1.1 2.3"/></svg>'
+};
+
+/* ═══ data: ekte tall fra turen, som går opp ═══
+   28 deltakere, 8 dager, program for torsdag 18. september. */
+const TUR = { navn:"Brussel, Paris og Normandie", klasse:"Tryggheim VG2", dag:2, dager:8 };
+
+const PROGRAM = [
+  { t:"08:00", h:"Frokost på hotellet", s:"", ferdig:true },
+  { t:"09:30", h:"Avreise med buss", s:"Sete 14B", ferdig:true },
+  { t:"12:30", h:"Lunsj ved Atomium", s:"Square de l'Atomium · 14°", naa:true },
+  { t:"14:00", h:"Omvisning i EU-parlamentet", s:"Ta med legitimasjon" },
+  { t:"17:30", h:"Fri tid i sentrum", s:"Møt ved bussen 19:15" },
+  { t:"20:00", h:"Middag på hotellet", s:"" }
+];
+
+const esc = s => String(s??"").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+/* ═══ deler ═══ */
+const topp = () => `
+  <header class="topp">
+    <button class="turknapp" data-gaa="meny" aria-haspopup="dialog">
+      <span class="nv">${esc(TUR.navn)}</span>${I.ned}
+    </button>
+    <button class="meg-knapp" data-gaa="meg" aria-label="Din profil">JR<span class="prikk"></span></button>
+  </header>`;
+
+const faner = (aktiv) => {
+  const f = [["hjem","I dag",I.hjem],["program","Program",I.program],["chat","Chat",I.chat,3],["meg","Meg",I.meg]];
+  return `<nav class="faner" role="tablist">${f.map(([id,navn,ikon,n]) => `
+    <button class="fane" role="tab" data-gaa="${id}" aria-selected="${aktiv===id}">
+      ${ikon}${n?`<span class="tall">${n}</span>`:""}<span>${navn}</span>
+    </button>`).join("")}</nav>`;
+};
+
+/* Dagstripa — TourFlows eget element. En avgangstavle for dagen. */
+const stripe = () => `
+  <div class="stripe" aria-label="Dagen i oversikt">
+    <div class="akse"></div>
+    <div class="punkter">
+      ${PROGRAM.map(p => `
+        <div class="pk ${p.ferdig?"ferdig":""} ${p.naa?"naa":""}">
+          <span class="kl">${p.t}</span>
+          <span class="mk"></span>
+          <span class="nvn">${esc(p.h.split(" ").slice(0,2).join(" "))}</span>
+        </div>`).join("")}
+    </div>
+  </div>`;
+
+/* ═══ skjermer ═══ */
+const SKJERM = {
+
+hjem: () => `${topp()}
+  <div class="rull"><div class="inn">
+    <h1 class="hilsen">Torsdag i Brussel</h1>
+    <p class="underlinje">Dag ${TUR.dag} av ${TUR.dager} · 14°, lett regn · bussen går 09:30</p>
+    ${stripe()}
+    <section class="naa">
+      <div class="merk">Nå snart</div>
+      <div class="kl">12:30</div>
+      <div class="hva">Lunsj ved Atomium</div>
+      <div class="hvor">Square de l'Atomium, Brussel</div>
+      <div class="knapper">
+        <button class="btn primar">${I.nav} Veibeskrivelse</button>
+        <button class="btn" data-gaa="program">Hele dagen</button>
+      </div>
+    </section>
+
+    <div class="bolk"><h3>Turen</h3></div>
+    <div class="ruter">
+      <button class="rute" data-gaa="sitteplasser">
+        <span class="nv">Sitteplasser</span><span class="vr">Sete <b>14B</b></span></button>
+      <button class="rute" data-gaa="pakkeliste">
+        <span class="nv">Pakkeliste</span><span class="vr"><b>12</b> av 18</span></button>
+      <button class="rute" data-gaa="filer">
+        <span class="nv">Filer</span><span class="vr"><b>7</b> stk.</span></button>
+      <button class="rute" data-gaa="deltakere">
+        <span class="nv">Deltakere</span><span class="vr"><b>28</b> med<span class="merkelapp">2 venter</span></span></button>
+    </div>
+
+    <div class="bolk"><h3>Senere i dag</h3>
+      <button class="lenke" data-gaa="program">Hele programmet</button></div>
+    ${PROGRAM.filter(p => !p.ferdig && !p.naa).map(p => `
+      <button class="post"><span class="t">${p.t}</span>
+        <span><span class="h">${esc(p.h)}</span>${p.s?`<span class="s">${esc(p.s)}</span>`:""}</span>
+        <span class="pil">${I.hoyre}</span></button>`).join("")}
+    <div class="luft"></div>
+  </div></div>
+  ${faner("hjem")}`,
+
+program: () => `${topp()}
+  <div class="inn"><h2 class="sidetittel">Program</h2></div>
+  <div class="dager" role="tablist" aria-label="Velg dag">
+    ${[["ons","17."],["tor","18."],["fre","19."],["lør","20."],["søn","21."],["man","22."]].map(([d,n],i) => `
+      <button class="dag" role="tab" aria-selected="${i===1}"><span class="d">${d}</span><span class="n">${n}</span></button>`).join("")}
+  </div>
+  <div class="rull"><div class="inn">
+    <div class="bolk"><h3>Torsdag 18. september</h3></div>
+    ${PROGRAM.map(p => `
+      <button class="post ${p.ferdig?"ferdig":""}"><span class="t">${p.t}</span>
+        <span><span class="h">${esc(p.h)}</span>${p.s?`<span class="s">${esc(p.s)}</span>`:""}</span>
+        <span class="pil">${I.hoyre}</span></button>`).join("")}
+    <div class="luft"></div>
+  </div></div>
+  ${faner("program")}`,
+
+chat: () => `${topp()}
+  <div class="inn"><h2 class="sidetittel">Chat</h2></div>
+  <div class="rull"><div class="inn">
+    ${[
+      ["Brussel, Paris og Normandie","Marit: Husk å møte 09:15 i lobbyen","12:04",3],
+      ["Rom 204","Leo: noen som har lader?","11:41",0],
+      ["Påmeldte · EU-parlamentet","Du ble lagt til","i går",0],
+      ["Reiseledere","Bare reiseledere ser denne","i går",0]
+    ].map(([n,s,t,u]) => `
+      <button class="rad" data-gaa="samtale">
+        <span class="grow"><span class="nv">${esc(n)}</span><span class="s">${esc(s)}</span></span>
+        <span style="text-align:right"><span class="s">${t}</span>
+        ${u?`<br><span class="merkelapp" style="background:var(--fare);color:#fff;margin:4px 0 0">${u}</span>`:""}</span>
+      </button>`).join("")}
+    <div class="luft"></div>
+  </div></div>
+  ${faner("chat")}`,
+
+samtale: () => `
+  <header class="topp">
+    <button class="meg-knapp" data-gaa="chat" aria-label="Tilbake til chattene" style="border-radius:50%">${I.venstre}</button>
+    <button class="turknapp" data-gaa="chatside" style="flex:1">
+      <span class="nv">Brussel, Paris og Normandie</span>${I.hoyre}
+    </button>
+  </header>
+  <div class="rull" style="display:flex;flex-direction:column">
+    <div class="meldinger">
+      <div class="melding"><span class="hvem">Marit Aasen · reiseleder</span>
+        <div class="boble">Husk å møte 09:15 i lobbyen. Bussen går presis 09:30.</div>
+        <span class="stempel">09:02</span></div>
+      <div class="melding"><span class="hvem">Leo Sand</span>
+        <div class="boble">Er det nok å ha pass, eller trenger vi noe mer til parlamentet?</div>
+        <span class="stempel">11:18</span></div>
+      <div class="melding min"><div class="boble">Pass holder. Det står i programmet for 14:00.</div>
+        <span class="stempel">11:20</span></div>
+      <div class="melding"><span class="hvem">Marit Aasen · reiseleder</span>
+        <div class="boble">Riktig. Og ta med regnjakke, det kommer en byge rundt tre.</div>
+        <span class="stempel">12:04</span></div>
+    </div>
+  </div>
+  <form class="skriv" onsubmit="return false">
+    <button class="ikonknapp" type="button" aria-label="Send bilde">${I.bilde}</button>
+    <input placeholder="Melding til hele turen…" aria-label="Skriv en melding">
+    <button class="ikonknapp send" type="submit" aria-label="Send melding">${I.send}</button>
+  </form>`,
+
+sitteplasser: () => `${topp()}
+  <div class="rull"><div class="inn">
+    <h2 class="sidetittel">Sitteplasser</h2>
+    <p class="underlinje">Buss · Oslo–Brussel · du har <b style="color:var(--ink)">14B</b></p>
+    <div class="bolk"><h3>Rad 13–16</h3><span class="s" style="font-size:13.5px;color:var(--ink-3)">9 ledige</span></div>
+    <div class="setekart">
+      ${[["13A","Ada"],["13B","Noah"],["13C",""],["13D",""],null,
+         ["14A","Mia"],["14B","Deg","min"],["14C","Leo"],["14D",""],null,
+         ["15A",""],["15B",""],["15C","Sara"],["15D",""],null,
+         ["16A",""],["16B",""],["16C",""],["16D",""]].map(s => {
+        if (!s) return '<div class="gang"></div>';
+        const [n,hvem,min] = s;
+        const kl = min ? "min" : (hvem ? "tatt" : "");
+        return `<button class="sete ${kl}" ${hvem&&!min?"disabled":""}>
+          <span class="n">${n}</span>${hvem?`<span class="hvem">${esc(hvem)}</span>`:""}</button>`;
+      }).join("")}
+    </div>
+    <div class="luft"></div>
+  </div></div>
+  ${faner("hjem")}`,
+
+pakkeliste: () => `${topp()}
+  <div class="rull"><div class="inn">
+    <h2 class="sidetittel">Pakkeliste</h2>
+    <p class="underlinje">12 av 18 krysset av · bare du ser dine kryss</p>
+    ${[["Må ha",[["Pass",1],["Helsetrygdkort",1],["Reiseforsikring",0]]],
+       ["Klær",[["Regnjakke",1],["Gode sko",0],["Pent antrekk til middagen",0]]],
+       ["Annet",[["Lader og powerbank",1],["Reiseadapter",0]]]].map(([b,rader]) => `
+      <div class="bolk"><h3>${b}</h3></div>
+      ${rader.map(([n,av]) => `
+        <button class="rad ${av?"av":""}">
+          <span class="hake">${av?I.hake:""}</span><span class="grow"><span class="nv">${esc(n)}</span></span>
+        </button>`).join("")}`).join("")}
+    <div class="luft"></div>
+  </div></div>
+  ${faner("hjem")}`,
+
+filer: () => `${topp()}
+  <div class="rull"><div class="inn">
+    <h2 class="sidetittel">Filer</h2>
+    <p class="underlinje">Alt som er lagt ut på turen, samlet</p>
+    <div class="bolk"><h3>Fra reiselederne</h3></div>
+    ${[["PDF","Program Brussel–Paris.pdf","Marit · 12. sep"],
+       ["DOC","Pakkeliste og regler.docx","Marit · 12. sep"],
+       ["PDF","Bussbilletter.pdf","Jonas · 16. sep"],
+       ["PNG","Romfordeling.png","Marit · i går"]].map(([t,n,s]) => `
+      <button class="rad"><span class="filtype">${t}</span>
+        <span class="grow"><span class="nv">${esc(n)}</span><span class="s">${esc(s)}</span></span>
+        <span class="pil" style="color:var(--ink-3)">${I.hoyre}</span></button>`).join("")}
+    <div class="bolk"><h3>Delt i chatten</h3></div>
+    ${[["PNG","Kart over Montmartre.png","Ada · i går"],
+       ["PDF","Billetter Disneyland.pdf","Marit · 14. sep"],
+       ["XLS","Kontaktliste foresatte.xlsx","Bare reiseledere"]].map(([t,n,s]) => `
+      <button class="rad"><span class="filtype">${t}</span>
+        <span class="grow"><span class="nv">${esc(n)}</span><span class="s">${esc(s)}</span></span>
+        <span class="pil" style="color:var(--ink-3)">${I.hoyre}</span></button>`).join("")}
+    <div class="luft"></div>
+  </div></div>
+  ${faner("hjem")}`,
+
+deltakere: () => `${topp()}
+  <div class="rull"><div class="inn">
+    <h2 class="sidetittel">Deltakere</h2>
+    <p class="underlinje">28 med på turen · 2 venter på svar</p>
+    <div class="bolk"><h3>Venter på godkjenning</h3></div>
+    <div class="rad" style="align-items:center">
+      <span class="init">EN</span>
+      <span class="grow"><span class="nv">Emma Nygård</span><span class="s">ba om å bli med i går</span></span>
+      <span style="display:flex;gap:8px">
+        <button class="btn" style="flex:none;padding:0 13px;min-height:38px">Avslå</button>
+        <button class="btn primar" style="flex:none;padding:0 13px;min-height:38px">Slipp inn</button>
+      </span>
+    </div>
+    <div class="bolk"><h3>Reiseledere</h3></div>
+    ${[["MA","Marit Aasen"],["PK","Per Kvamme"]].map(([i,n]) => `
+      <button class="rad"><span class="init">${i}</span>
+        <span class="grow"><span class="nv">${esc(n)}</span></span>
+        <span class="pil" style="color:var(--ink-3)">${I.hoyre}</span></button>`).join("")}
+    <div class="bolk"><h3>Elever</h3></div>
+    ${[["AF","Ada Fjell",""],["JR","Jonas Robstad","deg"],["LS","Leo Sand",""],["MB","Mia Berge",""],["NH","Noah Hole",""],["SR","Sara Rime",""]].map(([i,n,s]) => `
+      <button class="rad"><span class="init">${i}</span>
+        <span class="grow"><span class="nv">${esc(n)}</span>${s?`<span class="s">${s}</span>`:""}</span>
+        <span class="pil" style="color:var(--ink-3)">${I.hoyre}</span></button>`).join("")}
+    <div class="luft"></div>
+  </div></div>
+  ${faner("hjem")}`,
+
+meg: () => `${topp()}
+  <div class="rull"><div class="inn">
+    <h2 class="sidetittel">Jonas Robstad</h2>
+    <p class="underlinje">Deltaker · jonas@eksempel.no</p>
+    <div class="bolk"><h3>Varsler</h3></div>
+    <button class="rad"><span class="grow"><span class="nv">Varsler er ikke slått på</span>
+      <span class="s">Du går glipp av beskjeder fra reiselederne</span></span>
+      <span class="merkelapp">Slå på</span></button>
+    <button class="rad"><span class="grow"><span class="nv">Hva du varsles om</span>
+      <span class="s">Alt i hele turen</span></span><span class="pil">${I.hoyre}</span></button>
+    <div class="bolk"><h3>Appen</h3></div>
+    <button class="rad"><span class="grow"><span class="nv">Kart</span>
+      <span class="s">Google Maps · til fots</span></span><span class="pil">${I.hoyre}</span></button>
+    <button class="rad"><span class="grow"><span class="nv">Konto</span>
+      <span class="s">Innlogget med e-post</span></span><span class="pil">${I.hoyre}</span></button>
+    <button class="rad"><span class="grow"><span class="nv">Om appen og personvern</span></span>
+      <span class="pil">${I.hoyre}</span></button>
+    <div class="luft"></div>
+  </div></div>
+  ${faner("meg")}`,
+
+chatside: () => `
+  <header class="topp">
+    <button class="meg-knapp" data-gaa="samtale" aria-label="Tilbake til samtalen">${I.venstre}</button>
+    <span class="turknapp"><span class="nv">Om chatten</span></span>
+  </header>
+  <div class="rull"><div class="inn">
+    <h2 class="sidetittel">Brussel, Paris og Normandie</h2>
+    <p class="underlinje">Åpen for hele turen · 28 med</p>
+    <div class="bolk"><h3>Innstillinger</h3></div>
+    <button class="rad"><span class="grow"><span class="nv">Varsler</span>
+      <span class="s">Alt</span></span><span class="pil">${I.hoyre}</span></button>
+    <button class="rad"><span class="grow"><span class="nv">Endre navn</span>
+      <span class="s">Bare reiseledere</span></span><span class="pil">${I.hoyre}</span></button>
+    <div class="bolk"><h3>Deltakere</h3>
+      <button class="lenke" data-gaa="deltakere">Se alle 28</button></div>
+    ${[["MA","Marit Aasen","reiseleder"],["AF","Ada Fjell",""],["JR","Jonas Robstad","deg"]].map(([i,n,s]) => `
+      <div class="rad"><span class="init">${i}</span>
+        <span class="grow"><span class="nv">${esc(n)}</span>${s?`<span class="s">${s}</span>`:""}</span></div>`).join("")}
+    <div class="luft"></div>
+  </div></div>`
+};
+
+/* ═══ rullegardinen ═══ */
+const MENY = [
+  ["hjem","I dag","",I.hjem],
+  ["program","Program","",I.program],
+  ["chat","Chat","",I.chat,3],
+  ["filer","Filer","7 stk.",I.fil],
+  ["pakkeliste","Pakkeliste","12 av 18",I.sekk],
+  ["sitteplasser","Sitteplasser","Sete 14B",I.sete],
+  ["deltakere","Deltakere","28 med",I.folk,2],
+  null,
+  ["meg","Innstillinger","",I.tann],
+  ["bytt","Bytt tur","",I.bytt]
+];
+
+function gardin(bak) {
+  return `${bak}
+    <button class="slor" data-gaa="lukk" aria-label="Lukk menyen"></button>
+    <div class="gardin" role="dialog" aria-label="Meny">
+      <div class="tit">${esc(TUR.navn)}</div>
+      <div class="sub">${esc(TUR.klasse)} · 17.–24. september</div>
+      ${MENY.map(m => {
+        if (!m) return '<div class="mskille"></div>';
+        const [id,navn,verdi,ikon,tall] = m;
+        return `<button class="mrad" data-gaa="${id}" ${id===naavaerende?'aria-current="true"':""}>
+          ${ikon}<span class="nv">${navn}${verdi?` <span class="vr">· ${verdi}</span>`:""}</span>
+          ${tall?`<span class="tall">${tall}</span>`:""}</button>`;
+      }).join("")}
+    </div>`;
+}
+
+/* ═══ motor ═══ */
+let naavaerende = "hjem";
+const tlf = document.getElementById("telefon");
+const notat = document.getElementById("notat");
+
+const NOTATER = {
+  hjem:"<b>Hjem.</b> Hilsenen er h1 i serif, og dagstripa under er det ene elementet bare TourFlow har.",
+  program:"<b>Program.</b> Dagene ruller sidelengs i sin egen rad — aldri hele siden.",
+  chat:"<b>Chat.</b> Navnet står i blekk, ikke grått: identitet skal aldri bleknes bort.",
+  samtale:"<b>Samtale.</b> Skrivefeltet er 44 px høyt og 16 px tekst, så iPhone ikke zoomer.",
+  sitteplasser:"<b>Sitteplasser.</b> Ditt sete er den eneste fylte fargen på skjermen.",
+  pakkeliste:"<b>Pakkeliste.</b> Avkrysset blir grått og strøket, ikke borte.",
+  filer:"<b>Filer.</b> Filtypen står som tekst, ikke som et farget ikon i en boks.",
+  deltakere:"<b>Deltakere.</b> Den som venter på svar står øverst, med handlingen i raden.",
+  meg:"<b>Meg.</b> Fire rader. Det som haster — varsler av — står først og er gult, ikke rødt.",
+  meny:"<b>Rullegardinen.</b> Alt på ett sted, med tallene med. Trykk utenfor for å lukke.",
+  chatside:"<b>Om chatten.</b> Du kom hit ved å trykke på navnet øverst i samtalen."
+};
+
+function tegn() {
+  const vis = naavaerende === "meny" ? "hjem" : naavaerende;
+  const html = (SKJERM[vis] || SKJERM.hjem)();
+  tlf.innerHTML = naavaerende === "meny" ? gardin(html) : html;
+  notat.innerHTML = NOTATER[naavaerende] || "";
+  const r = tlf.querySelector(".rull");
+  if (r) r.scrollTop = 0;
+}
+
+let forrige = "hjem";
+tlf.addEventListener("click", e => {
+  const k = e.target.closest("[data-gaa]");
+  if (!k) return;
+  const mal = k.dataset.gaa;
+  if (mal === "lukk") { naavaerende = forrige; return tegn(); }
+  if (mal === "meny") { forrige = naavaerende; naavaerende = "meny"; return tegn(); }
+  if (mal === "bytt") { naavaerende = "hjem"; return tegn(); }
+  if (SKJERM[mal]) { naavaerende = mal; tegn(); }
+});
+
+tegn();
+</script>
+</body>
+</html>
