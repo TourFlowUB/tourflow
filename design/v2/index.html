@@ -316,7 +316,15 @@ h2.sidetittel{font-size:var(--fs-tittel);font-weight:600;letter-spacing:-.01em;m
    taste-skill-ignore: arket forbyr glass, men dette er bestilt og
    Apple sanksjonerer det for akkurat dette laget. */
 @supports (backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px)) { /* taste-skill-ignore */
-  html.glass .telefon{--glass-tint:rgba(255,255,255,.72)}
+  /* 72 % hvit over en hvit side er ingenting å se gjennom. 58 % lar
+     teksten under skimtes som myke grå skygger — det er den som gjør at
+     det leses som glass og ikke som en hvit stripe. */
+  html.glass .telefon{--glass-tint:rgba(255,255,255,.58)}
+
+  /* WebKit mister uskarpheten når en forelder klipper innholdet. I den
+     ekte appen finnes ikke denne telefonrammen; her slår vi av klippingen
+     på telefonbredde, der rammen likevel fyller skjermen. */
+  @media (max-width:479px){ html.glass .telefon{overflow:visible} }
 
   html.glass .topp,
   html.glass .faner{
@@ -329,10 +337,11 @@ h2.sidetittel{font-size:var(--fs-tittel);font-weight:600;letter-spacing:-.01em;m
   /* taste-skill-ignore: fanelinja er et ekte overlegg, ikke et kort i ro */
   html.glass .faner{bottom:0;border-top:1px solid rgba(255,255,255,.5);box-shadow:0 -0.5px 0 rgba(28,29,26,.08)} /* taste-skill-ignore */
 
-  /* Innholdet skal kunne titte fram under stripene, ikke ligge bak dem. */
-  html.glass .rull{padding-top:calc(48px + var(--safe-t));padding-bottom:62px}
-  html.glass .dager{padding-top:calc(62px + var(--safe-t))}
-  html.glass .skriv{padding-bottom:calc(10px + var(--safe-b))}
+  /* Innholdet skal kunne titte fram under stripene, ikke ligge bak dem.
+     Det som ligger rett under toppen får plassen — enten det er
+     skrollefeltet eller en overskrift. */
+  html.glass .topp + *{padding-top:calc(48px + var(--safe-t))}
+  html.glass .telefon:has(.faner) .rull{padding-bottom:62px}
   html.glass .gardin{padding-top:calc(14px + var(--safe-t))}
 }
 /* Slår noen av gjennomsiktighet i tilgjengelighet, skal vi høre etter. */
