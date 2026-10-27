@@ -341,8 +341,25 @@ h2.sidetittel{font-size:var(--fs-tittel);font-weight:600;letter-spacing:-.01em;m
     backdrop-filter:saturate(1.9) blur(26px); /* taste-skill-ignore: bestilt, og Apple sanksjonerer det for dette laget */
   }
   html.glass .topp{top:0;margin-top:0;padding-top:var(--safe-t);height:auto;min-height:48px}
+
+  /* Apple: «a tab bar floats above content at the bottom of the screen».
+     Den er ikke en stripe fra kant til kant, men en kapsel som svever,
+     med innhold synlig både rundt den og gjennom den. Formen alene sier
+     «dette laget ligger oppå» — også når uskarpheten er svak. */
   /* taste-skill-ignore: fanelinja er et ekte overlegg, ikke et kort i ro */
-  html.glass .faner{bottom:0;border-top:1px solid rgba(255,255,255,.5);box-shadow:0 -0.5px 0 rgba(28,29,26,.08)} /* taste-skill-ignore */
+  html.glass .faner{
+    left:10px;right:10px;bottom:calc(9px + var(--safe-b));
+    border:1px solid rgba(255,255,255,.6);border-radius:26px;
+    padding:6px;box-shadow:0 10px 26px -12px rgba(28,29,26,.3); /* taste-skill-ignore */
+    /* Kapselen ligger alltid oppå tekst, mens toppen som oftest ligger
+       over luft. Derfor er den tettere: Apples materiale justerer selv
+       lysstyrken for å holde det som står på den leselig. */
+    background:rgba(255,255,255,.8);
+  }
+  /* Den valgte fanen hviler på sin egen flate, slik iOS gjør det. */
+  html.glass .fane[aria-selected="true"]{
+    background:rgba(20,80,140,.1);border-radius:20px;
+  }
 
   /* Innholdet skal kunne titte fram under stripene, ikke ligge bak dem.
      Plassen settes ikke her, men måles i JS på de ekte stripene etter at
@@ -805,7 +822,10 @@ function maalOppStripene() {
 
   if (faner) {
     const rull = tlf.querySelector(".rull");
-    if (rull) rull.style.paddingBottom = faner.offsetHeight + "px";
+    // Kapselen svever, så innholdet trenger plass til både den og lufta
+    // under den — ellers skjuler den siste rad i lista.
+    const under = tlf.getBoundingClientRect().bottom - faner.getBoundingClientRect().bottom;
+    if (rull) rull.style.paddingBottom = Math.round(faner.offsetHeight + under * 2) + "px";
   }
 }
 
