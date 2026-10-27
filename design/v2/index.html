@@ -185,8 +185,8 @@ h2.sidetittel{font-size:var(--fs-tittel);font-weight:600;letter-spacing:-.01em;m
 }
 .post:last-child{border-bottom:0}
 .post .t{font-size:14.5px;color:var(--ink-2);font-variant-numeric:tabular-nums}
-.post .h{font-size:var(--fs-brod);font-weight:500}
-.post .s{font-size:var(--fs-sub);color:var(--ink-2);margin-top:2px}
+.post .h{display:block;font-size:var(--fs-brod);font-weight:500}
+.post .s{display:block;font-size:var(--fs-sub);color:var(--ink-2);margin-top:2px}
 .post.ferdig .t,.post.ferdig .h{color:var(--ink-3)}
 .post.ferdig .h{text-decoration:line-through;text-decoration-color:var(--border)}
 .post .pil{color:var(--ink-3)}
@@ -247,8 +247,10 @@ h2.sidetittel{font-size:var(--fs-tittel);font-weight:600;letter-spacing:-.01em;m
   border:0;border-bottom:1px solid var(--rule);background:none;cursor:pointer;min-height:56px;
 }
 .rad:last-child{border-bottom:0}
-.rad .nv{font-size:var(--fs-brod);font-weight:500}
-.rad .s{font-size:var(--fs-sub);color:var(--ink-2);margin-top:1px}
+/* Navn og underlinje er egne linjer. Uten dette henger underteksten seg
+   fast i navnet: «Emma Nygårdba om å bli med i går». */
+.rad .nv{display:block;font-size:var(--fs-brod);font-weight:500}
+.rad .s{display:block;font-size:var(--fs-sub);color:var(--ink-2);margin-top:1px}
 .rad .grow{flex:1;min-width:0}
 .filtype{
   width:34px;height:42px;flex:none;border:1px solid var(--border);border-radius:5px;
@@ -302,6 +304,45 @@ h2.sidetittel{font-size:var(--fs-tittel);font-weight:600;letter-spacing:-.01em;m
 
 /* ── tom tilstand ──────────────────────────────────────────────── */
 .tomt{padding:34px 0;text-align:center;color:var(--ink-2);font-size:var(--fs-sub)}
+
+/* ══ glass: bare på iPhone, bare lagt til på hjemskjermen ═══════
+   Apples egen side er tydelig: materialet hører til det funksjonelle
+   laget — fanelinja og toppen — og aldri i innholdet. Så det er bare
+   de to stripene som blir gjennomsiktige, og innholdet får skli under.
+
+   Vi kan ikke tegne ekte Liquid Glass; den brytningen og glansen er
+   systemets, ikke nettsidens. Dette er det nærmeste nettet kommer:
+   uskarphet, litt mettet farge og en hårstrek av lys i kanten.
+   taste-skill-ignore: arket forbyr glass, men dette er bestilt og
+   Apple sanksjonerer det for akkurat dette laget. */
+@supports (backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px)) { /* taste-skill-ignore */
+  html.glass .telefon{--glass-tint:rgba(255,255,255,.72)}
+
+  html.glass .topp,
+  html.glass .faner{
+    position:absolute;left:0;right:0;z-index:5;
+    background:var(--glass-tint);
+    -webkit-backdrop-filter:saturate(1.8) blur(20px); /* taste-skill-ignore: bestilt, og Apple sanksjonerer det for dette laget */
+    backdrop-filter:saturate(1.8) blur(20px); /* taste-skill-ignore: bestilt, og Apple sanksjonerer det for dette laget */
+  }
+  html.glass .topp{top:0;margin-top:0;padding-top:var(--safe-t);height:auto;min-height:48px}
+  /* taste-skill-ignore: fanelinja er et ekte overlegg, ikke et kort i ro */
+  html.glass .faner{bottom:0;border-top:1px solid rgba(255,255,255,.5);box-shadow:0 -0.5px 0 rgba(28,29,26,.08)} /* taste-skill-ignore */
+
+  /* Innholdet skal kunne titte fram under stripene, ikke ligge bak dem. */
+  html.glass .rull{padding-top:calc(48px + var(--safe-t));padding-bottom:62px}
+  html.glass .dager{padding-top:calc(62px + var(--safe-t))}
+  html.glass .skriv{padding-bottom:calc(10px + var(--safe-b))}
+  html.glass .gardin{padding-top:calc(14px + var(--safe-t))}
+}
+/* Slår noen av gjennomsiktighet i tilgjengelighet, skal vi høre etter. */
+@media (prefers-reduced-transparency:reduce){
+  html.glass .topp,html.glass .faner{
+    background:var(--ground);
+    -webkit-backdrop-filter:none; /* taste-skill-ignore: dette slår glasset av */
+    backdrop-filter:none; /* taste-skill-ignore: dette slår glasset av */
+  }
+}
 </style>
 </head>
 <body>
@@ -337,13 +378,64 @@ const I = {
    28 deltakere, 8 dager, program for torsdag 18. september. */
 const TUR = { navn:"Brussel, Paris og Normandie", klasse:"Tryggheim VG2", dag:2, dager:8 };
 
-const PROGRAM = [
-  { t:"08:00", h:"Frokost på hotellet", kort:"Frokost", s:"", ferdig:true },
-  { t:"09:30", h:"Avreise med buss", kort:"Buss", s:"Sete 14B", ferdig:true },
-  { t:"12:30", h:"Lunsj ved Atomium", kort:"Lunsj", s:"Square de l'Atomium · 14°", naa:true },
-  { t:"14:00", h:"Omvisning i EU-parlamentet", kort:"EU", s:"Ta med legitimasjon" },
-  { t:"17:30", h:"Fri tid i sentrum", kort:"Fri tid", s:"Møt ved bussen 19:15" },
-  { t:"20:00", h:"Middag på hotellet", kort:"Middag", s:"" }
+const DAGER = [
+  { kort:"ons", num:"17.", navn:"Onsdag 17. september", punkter:[
+    { t:"05:30", h:"Avreise fra Tryggheim", kort:"Avreise", s:"Møt på parkeringa 05:15", ferdig:true },
+    { t:"11:40", h:"Fly fra Stavanger", kort:"Fly", s:"SK4455 · sete 22C", ferdig:true },
+    { t:"15:20", h:"Ankomst Brussel", kort:"Ankomst", s:"Buss til hotellet", ferdig:true },
+    { t:"18:00", h:"Middag og innsjekk", kort:"Middag", s:"Hotel Bedford", ferdig:true }
+  ]},
+  { kort:"tor", num:"18.", navn:"Torsdag 18. september", idag:true, punkter:[
+    { t:"08:00", h:"Frokost på hotellet", kort:"Frokost", s:"", ferdig:true },
+    { t:"09:30", h:"Avreise med buss", kort:"Buss", s:"Sete 14B", ferdig:true },
+    { t:"12:30", h:"Lunsj ved Atomium", kort:"Lunsj", s:"Square de l'Atomium · 14°", naa:true },
+    { t:"14:00", h:"Omvisning i EU-parlamentet", kort:"EU", s:"Ta med legitimasjon" },
+    { t:"17:30", h:"Fri tid i sentrum", kort:"Fri tid", s:"Møt ved bussen 19:15" },
+    { t:"20:00", h:"Middag på hotellet", kort:"Middag", s:"" }
+  ]},
+  { kort:"fre", num:"19.", navn:"Fredag 19. september", punkter:[
+    { t:"07:15", h:"Frokost og utsjekk", kort:"Utsjekk", s:"Koffertene ut 08:30" },
+    { t:"09:00", h:"Buss til Paris", kort:"Paris", s:"3 t 20 min · sete 14B" },
+    { t:"13:00", h:"Lunsj på rasteplass", kort:"Lunsj", s:"" },
+    { t:"16:00", h:"Innsjekk Hôtel du Nord", kort:"Hotell", s:"Rom 204" },
+    { t:"19:30", h:"Middag i Montmartre", kort:"Middag", s:"" }
+  ]},
+  { kort:"lør", num:"20.", navn:"Lørdag 20. september", punkter:[
+    { t:"08:30", h:"Frokost", kort:"Frokost", s:"" },
+    { t:"10:00", h:"Louvre", kort:"Louvre", s:"Påmelding · 19 av 28" },
+    { t:"15:00", h:"Fri tid", kort:"Fri tid", s:"Møt ved Opéra 18:00" }
+  ]},
+  { kort:"søn", num:"21.", navn:"Søndag 21. september", punkter:[] },
+  { kort:"man", num:"22.", navn:"Mandag 22. september", punkter:[] }
+];
+
+const IDAG = DAGER.findIndex(d => d.idag);
+
+/* Tilstand som endrer seg når du trykker. Ikke ekte data, men nok til at
+   knappene gjør noe — et utkast der ingenting virker svarer bare på
+   hvordan det ser ut, ikke på hvordan det er å bruke. */
+const S = {
+  dag: IDAG,
+  kryss: new Set(["Pass","Helsetrygdkort","Regnjakke","Lader og powerbank"]),
+  sete: "14B",
+  ventende: true,
+  antall: 28
+};
+
+const PROGRAM = () => DAGER[IDAG].punkter;
+
+const PAKKELISTE = [
+  ["Må ha", ["Pass","Helsetrygdkort","Reiseforsikring"]],
+  ["Klær", ["Regnjakke","Gode sko","Pent antrekk til middagen"]],
+  ["Annet", ["Lader og powerbank","Reiseadapter"]]
+];
+
+/* Setene i bussen. Tomt navn er ledig; ditt eget sete kommer fra S.sete. */
+const SETER = [
+  ["13A","Ada"],["13B","Noah"],["13C",""],["13D",""], null,
+  ["14A","Mia"],["14B",""],["14C","Leo"],["14D",""], null,
+  ["15A",""],["15B",""],["15C","Sara"],["15D",""], null,
+  ["16A",""],["16B",""],["16C",""],["16D",""]
 ];
 
 const esc = s => String(s??"").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
@@ -370,7 +462,7 @@ const stripe = () => `
   <div class="stripe" aria-label="Dagen i oversikt">
     <div class="akse"></div>
     <div class="punkter">
-      ${PROGRAM.map(p => `
+      ${PROGRAM().map(p => `
         <div class="pk ${p.ferdig?"ferdig":""} ${p.naa?"aktiv":""}">
           <span class="kl">${p.t}</span>
           <span class="mk"></span>
@@ -401,18 +493,19 @@ hjem: () => `${topp()}
     <div class="bolk"><h3>Turen</h3></div>
     <div class="ruter">
       <button class="rute" data-gaa="sitteplasser">
-        <span class="nv">Sitteplasser</span><span class="vr">Sete <b>14B</b></span></button>
+        <span class="nv">Sitteplasser</span><span class="vr">Sete <b>${esc(S.sete)}</b></span></button>
       <button class="rute" data-gaa="pakkeliste">
-        <span class="nv">Pakkeliste</span><span class="vr"><b>12</b> av 18</span></button>
+        <span class="nv">Pakkeliste</span><span class="vr"><b>${S.kryss.size}</b> av ${PAKKELISTE.flatMap(b => b[1]).length}</span></button>
       <button class="rute" data-gaa="filer">
         <span class="nv">Filer</span><span class="vr"><b>7</b> stk.</span></button>
       <button class="rute" data-gaa="deltakere">
-        <span class="nv">Deltakere</span><span class="vr"><b>28</b> med<span class="merkelapp">2 venter</span></span></button>
+        <span class="nv">Deltakere</span><span class="vr"><b>${S.antall}</b> med${
+          S.ventende?'<span class="merkelapp">1 venter</span>':""}</span></button>
     </div>
 
     <div class="bolk"><h3>Senere i dag</h3>
       <button class="lenke" data-gaa="program">Hele programmet</button></div>
-    ${PROGRAM.filter(p => !p.ferdig && !p.naa).map(p => `
+    ${PROGRAM().filter(p => !p.ferdig && !p.naa).map(p => `
       <button class="post"><span class="t">${p.t}</span>
         <span><span class="h">${esc(p.h)}</span>${p.s?`<span class="s">${esc(p.s)}</span>`:""}</span>
         <span class="pil">${I.hoyre}</span></button>`).join("")}
@@ -423,15 +516,19 @@ hjem: () => `${topp()}
 program: () => `${topp()}
   <div class="inn"><h2 class="sidetittel">Program</h2></div>
   <div class="dager" role="tablist" aria-label="Velg dag">
-    ${[["ons","17."],["tor","18."],["fre","19."],["lør","20."],["søn","21."],["man","22."]].map(([d,n],i) => `
-      <button class="dag" role="tab" aria-selected="${i===1}"><span class="d">${d}</span><span class="n">${n}</span></button>`).join("")}
+    ${DAGER.map((d,i) => `
+      <button class="dag" role="tab" data-dag="${i}" aria-selected="${i===S.dag}">
+        <span class="d">${d.kort}</span><span class="n">${d.num}</span></button>`).join("")}
   </div>
   <div class="rull"><div class="inn">
-    <div class="bolk"><h3>Torsdag 18. september</h3></div>
-    ${PROGRAM.map(p => `
-      <button class="post ${p.ferdig?"ferdig":""}"><span class="t">${p.t}</span>
-        <span><span class="h">${esc(p.h)}</span>${p.s?`<span class="s">${esc(p.s)}</span>`:""}</span>
-        <span class="pil">${I.hoyre}</span></button>`).join("")}
+    <div class="bolk"><h3>${esc(DAGER[S.dag].navn)}</h3>
+      ${DAGER[S.dag].idag?'<span style="font-size:13.5px;color:var(--ink-2)">i dag</span>':""}</div>
+    ${DAGER[S.dag].punkter.length
+      ? DAGER[S.dag].punkter.map(p => `
+        <button class="post ${p.ferdig?"ferdig":""}" data-apne="${esc(p.h)}"><span class="t">${p.t}</span>
+          <span><span class="h">${esc(p.h)}</span>${p.s?`<span class="s">${esc(p.s)}</span>`:""}</span>
+          <span class="pil">${I.hoyre}</span></button>`).join("")
+      : `<p class="tomt">Ingen punkter denne dagen ennå.</p>`}
     <div class="luft"></div>
   </div></div>
   ${faner("program")}`,
@@ -485,18 +582,21 @@ samtale: () => `
 sitteplasser: () => `${topp()}
   <div class="rull"><div class="inn">
     <h2 class="sidetittel">Sitteplasser</h2>
-    <p class="underlinje">Buss · Oslo–Brussel · du har <b style="color:var(--ink)">14B</b></p>
-    <div class="bolk"><h3>Rad 13–16</h3><span class="s" style="font-size:13.5px;color:var(--ink-3)">9 ledige</span></div>
+    <p class="underlinje">Buss · Oslo–Brussel · du har <b style="color:var(--ink)">${esc(S.sete)}</b></p>
+    <div class="bolk"><h3>Rad 13–16</h3>
+      <span style="font-size:13.5px;color:var(--ink-2)">${
+        SETER.filter(s => s && !s[1] && s[0] !== S.sete).length} ledige</span></div>
     <div class="setekart">
-      ${[["13A","Ada"],["13B","Noah"],["13C",""],["13D",""],null,
-         ["14A","Mia"],["14B","Deg","min"],["14C","Leo"],["14D",""],null,
-         ["15A",""],["15B",""],["15C","Sara"],["15D",""],null,
-         ["16A",""],["16B",""],["16C",""],["16D",""]].map(s => {
+      ${SETER.map(s => {
         if (!s) return '<div class="gang"></div>';
-        const [n,hvem,min] = s;
-        const kl = min ? "min" : (hvem ? "tatt" : "");
-        return `<button class="sete ${kl}" ${hvem&&!min?"disabled":""}>
-          <span class="n">${n}</span>${hvem?`<span class="hvem">${esc(hvem)}</span>`:""}</button>`;
+        const [n,hvem] = s;
+        const mitt = n === S.sete;
+        const opptatt = Boolean(hvem) && !mitt;
+        return `<button class="sete ${mitt?"min":(opptatt?"tatt":"")}"
+          data-sete="${n}" data-opptatt="${opptatt?1:0}"
+          aria-pressed="${mitt}" aria-label="Sete ${n}${opptatt?", tatt av "+hvem:(mitt?", ditt":", ledig")}">
+          <span class="n">${n}</span>
+          ${mitt?'<span class="hvem">Deg</span>':(hvem?`<span class="hvem">${esc(hvem)}</span>`:"")}</button>`;
       }).join("")}
     </div>
     <div class="luft"></div>
@@ -506,15 +606,13 @@ sitteplasser: () => `${topp()}
 pakkeliste: () => `${topp()}
   <div class="rull"><div class="inn">
     <h2 class="sidetittel">Pakkeliste</h2>
-    <p class="underlinje">12 av 18 krysset av · bare du ser dine kryss</p>
-    ${[["Må ha",[["Pass",1],["Helsetrygdkort",1],["Reiseforsikring",0]]],
-       ["Klær",[["Regnjakke",1],["Gode sko",0],["Pent antrekk til middagen",0]]],
-       ["Annet",[["Lader og powerbank",1],["Reiseadapter",0]]]].map(([b,rader]) => `
+    <p class="underlinje">${S.kryss.size} av ${PAKKELISTE.flatMap(b => b[1]).length} krysset av · bare du ser dine kryss</p>
+    ${PAKKELISTE.map(([b,rader]) => `
       <div class="bolk"><h3>${b}</h3></div>
-      ${rader.map(([n,av]) => `
-        <button class="rad ${av?"av":""}">
+      ${rader.map(n => { const av = S.kryss.has(n); return `
+        <button class="rad ${av?"av":""}" data-kryss="${esc(n)}" aria-pressed="${av}">
           <span class="hake">${av?I.hake:""}</span><span class="grow"><span class="nv">${esc(n)}</span></span>
-        </button>`).join("")}`).join("")}
+        </button>`; }).join("")}`).join("")}
     <div class="luft"></div>
   </div></div>
   ${faner("hjem")}`,
@@ -545,16 +643,17 @@ filer: () => `${topp()}
 deltakere: () => `${topp()}
   <div class="rull"><div class="inn">
     <h2 class="sidetittel">Deltakere</h2>
-    <p class="underlinje">28 med på turen · 2 venter på svar</p>
-    <div class="bolk"><h3>Venter på godkjenning</h3></div>
-    <div class="rad" style="align-items:center">
-      <span class="init">EN</span>
-      <span class="grow"><span class="nv">Emma Nygård</span><span class="s">ba om å bli med i går</span></span>
-      <span style="display:flex;gap:8px">
-        <button class="btn" style="flex:none;padding:0 13px;min-height:38px">Avslå</button>
-        <button class="btn primar" style="flex:none;padding:0 13px;min-height:38px">Slipp inn</button>
-      </span>
-    </div>
+    <p class="underlinje">${S.antall} med på turen${S.ventende?" · 1 venter på svar":""}</p>
+    ${S.ventende ? `
+      <div class="bolk"><h3>Venter på godkjenning</h3></div>
+      <div class="rad" style="align-items:center">
+        <span class="init">EN</span>
+        <span class="grow"><span class="nv">Emma Nygård</span><span class="s">ba om å bli med i går</span></span>
+      </div>
+      <div style="display:flex;gap:9px;padding:0 0 14px">
+        <button class="btn" data-svar="nei">Avslå</button>
+        <button class="btn primar" data-svar="ja">Slipp inn</button>
+      </div>` : ""}
     <div class="bolk"><h3>Reiseledere</h3></div>
     ${[["MA","Marit Aasen"],["PK","Per Kvamme"]].map(([i,n]) => `
       <button class="rad"><span class="init">${i}</span>
@@ -613,14 +712,14 @@ chatside: () => `
 };
 
 /* ═══ rullegardinen ═══ */
-const MENY = [
+const MENY = () => [
   ["hjem","I dag","",I.hjem],
   ["program","Program","",I.program],
   ["chat","Chat","",I.chat,3],
   ["filer","Filer","7 stk.",I.fil],
-  ["pakkeliste","Pakkeliste","12 av 18",I.sekk],
-  ["sitteplasser","Sitteplasser","Sete 14B",I.sete],
-  ["deltakere","Deltakere","28 med",I.folk,2],
+  ["pakkeliste","Pakkeliste",`${S.kryss.size} av ${PAKKELISTE.flatMap(b=>b[1]).length}`,I.sekk],
+  ["sitteplasser","Sitteplasser","Sete "+S.sete,I.sete],
+  ["deltakere","Deltakere",S.antall+" med",I.folk,S.ventende?1:0],
   null,
   ["meg","Innstillinger","",I.tann],
   ["bytt","Bytt tur","",I.bytt]
@@ -632,7 +731,7 @@ function gardin(bak) {
     <div class="gardin" role="dialog" aria-label="Meny">
       <div class="tit">${esc(TUR.navn)}</div>
       <div class="sub">${esc(TUR.klasse)} · 17.–24. september</div>
-      ${MENY.map(m => {
+      ${MENY().map(m => {
         if (!m) return '<div class="mskille"></div>';
         const [id,navn,verdi,ikon,tall] = m;
         return `<button class="mrad" data-gaa="${id}" ${id===naavaerende?'aria-current="true"':""}>
@@ -661,24 +760,117 @@ const NOTATER = {
   chatside:"<b>Om chatten.</b> Du kom hit ved å trykke på navnet øverst i samtalen."
 };
 
+/* ═══ glass ═══
+   I den ekte appen slås dette på av seg selv: iPhone, lagt til på
+   hjemskjermen, og en nettleser som kan uskarphet. Her kan det også
+   slås på for hånd, så det går an å se uten å installere noe. */
+const ERIPHONE = /iPhone|iPad|iPod/.test(navigator.userAgent);
+const PAAHJEMSKJERM = window.navigator.standalone === true
+  || matchMedia("(display-mode: standalone)").matches;
+const KANUSKARPHET = CSS.supports("backdrop-filter","blur(1px)")
+  || CSS.supports("-webkit-backdrop-filter","blur(1px)");
+
+function settGlass(paa) {
+  document.documentElement.classList.toggle("glass", Boolean(paa) && KANUSKARPHET);
+  const m = document.querySelector('meta[name="theme-color"]');
+  if (m) m.setAttribute("content", "#FFFFFF");
+}
+settGlass(ERIPHONE && PAAHJEMSKJERM);
+
 function tegn() {
   const vis = naavaerende === "meny" ? "hjem" : naavaerende;
   const html = (SKJERM[vis] || SKJERM.hjem)();
   tlf.innerHTML = naavaerende === "meny" ? gardin(html) : html;
-  notat.innerHTML = NOTATER[naavaerende] || "";
+  const paa = document.documentElement.classList.contains("glass");
+  notat.innerHTML = (NOTATER[naavaerende] || "")
+    + ` <button id="glassbryter" style="margin-left:6px;border:1px solid #3A3D44;background:${paa?"#D8DBE0":"transparent"};`
+    + `color:${paa?"#15161A":"#8E9199"};border-radius:999px;padding:2px 9px;font-size:11px;cursor:pointer">`
+    + `Glass ${paa?"på":"av"}</button>`;
   const r = tlf.querySelector(".rull");
   if (r) r.scrollTop = 0;
 }
 
+notat.addEventListener("click", e => {
+  if (e.target.id !== "glassbryter") return;
+  if (!KANUSKARPHET) return;
+  settGlass(!document.documentElement.classList.contains("glass"));
+  tegn();
+});
+
 let forrige = "hjem";
+
+/* En kort beskjed nederst, for det som ville åpnet noe vi ikke har tegnet. */
+let beskjedtimer = null;
+function si(tekst) {
+  let b = document.getElementById("beskjed");
+  if (!b) {
+    b = document.createElement("div");
+    b.id = "beskjed";
+    b.setAttribute("role", "status");
+    b.style.cssText = "position:absolute;left:50%;bottom:78px;transform:translateX(-50%);z-index:12;"
+      + "background:var(--ink);color:#fff;border-radius:var(--r-kontroll);padding:9px 16px;"
+      + "font-size:13.5px;white-space:nowrap;max-width:88%;overflow:hidden;text-overflow:ellipsis";
+    tlf.appendChild(b);
+  }
+  b.textContent = tekst;
+  clearTimeout(beskjedtimer);
+  beskjedtimer = setTimeout(() => b.remove(), 1800);
+}
+
 tlf.addEventListener("click", e => {
-  const k = e.target.closest("[data-gaa]");
-  if (!k) return;
-  const mal = k.dataset.gaa;
-  if (mal === "lukk") { naavaerende = forrige; return tegn(); }
-  if (mal === "meny") { forrige = naavaerende; naavaerende = "meny"; return tegn(); }
-  if (mal === "bytt") { naavaerende = "hjem"; return tegn(); }
-  if (SKJERM[mal]) { naavaerende = mal; tegn(); }
+  const k = e.target.closest("[data-gaa],[data-dag],[data-kryss],[data-sete],[data-svar],[data-apne]");
+  if (!k) {
+    // En rad uten mål skal si fra om hva den ville åpnet, ikke stå død.
+    const rad = e.target.closest("button.rad, button.post");
+    if (rad) {
+      const navn = (rad.querySelector(".nv, .h") || {}).textContent;
+      si(navn ? "«" + navn.trim() + "» åpnes her" : "Denne er ikke tegnet ennå");
+    }
+    return;
+  }
+  const d = k.dataset;
+
+  /* ── navigasjon ── */
+  if (d.gaa) {
+    if (d.gaa === "lukk")  { naavaerende = forrige; return tegn(); }
+    if (d.gaa === "meny")  { forrige = naavaerende; naavaerende = "meny"; return tegn(); }
+    if (d.gaa === "bytt")  { si("Du har bare én tur akkurat nå."); return; }
+    if (SKJERM[d.gaa]) { naavaerende = d.gaa; tegn(); }
+    return;
+  }
+
+  /* ── velg dag ── */
+  if (d.dag !== undefined) { S.dag = Number(d.dag); return tegn(); }
+
+  /* ── kryss av på pakkelista ── */
+  if (d.kryss !== undefined) {
+    S.kryss.has(d.kryss) ? S.kryss.delete(d.kryss) : S.kryss.add(d.kryss);
+    const r = tlf.querySelector(".rull");
+    const topp = r ? r.scrollTop : 0;            // listen skal ikke hoppe
+    tegn();
+    const r2 = tlf.querySelector(".rull");
+    if (r2) r2.scrollTop = topp;
+    return;
+  }
+
+  /* ── bytt sete ── */
+  if (d.sete) {
+    if (d.opptatt === "1") return si("Setet er tatt.");
+    S.sete = d.sete;
+    tegn();
+    return si("Du har sete " + d.sete + " nå.");
+  }
+
+  /* ── slipp inn eller avslå ── */
+  if (d.svar) {
+    S.ventende = false;
+    if (d.svar === "ja") { S.antall += 1; tegn(); return si("Emma er med på turen."); }
+    tegn();
+    return si("Emma fikk avslag.");
+  }
+
+  /* ── noe som ville åpnet en fil eller et ark ── */
+  if (d.apne) return si(d.apne);
 });
 
 tegn();
