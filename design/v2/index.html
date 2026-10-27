@@ -105,12 +105,18 @@ button,input{font:inherit;color:inherit}
   overflow:hidden;text-overflow:ellipsis;
 }
 .turknapp svg{width:16px;height:16px;flex:none;stroke:var(--ink-3);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+/* Sirkelen er 32 px fordi den skal være diskret, men knappen må være 44.
+   Derfor er flaten gjennomsiktig og sirkelen tegnet inni. */
 .meg-knapp{
-  width:32px;height:32px;flex:none;border:1px solid var(--border);border-radius:50%;
-  background:var(--paper);color:var(--ink-2);font-size:12px;font-weight:600;cursor:pointer;
-  display:grid;place-items:center;position:relative;
+  width:44px;height:44px;flex:none;border:0;background:none;padding:0;cursor:pointer;
+  display:grid;place-items:center;position:relative;color:var(--ink-2);
 }
-.meg-knapp .prikk{position:absolute;top:-1px;right:-1px;width:9px;height:9px;border-radius:50%;background:var(--fare);border:2px solid var(--ground)}
+.meg-knapp .sirkel{
+  width:32px;height:32px;border:1px solid var(--border);border-radius:50%;
+  background:var(--paper);font-size:12px;font-weight:600;display:grid;place-items:center;
+}
+.meg-knapp svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.meg-knapp .prikk{position:absolute;top:5px;right:5px;width:9px;height:9px;border-radius:50%;background:var(--fare);border:2px solid var(--ground)}
 
 /* ── rullende innhold ──────────────────────────────────────────── */
 .rull{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
@@ -176,7 +182,8 @@ h2.sidetittel{font-size:var(--fs-tittel);font-weight:600;letter-spacing:-.01em;m
 /* ── seksjoner og rader ────────────────────────────────────────── */
 .bolk{display:flex;align-items:baseline;justify-content:space-between;margin:30px 0 4px}
 .bolk h3{font-size:14px;font-weight:600;margin:0}
-.bolk .lenke{font-size:13.5px;color:var(--blaa);background:none;border:0;cursor:pointer;padding:6px 0;min-height:auto}
+.bolk .lenke{font-size:13.5px;color:var(--blaa);background:none;border:0;cursor:pointer;
+  padding:13px 0;margin:-13px 0;min-height:44px}   /* 44 px å treffe, uten å ta 44 px plass */
 
 .post{
   display:grid;grid-template-columns:58px 1fr auto;gap:12px;align-items:baseline;
@@ -319,7 +326,7 @@ h2.sidetittel{font-size:var(--fs-tittel);font-weight:600;letter-spacing:-.01em;m
   /* 72 % hvit over en hvit side er ingenting å se gjennom. 58 % lar
      teksten under skimtes som myke grå skygger — det er den som gjør at
      det leses som glass og ikke som en hvit stripe. */
-  html.glass .telefon{--glass-tint:rgba(255,255,255,.58)}
+  html.glass .telefon{--glass-tint:rgba(255,255,255,.7)}
 
   /* WebKit mister uskarpheten når en forelder klipper innholdet. I den
      ekte appen finnes ikke denne telefonrammen; her slår vi av klippingen
@@ -330,18 +337,17 @@ h2.sidetittel{font-size:var(--fs-tittel);font-weight:600;letter-spacing:-.01em;m
   html.glass .faner{
     position:absolute;left:0;right:0;z-index:5;
     background:var(--glass-tint);
-    -webkit-backdrop-filter:saturate(1.8) blur(20px); /* taste-skill-ignore: bestilt, og Apple sanksjonerer det for dette laget */
-    backdrop-filter:saturate(1.8) blur(20px); /* taste-skill-ignore: bestilt, og Apple sanksjonerer det for dette laget */
+    -webkit-backdrop-filter:saturate(1.9) blur(26px); /* taste-skill-ignore: bestilt, og Apple sanksjonerer det for dette laget */
+    backdrop-filter:saturate(1.9) blur(26px); /* taste-skill-ignore: bestilt, og Apple sanksjonerer det for dette laget */
   }
   html.glass .topp{top:0;margin-top:0;padding-top:var(--safe-t);height:auto;min-height:48px}
   /* taste-skill-ignore: fanelinja er et ekte overlegg, ikke et kort i ro */
   html.glass .faner{bottom:0;border-top:1px solid rgba(255,255,255,.5);box-shadow:0 -0.5px 0 rgba(28,29,26,.08)} /* taste-skill-ignore */
 
   /* Innholdet skal kunne titte fram under stripene, ikke ligge bak dem.
-     Det som ligger rett under toppen får plassen — enten det er
-     skrollefeltet eller en overskrift. */
-  html.glass .topp + *{padding-top:calc(48px + var(--safe-t))}
-  html.glass .telefon:has(.faner) .rull{padding-bottom:62px}
+     Plassen settes ikke her, men måles i JS på de ekte stripene etter at
+     de er tegnet. Et regnestykke med env(safe-area-inset-top) stemmer på
+     én nettleser og bommer på neste; en måling stemmer alltid. */
   html.glass .gardin{padding-top:calc(14px + var(--safe-t))}
 }
 /* Slår noen av gjennomsiktighet i tilgjengelighet, skal vi høre etter. */
@@ -455,7 +461,7 @@ const topp = () => `
     <button class="turknapp" data-gaa="meny" aria-haspopup="dialog">
       <span class="nv">${esc(TUR.navn)}</span>${I.ned}
     </button>
-    <button class="meg-knapp" data-gaa="meg" aria-label="Din profil">JR<span class="prikk"></span></button>
+    <button class="meg-knapp" data-gaa="meg" aria-label="Din profil"><span class="sirkel">JR</span><span class="prikk"></span></button>
   </header>`;
 
 const faner = (aktiv) => {
@@ -562,7 +568,7 @@ chat: () => `${topp()}
 
 samtale: () => `
   <header class="topp">
-    <button class="meg-knapp" data-gaa="chat" aria-label="Tilbake til chattene" style="border-radius:50%">${I.venstre}</button>
+    <button class="meg-knapp" data-gaa="chat" aria-label="Tilbake til chattene">${I.venstre}</button>
     <button class="turknapp" data-gaa="chatside" style="flex:1">
       <span class="nv">Brussel, Paris og Normandie</span>${I.hoyre}
     </button>
@@ -779,6 +785,30 @@ const PAAHJEMSKJERM = window.navigator.standalone === true
 const KANUSKARPHET = CSS.supports("backdrop-filter","blur(1px)")
   || CSS.supports("-webkit-backdrop-filter","blur(1px)");
 
+/* Måler de ekte stripene og gir innholdet nøyaktig den plassen de tar.
+   Høyden avhenger av safe-area, skriftstørrelse og nettleser, så den
+   skal leses av skjermen — ikke regnes ut på forhånd. */
+function maalOppStripene() {
+  const topp = tlf.querySelector(".topp");
+  const faner = tlf.querySelector(".faner");
+  const paa = document.documentElement.classList.contains("glass");
+
+  // Null ut først, så gamle verdier ikke blir hengende igjen.
+  tlf.querySelectorAll(".rull, .inn, .dager, .meldinger").forEach(el => {
+    el.style.paddingTop = "";
+    el.style.paddingBottom = "";
+  });
+  if (!paa || !topp) return;
+
+  const etter = topp.nextElementSibling;
+  if (etter) etter.style.paddingTop = topp.offsetHeight + "px";
+
+  if (faner) {
+    const rull = tlf.querySelector(".rull");
+    if (rull) rull.style.paddingBottom = faner.offsetHeight + "px";
+  }
+}
+
 function settGlass(paa) {
   document.documentElement.classList.toggle("glass", Boolean(paa) && KANUSKARPHET);
   const m = document.querySelector('meta[name="theme-color"]');
@@ -790,6 +820,7 @@ function tegn() {
   const vis = naavaerende === "meny" ? "hjem" : naavaerende;
   const html = (SKJERM[vis] || SKJERM.hjem)();
   tlf.innerHTML = naavaerende === "meny" ? gardin(html) : html;
+  maalOppStripene();
   const paa = document.documentElement.classList.contains("glass");
   notat.innerHTML = (NOTATER[naavaerende] || "")
     + ` <button id="glassbryter" style="margin-left:6px;border:1px solid #3A3D44;background:${paa?"#D8DBE0":"transparent"};`
@@ -798,6 +829,10 @@ function tegn() {
   const r = tlf.querySelector(".rull");
   if (r) r.scrollTop = 0;
 }
+
+/* Snur telefonen eller tastaturet kommer opp, endrer stripene høyde. */
+addEventListener("resize", maalOppStripene);
+addEventListener("orientationchange", () => setTimeout(maalOppStripene, 200));
 
 notat.addEventListener("click", e => {
   if (e.target.id !== "glassbryter") return;
