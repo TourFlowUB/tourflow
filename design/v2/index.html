@@ -35,12 +35,12 @@
 
   --ink:#1C1D1A;
   --ink-2:#5E5F59;
-  --ink-3:#8A8B84;
+  --ink-3:#73746E;   /* 4,6:1 mot hvitt — var 8A8B84, som falt under kravet */
 
   /* fargen brukes på data og én kontroll, ikke på krom */
   --blaa:#14508C;
   --blaa-pale:#E4ECF5;
-  --varsel:#9A6B10;
+  --varsel:#7A5409;   /* 5,1:1 mot den bleke gule — var 9A6B10 */
   --varsel-pale:#FAF1DC;
   --fare:#9E2B20;
 
@@ -52,7 +52,7 @@
   --pad:20px;
   --marg:20px;
 
-  --fs-hilsen:30px;
+  --fs-hilsen:28px;
   --fs-tittel:21px;
   --fs-brod:16px;
   --fs-sub:13.5px;
@@ -136,11 +136,11 @@ h2.sidetittel{font-size:var(--fs-tittel);font-weight:600;letter-spacing:-.01em;m
 .stripe .kl{font-size:var(--fs-liten);color:var(--ink-3);font-variant-numeric:tabular-nums}
 .stripe .mk{width:9px;height:9px;border-radius:50%;background:var(--border);flex:none}
 .stripe .pk.ferdig .mk{background:var(--ink-3)}
-.stripe .pk.naa .mk{width:13px;height:13px;background:var(--blaa);box-shadow:0 0 0 4px var(--blaa-pale)} /* taste-skill-ignore: ikke en skygge, men en ring som markerer naa */
-.stripe .pk.naa .kl{color:var(--blaa);font-weight:600}
-.stripe .nvn{font-size:11px;color:var(--ink-3);text-align:center;line-height:1.25;
+.stripe .pk.aktiv .mk{width:13px;height:13px;background:var(--blaa);box-shadow:0 0 0 4px var(--blaa-pale)} /* taste-skill-ignore: ikke en skygge, men en ring som markerer naa */
+.stripe .pk.aktiv .kl{color:var(--blaa);font-weight:600}
+.stripe .nvn{font-size:12px;color:var(--ink-3);text-align:center;line-height:1.25;
   max-width:68px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
-.stripe .pk.naa .nvn{color:var(--ink)}
+.stripe .pk.aktiv .nvn{color:var(--ink)}
 
 /* ── «nå»-panelet: tonet flate, ingen skygge ───────────────────── */
 .naa{
@@ -212,7 +212,7 @@ h2.sidetittel{font-size:var(--fs-tittel);font-weight:600;letter-spacing:-.01em;m
 .fane{
   flex:1;border:0;background:none;cursor:pointer;color:var(--ink-3);
   display:flex;flex-direction:column;align-items:center;gap:3px;
-  padding:6px 0 2px;min-height:48px;font-size:11px;font-weight:500;
+  padding:6px 0 2px;min-height:48px;font-size:11.5px;font-weight:500;
 }
 .fane svg{width:23px;height:23px;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
 .fane[aria-selected="true"]{color:var(--blaa)}
@@ -284,7 +284,7 @@ h2.sidetittel{font-size:var(--fs-tittel);font-weight:600;letter-spacing:-.01em;m
 .hvem{font-size:var(--fs-liten);color:var(--ink-2);padding-left:2px}
 .boble{background:var(--paper);border-radius:16px 16px 16px 6px;padding:10px 13px;font-size:15.5px;overflow-wrap:anywhere}
 .melding.min .boble{background:var(--blaa);color:#fff;border-radius:16px 16px 6px 16px}
-.stempel{font-size:11px;color:var(--ink-3);padding:0 3px}
+.stempel{font-size:12px;color:var(--ink-3);padding:0 3px}
 .skriv{
   flex:none;display:flex;gap:9px;align-items:flex-end;padding:10px var(--marg) calc(10px + var(--safe-b));
   border-top:1px solid var(--rule);background:var(--ground);
@@ -338,12 +338,12 @@ const I = {
 const TUR = { navn:"Brussel, Paris og Normandie", klasse:"Tryggheim VG2", dag:2, dager:8 };
 
 const PROGRAM = [
-  { t:"08:00", h:"Frokost på hotellet", s:"", ferdig:true },
-  { t:"09:30", h:"Avreise med buss", s:"Sete 14B", ferdig:true },
-  { t:"12:30", h:"Lunsj ved Atomium", s:"Square de l'Atomium · 14°", naa:true },
-  { t:"14:00", h:"Omvisning i EU-parlamentet", s:"Ta med legitimasjon" },
-  { t:"17:30", h:"Fri tid i sentrum", s:"Møt ved bussen 19:15" },
-  { t:"20:00", h:"Middag på hotellet", s:"" }
+  { t:"08:00", h:"Frokost på hotellet", kort:"Frokost", s:"", ferdig:true },
+  { t:"09:30", h:"Avreise med buss", kort:"Buss", s:"Sete 14B", ferdig:true },
+  { t:"12:30", h:"Lunsj ved Atomium", kort:"Lunsj", s:"Square de l'Atomium · 14°", naa:true },
+  { t:"14:00", h:"Omvisning i EU-parlamentet", kort:"EU", s:"Ta med legitimasjon" },
+  { t:"17:30", h:"Fri tid i sentrum", kort:"Fri tid", s:"Møt ved bussen 19:15" },
+  { t:"20:00", h:"Middag på hotellet", kort:"Middag", s:"" }
 ];
 
 const esc = s => String(s??"").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
@@ -371,10 +371,10 @@ const stripe = () => `
     <div class="akse"></div>
     <div class="punkter">
       ${PROGRAM.map(p => `
-        <div class="pk ${p.ferdig?"ferdig":""} ${p.naa?"naa":""}">
+        <div class="pk ${p.ferdig?"ferdig":""} ${p.naa?"aktiv":""}">
           <span class="kl">${p.t}</span>
           <span class="mk"></span>
-          <span class="nvn">${esc(p.h.split(" ").slice(0,2).join(" "))}</span>
+          <span class="nvn">${esc(p.kort)}</span>
         </div>`).join("")}
     </div>
   </div>`;
