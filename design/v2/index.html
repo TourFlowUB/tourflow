@@ -9,7 +9,13 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+<!-- Skriftfila skal ikke holde igjen tegningen. Lastes den som «print»
+     og slippes løs når den er framme, begynner åpningen å spille med
+     én gang i stedet for å vente på et nettverkskall. -->
+<link rel="stylesheet" media="print" onload="this.media='all'"
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap">
+<noscript><link rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap"></noscript>
 <style>
 /* ═══════════════════════════════════════════════════════════════
    TripMate
@@ -379,6 +385,48 @@ h1.tittel{font-size:var(--fs-tittel);font-weight:700;letter-spacing:-.025em;line
 
 .tomt{padding:36px 0;text-align:center;color:var(--blekk-2);font-size:var(--fs-sub)}
 
+/* ══ åpningen ═══════════════════════════════════════════════════
+   Dette er den ene plassen i appen der glede får koste noe. Den ses
+   én gang per økt, ikke tjue ganger om dagen, og da gjelder andre
+   regler enn for en fane man trykker på hele tiden.
+
+   Rekkefølgen følger logoen: streken tegnes, prikken lander, og
+   «ripMate» kommer ut fra bak T-en. Til sammen 1,1 sekund, og du kan
+   trykke for å hoppe over. */
+.aapning{
+  position:fixed;inset:0;z-index:40;background:var(--grunn);
+  display:grid;place-items:center;cursor:pointer;
+  transition:opacity 280ms var(--ease-ut);
+}
+.aapning[hidden]{display:none}
+.aapning.ut{opacity:0;pointer-events:none}
+.aapning .ord{display:flex;align-items:center;gap:0}
+.aapning .merkeT{width:54px;height:54px}
+.aapning .T-stem,.aapning .T-arm{
+  stroke-dasharray:40;stroke-dashoffset:40;
+  animation:strek-tegn 420ms var(--ease-ut) forwards;
+}
+.aapning .T-arm{animation-delay:150ms}
+.aapning .T-dot{
+  transform:scale(0);transform-origin:15.6px 5.6px;
+  animation:prikk-land 260ms var(--ease-ut) 430ms forwards;
+}
+.aapning .resten{
+  font-size:40px;font-weight:700;letter-spacing:-.03em;line-height:1;margin-left:-13px;
+  /* Ordet skyves ut fra bak T-en: masken åpner seg, teksten følger. */
+  clip-path:inset(0 100% 0 0);transform:translateX(-10px);opacity:0;
+  animation:ord-ut 460ms var(--ease-ut) 520ms forwards;
+}
+@keyframes strek-tegn{to{stroke-dashoffset:0}}
+@keyframes prikk-land{0%{transform:scale(0)}65%{transform:scale(1.18)}100%{transform:scale(1)}}
+@keyframes ord-ut{to{clip-path:inset(0 0 0 0);transform:none;opacity:1}}
+
+@media (prefers-reduced-motion:reduce){
+  .aapning .T-stem,.aapning .T-arm{stroke-dashoffset:0;animation:none}
+  .aapning .T-dot{transform:none;animation:none}
+  .aapning .resten{clip-path:none;transform:none;opacity:1;animation:none}
+}
+
 /* Rader som forsvinner (godkjent, avslått): ut samme vei som alt
    annet — opacity og transform, aldri height. */
 .gaar-ut{opacity:0;transform:translateY(-6px);transition:opacity 200ms var(--ease-ut),transform 200ms var(--ease-ut)}
@@ -441,6 +489,21 @@ h1.tittel{font-size:var(--fs-tittel);font-weight:700;letter-spacing:-.025em;line
 <div class="ramme">
   <div class="telefon" id="telefon"></div>
   <div class="notat" id="notat"></div>
+</div>
+
+<!-- Åpningen står i selve dokumentet, ikke i et mal-element JS kloner.
+     Da begynner den å tegne seg i samme øyeblikk siden vises, uten å
+     vente på at skriftfila lastes. Og den ligger utenfor .telefon,
+     som tegn() tømmer hver gang en skjerm byttes. -->
+<div class="aapning" id="aapning" aria-hidden="true">
+  <div class="ord">
+    <svg class="merkeT" viewBox="0 0 24 24">
+      <path class="T-stem" d="M11.4 7.4V20.5" stroke="#103541" stroke-width="3.2" stroke-linecap="round" fill="none"/>
+      <path class="T-arm" d="M3.6 8.9c2.6-1.9 5.6-2.9 8.6-2.6" stroke="#103541" stroke-width="3.2" stroke-linecap="round" fill="none"/>
+      <circle class="T-dot" cx="15.6" cy="5.6" r="2.9" fill="#F06629"/>
+    </svg>
+    <span class="resten">ripMate</span>
+  </div>
 </div>
 
 <script>
@@ -877,11 +940,13 @@ function maalOppStripene() {
   }
 }
 
-const ERIPHONE = /iPhone|iPad|iPod/.test(navigator.userAgent);
-const PAAHJEMSKJERM = window.navigator.standalone === true || matchMedia("(display-mode: standalone)").matches;
 const KANUSKARPHET = CSS.supports("backdrop-filter","blur(1px)") || CSS.supports("-webkit-backdrop-filter","blur(1px)");
 function settGlass(paa){ document.documentElement.classList.toggle("glass", Boolean(paa) && KANUSKARPHET); }
-settGlass(ERIPHONE && PAAHJEMSKJERM);
+/* Glasset slår seg ikke lenger på av seg selv på hjemskjermen. Jonas
+   ser uskarphet i toppen og vet ikke hvor den kommer fra; da skrur vi
+   av vår egen, så det som eventuelt blir igjen er iOS sitt eget og
+   ikke noe vi har laget. Bryteren nederst slår den på igjen. */
+settGlass(false);
 
 function tegn(behold) {
   const vis = naavaerende === "meny" ? forrige : naavaerende;
@@ -1028,6 +1093,35 @@ notat.addEventListener("click", e => {
 });
 
 tegn();
+
+/* ═══ åpningen ═══
+   Én gang per økt. «?ren» og «?rask» hopper over den, så skjermbilder
+   og tester ikke blir stående og vente på en animasjon. */
+const PARAM = new URLSearchParams(location.search);
+const REN = PARAM.has("ren");
+if (REN) notat.style.display = "none";
+
+function visAapning() {
+  const a = document.getElementById("aapning");
+  if (!a) return;
+  let sett = false;
+  try { sett = Boolean(sessionStorage.getItem("tm.sett")); } catch {}
+  // Sett før, eller bedt om ren visning: bort med den uten å blinke.
+  if (REN || PARAM.has("rask") || sett) return a.remove();
+  try { sessionStorage.setItem("tm.sett", "1"); } catch {}
+
+  let ferdig = false;
+  const avslutt = () => {
+    if (ferdig) return;
+    ferdig = true;
+    a.classList.add("ut");
+    setTimeout(() => a.remove(), 300);
+  };
+  a.addEventListener("click", avslutt);     // trykk for å hoppe over
+  const mindre = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  setTimeout(avslutt, mindre ? 500 : 1180);
+}
+visAapning();
 </script>
 </body>
 </html>

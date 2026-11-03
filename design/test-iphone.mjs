@@ -10,7 +10,7 @@ import { webkit, devices } from "playwright";
 import { mkdir } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 
-const ADRESSE = process.argv[2] || "http://localhost:4321/v2/";
+const ADRESSE = process.argv[2] || "http://localhost:4321/v2/?ren=1";
 const UT = fileURLToPath(new URL("./.taste-skill/webkit/", import.meta.url));
 
 const SKJERMER = ["hjem", "program", "chat", "meg", "pakkeliste", "sitteplasser", "filer", "deltakere"];
