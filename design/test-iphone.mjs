@@ -47,7 +47,7 @@ for (const glass of [false, true]) {
     const m = await side.evaluate(() => {
       const q = s => document.querySelector(s);
       const topp = q(".topp"), faner = q(".faner"), rull = q(".rull");
-      const tit = q(".sidetittel") || q(".hilsen");
+      const tit = q("h1.tittel") || q(".sidetittel") || q(".hilsen");
       const r = el => el ? el.getBoundingClientRect() : null;
       const tr = r(tit), tp = r(topp), fr = r(faner);
       const cs = topp ? getComputedStyle(topp) : null;

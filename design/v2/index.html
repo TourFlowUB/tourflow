@@ -3,377 +3,436 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>TourFlow — nytt design</title>
-<meta name="theme-color" content="#FFFFFF">
+<title>TripMate</title>
+<meta name="theme-color" content="#FAF8F6">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
 <style>
 /* ═══════════════════════════════════════════════════════════════
-   TourFlow v2
+   TripMate
 
-   Stil: «Editorial greeting», delt ut av taste-skill (frø 1132057274).
-   Hilsenen er h1, tallene står i vanlig vekt på tonede flater, og
-   fargebudsjettet er under 2 %.
+   Stil: «Accent ladder», delt ut av taste-skill (frø 1132880137).
+   Én merkefarge i full styrke bare på små merker; de bleke tonene
+   gjør alt arealarbeidet. Arket sier selv at stigen skal bygges av
+   merkets egen farge — her oransjen fra logoen.
 
-   To bevisste avvik fra arket, begge begrunnet i rapporten:
-   · fargen er TourFlow-blå, ikke arkets teal — produktet er i drift
-     og har alt en farge folk kjenner igjen
-   · brødteksten er 16 px, ikke 14 — arket er målt på skjermbord,
-     og Apples retningslinjer gjelder for en telefon i sollys
+   Fargene er hentet ut av logofila, ikke gjettet:
+   djupblå #103541, oransje #F06629.
    ═══════════════════════════════════════════════════════════════ */
 
 :root{
-  /* flater: hvit grunn, papirtone fra produktets verden på panelene */
-  --ground:#FFFFFF;
-  --paper:#F7F6F2;
-  --raised:#FFFFFF;
-  --border:#E7E4DC;
-  --rule:#F0EDE6;
+  /* ── stigen, bygget av merkeoransjen ───────────────────────── */
+  --merke:#F06629;          /* full styrke: bare små merker */
+  --merke-blek:#FEF1E8;     /* areal: kort, striper, felter */
+  --merke-spor:#FAD9C2;     /* spor og kanter i familien */
+  --merke-blekk:#8C3A0C;    /* tekst som står på den bleke tonen */
 
-  --ink:#1C1D1A;
-  --ink-2:#5E5F59;
-  --ink-3:#73746E;   /* 4,6:1 mot hvitt — var 8A8B84, som falt under kravet */
+  /* ── blekk: merkets djupblå gjør jobben som tekstfarge ────── */
+  --blekk:#103541;
+  --blekk-2:#4A6069;
+  --blekk-3:#5F7379;        /* 4,7:1 mot den varme grunnen; #6E8189 ga 3,9 */
 
-  /* fargen brukes på data og én kontroll, ikke på krom */
-  --blaa:#14508C;
-  --blaa-pale:#E4ECF5;
-  --varsel:#7A5409;   /* 5,1:1 mot den bleke gule — var 9A6B10 */
-  --varsel-pale:#FAF1DC;
-  --fare:#9E2B20;
+  --grunn:#FAF8F6;          /* ett hakk mot den bleke tonen */
+  --flate:#FFFFFF;
+  --kant:#EAE4DF;
+  --strek:#F1ECE8;
 
-  --r-kort:22px;
-  --r-flate:14px;
+  --fare:#B3261E;
+  --fare-blek:#FCEDEC;
+  --god:#1E6B4E;
+
+  /* ── form: det tette paret, 8 og 6 ─────────────────────────── */
+  --r-kort:14px;
+  --r-flate:10px;
   --r-kontroll:999px;
 
-  --gap:16px;
-  --pad:20px;
   --marg:20px;
+  --gap:14px;
 
-  --fs-hilsen:28px;
-  --fs-tittel:21px;
-  --fs-brod:16px;
+  --fs-tittel:27px;
+  --fs-seksjon:15px;
+  --fs-brod:16px;     /* arket sier 14; en telefon i sollys sier 16 */
   --fs-sub:13.5px;
   --fs-liten:12px;
 
   --safe-t:env(safe-area-inset-top,0px);
   --safe-b:env(safe-area-inset-bottom,0px);
+
+  /* ── bevegelse ─────────────────────────────────────────────
+     Kurvene er hentet, ikke funnet på. De innebygde er for svake. */
+  --ease-ut:cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-begge:cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-skuff:cubic-bezier(0.32, 0.72, 0, 1);
+  --t-trykk:120ms;
+  --t-liten:160ms;
+  --t-skjerm:140ms;
+  --t-meny:260ms;
+
   color-scheme:light;
 }
 
 *{box-sizing:border-box}
 html,body{margin:0;height:100%}
 body{
-  font-family:"Instrument Sans",-apple-system,system-ui,sans-serif;
-  font-size:var(--fs-brod);line-height:1.45;color:var(--ink);background:var(--ground);
-  -webkit-text-size-adjust:100%;overflow:hidden;
-  font-variant-numeric:tabular-nums;
+  font-family:"DM Sans",-apple-system,system-ui,sans-serif;
+  font-size:var(--fs-brod);line-height:1.45;color:var(--blekk);background:var(--grunn);
+  -webkit-text-size-adjust:100%;overflow:hidden;font-variant-numeric:tabular-nums;
+  -webkit-tap-highlight-color:transparent;
 }
 button,input{font:inherit;color:inherit}
-:focus-visible{outline:2px solid var(--blaa);outline-offset:2px;border-radius:8px}
-@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+:focus-visible{outline:2px solid var(--merke);outline-offset:2px;border-radius:8px}
+
+/* Trykkrespons på alt som kan trykkes. 120 ms, bare transform. */
+button{transition:transform var(--t-trykk) var(--ease-ut)}
+button:active{transform:scale(.97)}
 
 /* ── stillas rundt prototypen (ikke en del av appen) ───────────── */
-.ramme{display:flex;flex-direction:column;height:100dvh;background:#15161A}
+.ramme{display:flex;flex-direction:column;height:100dvh;background:#0B2029}
 .telefon{
-  flex:1;min-height:0;width:100%;max-width:412px;margin:0 auto;background:var(--ground);
+  flex:1;min-height:0;width:100%;max-width:412px;margin:0 auto;background:var(--grunn);
   display:flex;flex-direction:column;position:relative;overflow:hidden;
 }
 @media (min-width:480px){
   .ramme{padding:16px 0}
-  .telefon{border-radius:28px;max-height:880px;box-shadow:0 24px 70px rgba(0,0,0,.45)} /* taste-skill-ignore: stillaset rundt prototypen, ikke appen */
+  .telefon{border-radius:28px;max-height:880px;box-shadow:0 24px 70px rgba(0,0,0,.5)} /* taste-skill-ignore: stillas */
 }
 .notat{
-  flex:none;padding:10px 16px calc(10px + var(--safe-b));background:#15161A;
-  color:#8E9199;font-size:12px;text-align:center;line-height:1.5;
+  flex:none;padding:10px 16px calc(10px + var(--safe-b));background:#0B2029;
+  color:#7D959E;font-size:12px;text-align:center;line-height:1.5;
 }
-.notat b{color:#D8DBE0;font-weight:500}
+.notat b{color:#D7E3E7;font-weight:500}
 
-/* ── toppbar: 48 px, navn + meny, én handling ──────────────────── */
+/* ── merket ────────────────────────────────────────────────────── */
+.merkeT{width:22px;height:22px;flex:none;display:block}
+.ordmerke{display:flex;align-items:center;gap:7px;min-width:0}
+.ordmerke .navn{font-size:17px;font-weight:700;letter-spacing:-.02em}
+.ordmerke .navn em{font-style:normal;color:var(--merke)}
+
+/* ── toppbar ───────────────────────────────────────────────────── */
 .topp{
-  flex:none;display:flex;align-items:center;gap:10px;height:48px;
+  flex:none;display:flex;align-items:center;gap:10px;height:52px;
   padding:0 12px 0 var(--marg);margin-top:var(--safe-t);
 }
 .turknapp{
   flex:1;min-width:0;display:flex;align-items:center;gap:6px;border:0;background:none;
   padding:6px 4px 6px 0;cursor:pointer;text-align:left;min-height:44px;
 }
-.turknapp .nv{
-  font-size:15px;font-weight:600;letter-spacing:-.01em;white-space:nowrap;
-  overflow:hidden;text-overflow:ellipsis;
-}
-.turknapp svg{width:16px;height:16px;flex:none;stroke:var(--ink-3);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-/* Sirkelen er 32 px fordi den skal være diskret, men knappen må være 44.
-   Derfor er flaten gjennomsiktig og sirkelen tegnet inni. */
+.turknapp .nv{font-size:15px;font-weight:600;letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.turknapp .kryss{width:15px;height:15px;flex:none;stroke:var(--blekk-3);fill:none;stroke-width:2.2;
+  stroke-linecap:round;stroke-linejoin:round;transition:transform var(--t-meny) var(--ease-ut)}
+.turknapp[aria-expanded="true"] .kryss{transform:rotate(180deg)}
 .meg-knapp{
   width:44px;height:44px;flex:none;border:0;background:none;padding:0;cursor:pointer;
-  display:grid;place-items:center;position:relative;color:var(--ink-2);
+  display:grid;place-items:center;position:relative;color:var(--blekk-2);
 }
 .meg-knapp .sirkel{
-  width:32px;height:32px;border:1px solid var(--border);border-radius:50%;
-  background:var(--paper);font-size:12px;font-weight:600;display:grid;place-items:center;
+  width:32px;height:32px;border-radius:50%;background:var(--merke-blek);color:var(--merke-blekk);
+  font-size:12px;font-weight:600;display:grid;place-items:center;
 }
 .meg-knapp svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-.meg-knapp .prikk{position:absolute;top:5px;right:5px;width:9px;height:9px;border-radius:50%;background:var(--fare);border:2px solid var(--ground)}
+.meg-knapp .prikk{position:absolute;top:5px;right:5px;width:9px;height:9px;border-radius:50%;
+  background:var(--merke);border:2px solid var(--grunn)}
 
-/* ── rullende innhold ──────────────────────────────────────────── */
+/* ── skjerm ────────────────────────────────────────────────────── */
 .rull{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
 .rull::-webkit-scrollbar{display:none}
 .inn{padding:0 var(--marg)}
-.luft{height:28px}
+.luft{height:30px}
 
-/* ── hilsenen: h1 i serif, dato i grå linje under ──────────────── */
-h1.hilsen{
-  font-family:"Instrument Serif",Georgia,serif;font-weight:400;
-  font-size:var(--fs-hilsen);line-height:1.1;letter-spacing:-.01em;margin:10px 0 0;
-}
-.underlinje{font-size:var(--fs-sub);color:var(--ink-2);margin-top:6px}
-h2.sidetittel{font-size:var(--fs-tittel);font-weight:600;letter-spacing:-.01em;margin:10px 0 0}
+/* Skjermbytte: 140 ms, bare opacity og transform. Nok til å unngå
+   at innholdet teleporterer, for lite til å merkes som en animasjon
+   når du bytter fane tjue ganger om dagen. */
+@keyframes skjerm-inn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.skjerm-anim{animation:skjerm-inn var(--t-skjerm) var(--ease-ut)}
 
-/* ── dagstripa: TourFlows eget element ─────────────────────────── */
-/* En avgangstavle for dagen. Hvert punkt er et merke på en linje,
-   og «nå» er den eneste blå tingen på skjermen. */
-.stripe{margin:22px 0 0;position:relative}
-.stripe .akse{position:absolute;left:0;right:0;top:19px;height:1px;background:var(--border)}
+h1.tittel{font-size:var(--fs-tittel);font-weight:700;letter-spacing:-.025em;line-height:1.15;margin:8px 0 0}
+.underlinje{font-size:var(--fs-sub);color:var(--blekk-2);margin-top:5px}
+
+/* ── dagstripa: TripMates eget element ─────────────────────────── */
+/* Logoens oransje prikk er «nå». Det er den samme prikken som sitter
+   på T-en — merket og tidspunktet er den samme tingen. */
+.stripe{margin:20px 0 0;position:relative}
+.stripe .akse{position:absolute;left:0;right:0;top:20px;height:2px;background:var(--strek);border-radius:2px}
+.stripe .gaatt{position:absolute;left:0;top:20px;height:2px;background:var(--merke-spor);border-radius:2px;
+  transform-origin:left;transition:transform 600ms var(--ease-begge)}
 .stripe .punkter{display:flex;justify-content:space-between;position:relative}
-.stripe .pk{display:flex;flex-direction:column;align-items:center;gap:7px;flex:1;min-width:0}
-.stripe .kl{font-size:var(--fs-liten);color:var(--ink-3);font-variant-numeric:tabular-nums}
-.stripe .mk{width:9px;height:9px;border-radius:50%;background:var(--border);flex:none}
-.stripe .pk.ferdig .mk{background:var(--ink-3)}
-.stripe .pk.aktiv .mk{width:13px;height:13px;background:var(--blaa);box-shadow:0 0 0 4px var(--blaa-pale)} /* taste-skill-ignore: ikke en skygge, men en ring som markerer naa */
-.stripe .pk.aktiv .kl{color:var(--blaa);font-weight:600}
-.stripe .nvn{font-size:12px;color:var(--ink-3);text-align:center;line-height:1.25;
-  max-width:68px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
-.stripe .pk.aktiv .nvn{color:var(--ink)}
-
-/* ── «nå»-panelet: tonet flate, ingen skygge ───────────────────── */
-.naa{
-  margin-top:22px;background:var(--paper);border-radius:var(--r-kort);padding:var(--pad);
+.stripe .pk{display:flex;flex-direction:column;align-items:center;gap:6px;flex:1;min-width:0}
+.stripe .kl{font-size:var(--fs-liten);color:var(--blekk-3)}
+.stripe .mk{width:9px;height:9px;border-radius:50%;background:var(--kant);flex:none}
+.stripe .pk.ferdig .mk{background:var(--merke-spor)}
+.stripe .pk.aktiv .mk{
+  width:14px;height:14px;background:var(--merke);
+  box-shadow:0 0 0 5px var(--merke-blek); /* taste-skill-ignore: ring, ikke skygge */
 }
-.naa .merk{font-size:var(--fs-liten);color:var(--ink-2);margin-bottom:10px}
-.naa .kl{font-size:34px;font-weight:400;line-height:1;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
-.naa .hva{font-size:19px;font-weight:600;margin-top:8px;letter-spacing:-.01em}
-.naa .hvor{font-size:var(--fs-sub);color:var(--ink-2);margin-top:3px}
-.naa .knapper{display:flex;gap:9px;margin-top:16px}
+.stripe .pk.aktiv .kl{color:var(--merke-blekk);font-weight:600}
+.stripe .nvn{font-size:12px;color:var(--blekk-3);text-align:center;line-height:1.25;max-width:70px;
+  overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.stripe .pk.aktiv .nvn{color:var(--blekk)}
+/* Prikken setter seg på plass én gang når skjermen åpnes. Den pulser
+   ikke: et merke som beveger seg hele dagen er støy, ikke informasjon. */
+@keyframes prikk-inn{from{transform:scale(.4);box-shadow:0 0 0 0 var(--merke-blek)} /* taste-skill-ignore: ringen rundt prikken, ikke en skygge */
+  to{transform:scale(1);box-shadow:0 0 0 5px var(--merke-blek)}} /* taste-skill-ignore */
+.skjerm-anim .stripe .pk.aktiv .mk{animation:prikk-inn 320ms var(--ease-ut) 60ms backwards}
+
+/* ── «nå»-kortet: blek tone gjør arealet, full farge bare merket ── */
+.naakort{
+  margin-top:18px;background:var(--merke-blek);border-radius:var(--r-kort);padding:18px;
+  position:relative;overflow:hidden;
+}
+.naakort .merk{
+  display:inline-flex;align-items:center;gap:6px;font-size:var(--fs-liten);font-weight:600;
+  color:var(--merke-blekk);margin-bottom:8px;
+}
+.naakort .merk i{width:7px;height:7px;border-radius:50%;background:var(--merke);display:block}
+.naakort .kl{font-size:38px;font-weight:700;line-height:1;letter-spacing:-.035em}
+.naakort .hva{font-size:19px;font-weight:600;margin-top:6px;letter-spacing:-.015em}
+.naakort .hvor{font-size:var(--fs-sub);color:var(--merke-blekk);opacity:.82;margin-top:2px}
+.naakort .knapper{display:flex;gap:8px;margin-top:16px}
+
 .btn{
-  flex:1;min-height:44px;border-radius:var(--r-kontroll);border:1px solid var(--border);
-  background:var(--raised);color:var(--ink);font-size:14.5px;font-weight:500;cursor:pointer;
-  display:inline-flex;align-items:center;justify-content:center;gap:7px;text-decoration:none;
+  flex:1;min-height:46px;border-radius:var(--r-kontroll);border:1px solid var(--kant);
+  background:var(--flate);color:var(--blekk);font-size:15px;font-weight:600;cursor:pointer;
+  display:inline-flex;align-items:center;justify-content:center;gap:7px;
 }
-.btn svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.btn.primar{background:var(--blaa);border-color:var(--blaa);color:#fff}
+.btn svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+/* Hovedhandlingen er blekk, ikke oransje: hvit tekst på #F06629 gir
+   3,2:1, og det er under kravet. Oransjen beholder jobben som merke. */
+.btn.primar{background:var(--blekk);border-color:var(--blekk);color:#fff}
 
-/* ── ruter: 2×2, tonede flater uten ikonbokser ─────────────────── */
+/* ── ruter ─────────────────────────────────────────────────────── */
 .ruter{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
 .rute{
-  text-align:left;border:1px solid var(--border);background:var(--ground);border-radius:var(--r-flate);
-  padding:14px;cursor:pointer;min-height:76px;display:flex;flex-direction:column;justify-content:space-between;
+  text-align:left;border:1px solid var(--kant);background:var(--flate);border-radius:var(--r-flate);
+  padding:13px;cursor:pointer;min-height:78px;display:flex;flex-direction:column;justify-content:space-between;
 }
-.rute .nv{font-size:15px;font-weight:500}
-.rute .vr{font-size:var(--fs-sub);color:var(--ink-2);margin-top:3px;font-variant-numeric:tabular-nums}
-.rute .vr b{font-weight:600;color:var(--ink)}
+.rute .nv{font-size:15px;font-weight:600}
+.rute .vr{font-size:var(--fs-sub);color:var(--blekk-2);margin-top:3px}
+.rute .vr b{font-weight:700;color:var(--blekk)}
 .merkelapp{
-  display:inline-block;background:var(--varsel-pale);color:var(--varsel);border-radius:var(--r-kontroll);
-  font-size:11.5px;font-weight:600;padding:1px 7px;margin-left:6px;vertical-align:1px;
+  display:inline-block;background:var(--merke-blek);color:var(--merke-blekk);border-radius:var(--r-kontroll);
+  font-size:11.5px;font-weight:600;padding:1px 8px;margin-left:6px;
 }
 
 /* ── seksjoner og rader ────────────────────────────────────────── */
-.bolk{display:flex;align-items:baseline;justify-content:space-between;margin:30px 0 4px}
-.bolk h3{font-size:14px;font-weight:600;margin:0}
-.bolk .lenke{font-size:13.5px;color:var(--blaa);background:none;border:0;cursor:pointer;
-  padding:13px 0;margin:-13px 0;min-height:44px}   /* 44 px å treffe, uten å ta 44 px plass */
+.bolk{display:flex;align-items:baseline;justify-content:space-between;margin:28px 0 2px}
+.bolk h3{font-size:var(--fs-seksjon);font-weight:600;margin:0;letter-spacing:-.01em}
+.bolk .lenke{font-size:13.5px;font-weight:500;color:var(--merke-blekk);background:none;border:0;
+  cursor:pointer;padding:13px 0;margin:-13px 0;min-height:44px}
 
 .post{
-  display:grid;grid-template-columns:58px 1fr auto;gap:12px;align-items:baseline;
-  padding:13px 0;border-bottom:1px solid var(--rule);width:100%;text-align:left;
+  display:grid;grid-template-columns:56px 1fr auto;gap:12px;align-items:baseline;
+  padding:13px 0;border-bottom:1px solid var(--strek);width:100%;text-align:left;
   background:none;border-left:0;border-right:0;border-top:0;cursor:pointer;
 }
-.post:last-child{border-bottom:0}
-.post .t{font-size:14.5px;color:var(--ink-2);font-variant-numeric:tabular-nums}
+.post:last-of-type{border-bottom:0}
+.post .t{font-size:14.5px;font-weight:500;color:var(--blekk-2)}
 .post .h{display:block;font-size:var(--fs-brod);font-weight:500}
-.post .s{display:block;font-size:var(--fs-sub);color:var(--ink-2);margin-top:2px}
-.post.ferdig .t,.post.ferdig .h{color:var(--ink-3)}
-.post.ferdig .h{text-decoration:line-through;text-decoration-color:var(--border)}
-.post .pil{color:var(--ink-3)}
+.post .s{display:block;font-size:var(--fs-sub);color:var(--blekk-2);margin-top:2px}
+.post.ferdig .t,.post.ferdig .h{color:var(--blekk-3)}
+.post.ferdig .h{text-decoration:line-through;text-decoration-color:var(--kant)}
+.post .pil{color:var(--blekk-3)}
 .post .pil svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 
-/* ── dagvelger: egen rad som ruller sidelengs ──────────────────── */
-.dager{display:flex;gap:8px;overflow-x:auto;padding:14px var(--marg) 2px;scrollbar-width:none}
+/* ── dagvelger ─────────────────────────────────────────────────── */
+.dager{display:flex;gap:8px;overflow-x:auto;padding:12px var(--marg) 4px;scrollbar-width:none}
 .dager::-webkit-scrollbar{display:none}
 .dag{
-  flex:none;border:1px solid var(--border);background:var(--ground);border-radius:12px;
-  padding:8px 12px;cursor:pointer;text-align:center;min-width:52px;min-height:52px;
+  flex:none;border:1px solid var(--kant);background:var(--flate);border-radius:var(--r-flate);
+  padding:8px 12px;cursor:pointer;text-align:center;min-width:54px;min-height:54px;
+  transition:background var(--t-liten) var(--ease-ut),border-color var(--t-liten) var(--ease-ut),
+             color var(--t-liten) var(--ease-ut),transform var(--t-trykk) var(--ease-ut);
 }
-.dag .d{font-size:var(--fs-liten);color:var(--ink-2)}
-.dag .n{font-size:17px;font-weight:500;font-variant-numeric:tabular-nums;line-height:1.2}
-.dag[aria-selected="true"]{background:var(--ink);border-color:var(--ink);color:var(--ground)}
-.dag[aria-selected="true"] .d{color:rgba(255,255,255,.72)}
+.dag .d{font-size:var(--fs-liten);color:var(--blekk-2);transition:color var(--t-liten) var(--ease-ut)}
+.dag .n{font-size:17px;font-weight:600;line-height:1.2}
+.dag[aria-selected="true"]{background:var(--merke-blek);border-color:var(--merke-spor);color:var(--merke-blekk)}
+.dag[aria-selected="true"] .d{color:var(--merke-blekk)}
+.dag .idag{display:block;width:5px;height:5px;border-radius:50%;background:var(--merke);margin:3px auto 0}
 
-/* ── fanelinje: fire faste mål, aldri skjult ───────────────────── */
+/* ── fanelinje ─────────────────────────────────────────────────── */
 .faner{
-  flex:none;display:flex;border-top:1px solid var(--rule);background:var(--ground);
+  flex:none;display:flex;border-top:1px solid var(--strek);background:var(--grunn);
   padding:6px 8px calc(6px + var(--safe-b));
 }
 .fane{
-  flex:1;border:0;background:none;cursor:pointer;color:var(--ink-3);
+  flex:1;border:0;background:none;cursor:pointer;color:var(--blekk-3);
   display:flex;flex-direction:column;align-items:center;gap:3px;
-  padding:6px 0 2px;min-height:48px;font-size:11.5px;font-weight:500;
+  padding:7px 0 3px;min-height:48px;font-size:11.5px;font-weight:500;position:relative;
+  transition:color var(--t-liten) var(--ease-ut);
 }
-.fane svg{width:23px;height:23px;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
-.fane[aria-selected="true"]{color:var(--blaa)}
+.fane svg{width:23px;height:23px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;
+  transition:transform var(--t-liten) var(--ease-ut)}
+.fane[aria-selected="true"]{color:var(--merke-blekk)}
+/* Ikonet løfter seg to piksler. Nok til å kjennes, for lite til å se. */
+.fane[aria-selected="true"] svg{transform:translateY(-2px)}
 .fane .tall{
-  position:absolute;transform:translate(13px,-4px);background:var(--fare);color:#fff;
-  border-radius:var(--r-kontroll);font-size:10.5px;font-weight:600;padding:0 5px;min-width:17px;line-height:17px;
+  position:absolute;top:3px;left:50%;margin-left:4px;background:var(--merke);color:#fff;
+  border-radius:var(--r-kontroll);font-size:10.5px;font-weight:700;padding:0 5px;min-width:18px;line-height:18px;text-align:center;
 }
 
 /* ── rullegardin ───────────────────────────────────────────────── */
-.slor{position:absolute;inset:0;background:rgba(20,21,18,.32);z-index:8;border:0;width:100%}
-.gardin{
-  position:absolute;left:0;right:0;top:0;z-index:9;background:var(--ground);
-  border-radius:0 0 var(--r-kort) var(--r-kort);padding:calc(14px + var(--safe-t)) 0 10px;
-  box-shadow:0 20px 40px -24px rgba(20,21,18,.5); /* taste-skill-ignore: rullegardinen er et ekte overlegg */
+.slor{
+  position:absolute;inset:0;background:rgba(16,53,65,.4);z-index:8;border:0;width:100%;
+  opacity:0;transition:opacity var(--t-meny) var(--ease-ut);
 }
-.gardin .tit{font-size:17px;font-weight:600;padding:2px var(--marg) 0;letter-spacing:-.01em}
-.gardin .sub{font-size:var(--fs-sub);color:var(--ink-2);padding:2px var(--marg) 12px}
+.slor.vis{opacity:1}
+.gardin{
+  position:absolute;left:0;right:0;top:0;z-index:9;background:var(--flate);
+  border-radius:0 0 var(--r-kort) var(--r-kort);padding:calc(12px + var(--safe-t)) 0 10px;
+  box-shadow:0 20px 44px -26px rgba(16,53,65,.6); /* taste-skill-ignore: ekte overlegg */
+  transform:translateY(-100%);transition:transform var(--t-meny) var(--ease-skuff);
+}
+.gardin.vis{transform:none}
+.gardin .hode{display:flex;align-items:center;gap:9px;padding:2px var(--marg) 0}
+.gardin .tit{font-size:16px;font-weight:700;letter-spacing:-.015em}
+.gardin .sub{font-size:var(--fs-sub);color:var(--blekk-2);padding:1px var(--marg) 10px;margin-left:31px}
 .mrad{
   display:flex;align-items:center;gap:13px;width:100%;border:0;background:none;
   padding:11px var(--marg);text-align:left;cursor:pointer;min-height:48px;
 }
-.mrad svg{width:19px;height:19px;flex:none;stroke:var(--ink-2);fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.mrad svg{width:19px;height:19px;flex:none;stroke:var(--blekk-2);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .mrad .nv{flex:1;font-size:15.5px;font-weight:500}
-.mrad .vr{font-size:var(--fs-sub);color:var(--ink-3);font-weight:400}
-.mrad[aria-current="true"]{background:var(--paper)}
-.mrad .tall{background:var(--fare);color:#fff;border-radius:var(--r-kontroll);font-size:11.5px;font-weight:600;padding:1px 7px}
-.mskille{height:1px;background:var(--rule);margin:8px var(--marg)}
+.mrad .vr{font-size:var(--fs-sub);color:var(--blekk-3);font-weight:400}
+.mrad[aria-current="true"]{background:var(--merke-blek)}
+.mrad[aria-current="true"] svg{stroke:var(--merke-blekk)}
+.mrad .tall{background:var(--merke);color:#fff;border-radius:var(--r-kontroll);font-size:11.5px;font-weight:700;padding:1px 8px}
+.mskille{height:1px;background:var(--strek);margin:8px var(--marg)}
 
-/* ── lister: filer, pakkeliste, deltakere ──────────────────────── */
+/* ── lister ────────────────────────────────────────────────────── */
 .rad{
-  display:flex;align-items:center;gap:13px;width:100%;padding:13px 0;text-align:left;
-  border:0;border-bottom:1px solid var(--rule);background:none;cursor:pointer;min-height:56px;
+  display:flex;align-items:center;gap:13px;width:100%;padding:12px 0;text-align:left;
+  border:0;border-bottom:1px solid var(--strek);background:none;cursor:pointer;min-height:56px;
 }
-.rad:last-child{border-bottom:0}
-/* Navn og underlinje er egne linjer. Uten dette henger underteksten seg
-   fast i navnet: «Emma Nygårdba om å bli med i går». */
+.rad:last-of-type{border-bottom:0}
 .rad .nv{display:block;font-size:var(--fs-brod);font-weight:500}
-.rad .s{display:block;font-size:var(--fs-sub);color:var(--ink-2);margin-top:1px}
+.rad .s{display:block;font-size:var(--fs-sub);color:var(--blekk-2);margin-top:1px}
 .rad .grow{flex:1;min-width:0}
 .filtype{
-  width:34px;height:42px;flex:none;border:1px solid var(--border);border-radius:5px;
-  display:grid;place-items:center;font-size:9.5px;font-weight:600;color:var(--ink-2);background:var(--paper);
+  width:34px;height:42px;flex:none;border:1px solid var(--kant);border-radius:6px;
+  display:grid;place-items:center;font-size:9.5px;font-weight:600;color:var(--blekk-2);background:var(--flate);
 }
-.hake{width:24px;height:24px;flex:none;border:1.5px solid var(--border);border-radius:7px;display:grid;place-items:center;background:var(--ground)}
-.hake svg{width:14px;height:14px;stroke:#fff;fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
-.rad.av .hake{background:var(--ink);border-color:var(--ink)}
-.rad.av .nv{color:var(--ink-3);text-decoration:line-through;text-decoration-color:var(--border)}
 .init{
   width:34px;height:34px;flex:none;border-radius:50%;display:grid;place-items:center;
-  font-size:13px;font-weight:600;color:var(--ink-2);background:var(--paper);border:1px solid var(--border);
+  font-size:12.5px;font-weight:600;color:var(--merke-blekk);background:var(--merke-blek);
 }
+
+/* Avkryssing: boksen fylles og haken tegnes. 180 ms, og teksten
+   dempes samtidig — ett trykk, én samlet beskjed. */
+.hake{
+  width:26px;height:26px;flex:none;border:1.8px solid var(--kant);border-radius:8px;
+  display:grid;place-items:center;background:var(--flate);
+  transition:background var(--t-liten) var(--ease-ut),border-color var(--t-liten) var(--ease-ut);
+}
+.hake svg{width:15px;height:15px;stroke:#fff;fill:none;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round;
+  stroke-dasharray:20;stroke-dashoffset:20;transition:stroke-dashoffset 180ms var(--ease-ut) 40ms}
+.rad.av .hake{background:var(--merke);border-color:var(--merke)}
+.rad.av .hake svg{stroke-dashoffset:0}
+.rad .nv{transition:color var(--t-liten) var(--ease-ut)}
+.rad.av .nv{color:var(--blekk-3);text-decoration:line-through;text-decoration-color:var(--kant)}
 
 /* ── seter ─────────────────────────────────────────────────────── */
 .setekart{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:4px}
-.gang{grid-column:1/-1;height:10px}
+.gang{grid-column:1/-1;height:12px;display:grid;place-items:center}
+.gang span{font-size:10.5px;color:var(--blekk-3)}
 .sete{
-  border:1px solid var(--border);background:var(--ground);border-radius:10px;
-  min-height:52px;padding:6px 2px;cursor:pointer;display:flex;flex-direction:column;
+  border:1px solid var(--kant);background:var(--flate);border-radius:var(--r-flate);
+  min-height:54px;padding:6px 2px;cursor:pointer;display:flex;flex-direction:column;
   align-items:center;justify-content:center;gap:1px;
+  transition:background var(--t-liten) var(--ease-ut),border-color var(--t-liten) var(--ease-ut),
+             color var(--t-liten) var(--ease-ut),transform var(--t-liten) var(--ease-ut);
 }
-.sete .n{font-size:13px;font-weight:500;font-variant-numeric:tabular-nums}
-.sete .hvem{font-size:10.5px;color:var(--ink-3);max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.sete.tatt{background:var(--paper);color:var(--ink-3)}
-.sete.min{background:var(--blaa);border-color:var(--blaa);color:#fff}
-.sete.min .hvem{color:rgba(255,255,255,.78)}
+.sete .n{font-size:13.5px;font-weight:600}
+.sete .hvem{font-size:10.5px;color:var(--blekk-3);max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sete.tatt{background:var(--grunn);color:var(--blekk-3);cursor:default}
+.sete.min{background:var(--merke);border-color:var(--merke);color:#fff}
+.sete.min .hvem{color:rgba(255,255,255,.85)}
+/* Setet du nettopp tok: ett løft, 220 ms. Skjer én gang per tur. */
+@keyframes sete-tatt{0%{transform:scale(.9)}60%{transform:scale(1.06)}100%{transform:scale(1)}}
+.sete.nytt{animation:sete-tatt 220ms var(--ease-ut)}
 
 /* ── chat ──────────────────────────────────────────────────────── */
 .meldinger{display:flex;flex-direction:column;gap:14px;padding:16px var(--marg) 8px;margin-top:auto}
 .melding{max-width:84%;display:flex;flex-direction:column;gap:3px}
 .melding.min{align-self:flex-end;align-items:flex-end}
-.hvem{font-size:var(--fs-liten);color:var(--ink-2);padding-left:2px}
-.boble{background:var(--paper);border-radius:16px 16px 16px 6px;padding:10px 13px;font-size:15.5px;overflow-wrap:anywhere}
-.melding.min .boble{background:var(--blaa);color:#fff;border-radius:16px 16px 6px 16px}
-.stempel{font-size:12px;color:var(--ink-3);padding:0 3px}
+.hvem{font-size:var(--fs-liten);color:var(--blekk-2);padding-left:2px;font-weight:500}
+.boble{background:var(--flate);border:1px solid var(--kant);border-radius:16px 16px 16px 6px;
+  padding:10px 13px;font-size:15.5px;overflow-wrap:anywhere}
+.melding.min .boble{background:var(--merke-blek);border-color:var(--merke-spor);color:var(--merke-blekk);
+  border-radius:16px 16px 6px 16px}
+.stempel{font-size:11.5px;color:var(--blekk-3);padding:0 3px}
 .skriv{
   flex:none;display:flex;gap:9px;align-items:flex-end;padding:10px var(--marg) calc(10px + var(--safe-b));
-  border-top:1px solid var(--rule);background:var(--ground);
+  border-top:1px solid var(--strek);background:var(--grunn);
 }
 .skriv input{
-  flex:1;min-width:0;min-height:44px;border:1px solid var(--border);background:var(--paper);
-  border-radius:var(--r-kontroll);padding:11px 15px;font-size:16px;
+  flex:1;min-width:0;min-height:46px;border:1px solid var(--kant);background:var(--flate);
+  border-radius:var(--r-kontroll);padding:12px 16px;font-size:16px;
 }
 .ikonknapp{
-  width:44px;height:44px;flex:none;border-radius:50%;border:1px solid var(--border);
-  background:var(--ground);cursor:pointer;display:grid;place-items:center;color:var(--ink-2);
+  width:46px;height:46px;flex:none;border-radius:50%;border:1px solid var(--kant);
+  background:var(--flate);cursor:pointer;display:grid;place-items:center;color:var(--blekk-2);
 }
-.ikonknapp.send{background:var(--blaa);border-color:var(--blaa);color:#fff}
-.ikonknapp svg{width:19px;height:19px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.ikonknapp.send{background:var(--blekk);border-color:var(--blekk);color:#fff}
+.ikonknapp svg{width:19px;height:19px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 
-/* ── tom tilstand ──────────────────────────────────────────────── */
-.tomt{padding:34px 0;text-align:center;color:var(--ink-2);font-size:var(--fs-sub)}
+.tomt{padding:36px 0;text-align:center;color:var(--blekk-2);font-size:var(--fs-sub)}
 
-/* ══ glass: bare på iPhone, bare lagt til på hjemskjermen ═══════
-   Apples egen side er tydelig: materialet hører til det funksjonelle
-   laget — fanelinja og toppen — og aldri i innholdet. Så det er bare
-   de to stripene som blir gjennomsiktige, og innholdet får skli under.
+/* Rader som forsvinner (godkjent, avslått): ut samme vei som alt
+   annet — opacity og transform, aldri height. */
+.gaar-ut{opacity:0;transform:translateY(-6px);transition:opacity 200ms var(--ease-ut),transform 200ms var(--ease-ut)}
 
-   Vi kan ikke tegne ekte Liquid Glass; den brytningen og glansen er
-   systemets, ikke nettsidens. Dette er det nærmeste nettet kommer:
-   uskarphet, litt mettet farge og en hårstrek av lys i kanten.
-   taste-skill-ignore: arket forbyr glass, men dette er bestilt og
-   Apple sanksjonerer det for akkurat dette laget. */
+/* ── beskjed ───────────────────────────────────────────────────── */
+/* Overgang, ikke keyframes: den kan fyres av to ganger på et sekund,
+   og da skal den sikte fra der den er, ikke starte på nytt. */
+.beskjed{
+  position:absolute;left:50%;bottom:84px;z-index:12;
+  background:var(--blekk);color:#fff;border-radius:var(--r-kontroll);padding:10px 16px;
+  font-size:13.5px;font-weight:500;white-space:nowrap;max-width:88%;overflow:hidden;text-overflow:ellipsis;
+  transform:translate(-50%,8px);opacity:0;pointer-events:none;
+  transition:opacity 200ms var(--ease-ut),transform 200ms var(--ease-ut);
+}
+.beskjed.vis{opacity:1;transform:translate(-50%,0)}
+
+/* ══ glass: iPhone, lagt til på hjemskjermen ═══════════════════ */
 @supports (backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px)) { /* taste-skill-ignore */
-  /* 72 % hvit over en hvit side er ingenting å se gjennom. 58 % lar
-     teksten under skimtes som myke grå skygger — det er den som gjør at
-     det leses som glass og ikke som en hvit stripe. */
-  html.glass .telefon{--glass-tint:rgba(255,255,255,.7)}
-
-  /* WebKit mister uskarpheten når en forelder klipper innholdet. I den
-     ekte appen finnes ikke denne telefonrammen; her slår vi av klippingen
-     på telefonbredde, der rammen likevel fyller skjermen. */
+  html.glass .telefon{--glass-tint:rgba(250,248,246,.72)}
   @media (max-width:479px){ html.glass .telefon{overflow:visible} }
 
-  html.glass .topp,
-  html.glass .faner{
-    position:absolute;left:0;right:0;z-index:5;
-    background:var(--glass-tint);
-    -webkit-backdrop-filter:saturate(1.9) blur(26px); /* taste-skill-ignore: bestilt, og Apple sanksjonerer det for dette laget */
-    backdrop-filter:saturate(1.9) blur(26px); /* taste-skill-ignore: bestilt, og Apple sanksjonerer det for dette laget */
+  html.glass .topp,html.glass .faner{
+    position:absolute;left:0;right:0;z-index:5;background:var(--glass-tint);
+    -webkit-backdrop-filter:saturate(1.9) blur(26px); /* taste-skill-ignore */
+    backdrop-filter:saturate(1.9) blur(26px); /* taste-skill-ignore */
   }
-  html.glass .topp{top:0;margin-top:0;padding-top:var(--safe-t);height:auto;min-height:48px}
-
-  /* Apple: «a tab bar floats above content at the bottom of the screen».
-     Den er ikke en stripe fra kant til kant, men en kapsel som svever,
-     med innhold synlig både rundt den og gjennom den. Formen alene sier
-     «dette laget ligger oppå» — også når uskarpheten er svak. */
-  /* taste-skill-ignore: fanelinja er et ekte overlegg, ikke et kort i ro */
+  html.glass .topp{top:0;margin-top:0;padding-top:var(--safe-t);height:auto;min-height:52px}
+  /* Apple: «a tab bar floats above content». Den er en kapsel, ikke en
+     stripe fra kant til kant. */
   html.glass .faner{
     left:10px;right:10px;bottom:calc(9px + var(--safe-b));
-    border:1px solid rgba(255,255,255,.6);border-radius:26px;
-    padding:6px;box-shadow:0 10px 26px -12px rgba(28,29,26,.3); /* taste-skill-ignore */
-    /* Kapselen ligger alltid oppå tekst, mens toppen som oftest ligger
-       over luft. Derfor er den tettere: Apples materiale justerer selv
-       lysstyrken for å holde det som står på den leselig. */
-    background:rgba(255,255,255,.8);
+    border:1px solid rgba(255,255,255,.7);border-radius:24px;padding:6px;
+    background:rgba(250,248,246,.82);
+    box-shadow:0 10px 26px -12px rgba(16,53,65,.35); /* taste-skill-ignore */
   }
-  /* Den valgte fanen hviler på sin egen flate, slik iOS gjør det. */
-  html.glass .fane[aria-selected="true"]{
-    background:rgba(20,80,140,.1);border-radius:20px;
-  }
-
-  /* Innholdet skal kunne titte fram under stripene, ikke ligge bak dem.
-     Plassen settes ikke her, men måles i JS på de ekte stripene etter at
-     de er tegnet. Et regnestykke med env(safe-area-inset-top) stemmer på
-     én nettleser og bommer på neste; en måling stemmer alltid. */
-  html.glass .gardin{padding-top:calc(14px + var(--safe-t))}
+  html.glass .fane[aria-selected="true"]{background:var(--merke-blek);border-radius:18px}
+  html.glass .gardin{padding-top:calc(12px + var(--safe-t))}
 }
-/* Slår noen av gjennomsiktighet i tilgjengelighet, skal vi høre etter. */
 @media (prefers-reduced-transparency:reduce){
   html.glass .topp,html.glass .faner{
-    background:var(--ground);
-    -webkit-backdrop-filter:none; /* taste-skill-ignore: dette slår glasset av */
-    backdrop-filter:none; /* taste-skill-ignore: dette slår glasset av */
+    background:var(--grunn);
+    -webkit-backdrop-filter:none; /* taste-skill-ignore */
+    backdrop-filter:none; /* taste-skill-ignore */
   }
+}
+
+/* ══ mindre bevegelse: behold det som forklarer, fjern det som flytter ══ */
+@media (prefers-reduced-motion:reduce){
+  *{animation-duration:.01ms!important;animation-iteration-count:1!important}
+  .skjerm-anim{animation:none}
+  .gardin{transition:opacity var(--t-liten) linear;transform:none;opacity:0}
+  .gardin.vis{opacity:1}
+  .stripe .gaatt{transition:none}
+  button:active{transform:none}
 }
 </style>
 </head>
@@ -385,13 +444,20 @@ h2.sidetittel{font-size:var(--fs-tittel);font-weight:600;letter-spacing:-.01em;m
 </div>
 
 <script>
-/* ═══ ikoner: ett sett, 1,6 px strek, grå ═══ */
+/* ═══ merket: T-en med flystreken og den oransje prikken ═══ */
+const MERKE = (farge = "var(--blekk)") => `
+  <svg class="merkeT" viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M11.4 7.4V20.5" stroke="${farge}" stroke-width="3.2" stroke-linecap="round" fill="none"/>
+    <path d="M3.6 8.9c2.6-1.9 5.6-2.9 8.6-2.6" stroke="${farge}" stroke-width="3.2" stroke-linecap="round" fill="none"/>
+    <circle cx="15.6" cy="5.6" r="2.9" fill="var(--merke)"/>
+  </svg>`;
+
 const I = {
   hjem:'<svg viewBox="0 0 24 24"><path d="M4 11.2 12 4.5l8 6.7"/><path d="M6.2 10v9.5h11.6V10"/></svg>',
   program:'<svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M3.5 9.8h17M8.5 3v4M15.5 3v4"/></svg>',
   chat:'<svg viewBox="0 0 24 24"><path d="M20.5 12a8 8 0 0 1-8 8H7l-3.5 2.5L4.6 18A8 8 0 1 1 20.5 12Z"/></svg>',
   meg:'<svg viewBox="0 0 24 24"><circle cx="12" cy="8.2" r="3.7"/><path d="M4.8 20a7.2 7.2 0 0 1 14.4 0"/></svg>',
-  ned:'<svg viewBox="0 0 24 24"><path d="m6 9.5 6 6 6-6"/></svg>',
+  ned:'<svg class="kryss" viewBox="0 0 24 24"><path d="m6 9.5 6 6 6-6"/></svg>',
   hoyre:'<svg viewBox="0 0 24 24"><path d="m9.5 6 6 6-6 6"/></svg>',
   venstre:'<svg viewBox="0 0 24 24"><path d="m14.5 6-6 6 6 6"/></svg>',
   nav:'<svg viewBox="0 0 24 24"><path d="M3.5 11.3 20.5 4l-7.3 16.5-2-7.2-7.7-2Z"/></svg>',
@@ -406,9 +472,8 @@ const I = {
   bilde:'<svg viewBox="0 0 24 24"><rect x="3.5" y="5.5" width="17" height="13.5" rx="2.5"/><circle cx="12" cy="12.2" r="3.2"/><path d="M8.3 5.5 9.4 3.2h5.2l1.1 2.3"/></svg>'
 };
 
-/* ═══ data: ekte tall fra turen, som går opp ═══
-   28 deltakere, 8 dager, program for torsdag 18. september. */
-const TUR = { navn:"Brussel, Paris og Normandie", klasse:"Tryggheim VG2", dag:2, dager:8 };
+/* ═══ data ═══ */
+const TUR = { navn:"Brussel, Paris og Normandie", klasse:"Tryggheim VG2", dager:8 };
 
 const DAGER = [
   { kort:"ons", num:"17.", navn:"Onsdag 17. september", punkter:[
@@ -420,7 +485,7 @@ const DAGER = [
   { kort:"tor", num:"18.", navn:"Torsdag 18. september", idag:true, punkter:[
     { t:"08:00", h:"Frokost på hotellet", kort:"Frokost", s:"", ferdig:true },
     { t:"09:30", h:"Avreise med buss", kort:"Buss", s:"Sete 14B", ferdig:true },
-    { t:"12:30", h:"Lunsj ved Atomium", kort:"Lunsj", s:"Square de l'Atomium · 14°", naa:true },
+    { t:"12:30", h:"Lunsj ved Atomium", kort:"Lunsj", s:"Square de l'Atomium", naa:true },
     { t:"14:00", h:"Omvisning i EU-parlamentet", kort:"EU", s:"Ta med legitimasjon" },
     { t:"17:30", h:"Fri tid i sentrum", kort:"Fri tid", s:"Møt ved bussen 19:15" },
     { t:"20:00", h:"Middag på hotellet", kort:"Middag", s:"" }
@@ -440,21 +505,7 @@ const DAGER = [
   { kort:"søn", num:"21.", navn:"Søndag 21. september", punkter:[] },
   { kort:"man", num:"22.", navn:"Mandag 22. september", punkter:[] }
 ];
-
 const IDAG = DAGER.findIndex(d => d.idag);
-
-/* Tilstand som endrer seg når du trykker. Ikke ekte data, men nok til at
-   knappene gjør noe — et utkast der ingenting virker svarer bare på
-   hvordan det ser ut, ikke på hvordan det er å bruke. */
-const S = {
-  dag: IDAG,
-  kryss: new Set(["Pass","Helsetrygdkort","Regnjakke","Lader og powerbank"]),
-  sete: "14B",
-  ventende: true,
-  antall: 28
-};
-
-const PROGRAM = () => DAGER[IDAG].punkter;
 
 const PAKKELISTE = [
   ["Må ha", ["Pass","Helsetrygdkort","Reiseforsikring"]],
@@ -462,7 +513,6 @@ const PAKKELISTE = [
   ["Annet", ["Lader og powerbank","Reiseadapter"]]
 ];
 
-/* Setene i bussen. Tomt navn er ledig; ditt eget sete kommer fra S.sete. */
 const SETER = [
   ["13A","Ada"],["13B","Noah"],["13C",""],["13D",""], null,
   ["14A","Mia"],["14B",""],["14C","Leo"],["14D",""], null,
@@ -470,15 +520,23 @@ const SETER = [
   ["16A",""],["16B",""],["16C",""],["16D",""]
 ];
 
+const S = {
+  dag: IDAG, kryss: new Set(["Pass","Helsetrygdkort","Regnjakke","Lader og powerbank"]),
+  sete: "14B", nyttSete: null, ventende: true, antall: 28, menyAapen: false, gardinLukker: false
+};
+
 const esc = s => String(s??"").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const PROGRAM = () => DAGER[IDAG].punkter;
+const ANTALL_PAKK = PAKKELISTE.flatMap(b => b[1]).length;
 
 /* ═══ deler ═══ */
 const topp = () => `
   <header class="topp">
-    <button class="turknapp" data-gaa="meny" aria-haspopup="dialog">
-      <span class="nv">${esc(TUR.navn)}</span>${I.ned}
+    <button class="turknapp" data-gaa="meny" aria-haspopup="dialog" aria-expanded="${S.menyAapen}">
+      ${MERKE()}<span class="nv">${esc(TUR.navn)}</span>${I.ned}
     </button>
-    <button class="meg-knapp" data-gaa="meg" aria-label="Din profil"><span class="sirkel">JR</span><span class="prikk"></span></button>
+    <button class="meg-knapp" data-gaa="meg" aria-label="Din profil">
+      <span class="sirkel">JR</span><span class="prikk"></span></button>
   </header>`;
 
 const faner = (aktiv) => {
@@ -489,35 +547,38 @@ const faner = (aktiv) => {
     </button>`).join("")}</nav>`;
 };
 
-/* Dagstripa — TourFlows eget element. En avgangstavle for dagen. */
-const stripe = () => `
+const stripe = () => {
+  const p = PROGRAM();
+  const naaIdx = p.findIndex(x => x.naa);
+  const andel = p.length > 1 ? (naaIdx / (p.length - 1)) * 100 : 0;
+  return `
   <div class="stripe" aria-label="Dagen i oversikt">
     <div class="akse"></div>
+    <div class="gaatt" style="right:0;transform:scaleX(${(andel/100).toFixed(3)})"></div>
     <div class="punkter">
-      ${PROGRAM().map(p => `
-        <div class="pk ${p.ferdig?"ferdig":""} ${p.naa?"aktiv":""}">
-          <span class="kl">${p.t}</span>
-          <span class="mk"></span>
-          <span class="nvn">${esc(p.kort)}</span>
+      ${p.map(x => `
+        <div class="pk ${x.ferdig?"ferdig":""} ${x.naa?"aktiv":""}">
+          <span class="kl">${x.t}</span><span class="mk"></span><span class="nvn">${esc(x.kort)}</span>
         </div>`).join("")}
     </div>
   </div>`;
+};
 
 /* ═══ skjermer ═══ */
 const SKJERM = {
 
 hjem: () => `${topp()}
-  <div class="rull"><div class="inn">
-    <h1 class="hilsen">Torsdag i Brussel</h1>
-    <p class="underlinje">Dag ${TUR.dag} av ${TUR.dager} · 14°, lett regn · bussen går 09:30</p>
+  <div class="rull"><div class="inn skjerm-anim">
+    <h1 class="tittel">Torsdag i Brussel</h1>
+    <p class="underlinje">Dag 2 av ${TUR.dager} · 14°, lett regn · bussen går 09:30</p>
     ${stripe()}
-    <section class="naa">
-      <div class="merk">Nå snart</div>
+    <section class="naakort">
+      <div class="merk"><i></i>Nå snart</div>
       <div class="kl">12:30</div>
       <div class="hva">Lunsj ved Atomium</div>
       <div class="hvor">Square de l'Atomium, Brussel</div>
       <div class="knapper">
-        <button class="btn primar">${I.nav} Veibeskrivelse</button>
+        <button class="btn primar" data-apne="Veibeskrivelse åpnes i kartappen">${I.nav} Veibeskrivelse</button>
         <button class="btn" data-gaa="program">Hele dagen</button>
       </div>
     </section>
@@ -527,7 +588,7 @@ hjem: () => `${topp()}
       <button class="rute" data-gaa="sitteplasser">
         <span class="nv">Sitteplasser</span><span class="vr">Sete <b>${esc(S.sete)}</b></span></button>
       <button class="rute" data-gaa="pakkeliste">
-        <span class="nv">Pakkeliste</span><span class="vr"><b>${S.kryss.size}</b> av ${PAKKELISTE.flatMap(b => b[1]).length}</span></button>
+        <span class="nv">Pakkeliste</span><span class="vr"><b>${S.kryss.size}</b> av ${ANTALL_PAKK}</span></button>
       <button class="rute" data-gaa="filer">
         <span class="nv">Filer</span><span class="vr"><b>7</b> stk.</span></button>
       <button class="rute" data-gaa="deltakere">
@@ -538,7 +599,7 @@ hjem: () => `${topp()}
     <div class="bolk"><h3>Senere i dag</h3>
       <button class="lenke" data-gaa="program">Hele programmet</button></div>
     ${PROGRAM().filter(p => !p.ferdig && !p.naa).map(p => `
-      <button class="post"><span class="t">${p.t}</span>
+      <button class="post" data-apne="${esc(p.h)}"><span class="t">${p.t}</span>
         <span><span class="h">${esc(p.h)}</span>${p.s?`<span class="s">${esc(p.s)}</span>`:""}</span>
         <span class="pil">${I.hoyre}</span></button>`).join("")}
     <div class="luft"></div>
@@ -546,15 +607,16 @@ hjem: () => `${topp()}
   ${faner("hjem")}`,
 
 program: () => `${topp()}
-  <div class="inn"><h2 class="sidetittel">Program</h2></div>
+  <div class="inn"><h1 class="tittel" style="font-size:22px">Program</h1></div>
   <div class="dager" role="tablist" aria-label="Velg dag">
     ${DAGER.map((d,i) => `
       <button class="dag" role="tab" data-dag="${i}" aria-selected="${i===S.dag}">
-        <span class="d">${d.kort}</span><span class="n">${d.num}</span></button>`).join("")}
+        <span class="d">${d.kort}</span><span class="n">${d.num}</span>
+        ${d.idag?'<span class="idag"></span>':""}</button>`).join("")}
   </div>
-  <div class="rull"><div class="inn">
-    <div class="bolk"><h3>${esc(DAGER[S.dag].navn)}</h3>
-      ${DAGER[S.dag].idag?'<span style="font-size:13.5px;color:var(--ink-2)">i dag</span>':""}</div>
+  <div class="rull"><div class="inn skjerm-anim">
+    <div class="bolk" style="margin-top:14px"><h3>${esc(DAGER[S.dag].navn)}</h3>
+      ${DAGER[S.dag].idag?'<span style="font-size:13.5px;color:var(--merke-blekk);font-weight:500">i dag</span>':""}</div>
     ${DAGER[S.dag].punkter.length
       ? DAGER[S.dag].punkter.map(p => `
         <button class="post ${p.ferdig?"ferdig":""}" data-apne="${esc(p.h)}"><span class="t">${p.t}</span>
@@ -566,8 +628,8 @@ program: () => `${topp()}
   ${faner("program")}`,
 
 chat: () => `${topp()}
-  <div class="inn"><h2 class="sidetittel">Chat</h2></div>
-  <div class="rull"><div class="inn">
+  <div class="inn"><h1 class="tittel" style="font-size:22px">Chat</h1></div>
+  <div class="rull"><div class="inn skjerm-anim">
     ${[
       ["Brussel, Paris og Normandie","Marit: Husk å møte 09:15 i lobbyen","12:04",3],
       ["Rom 204","Leo: noen som har lader?","11:41",0],
@@ -576,8 +638,9 @@ chat: () => `${topp()}
     ].map(([n,s,t,u]) => `
       <button class="rad" data-gaa="samtale">
         <span class="grow"><span class="nv">${esc(n)}</span><span class="s">${esc(s)}</span></span>
-        <span style="text-align:right"><span class="s">${t}</span>
-        ${u?`<br><span class="merkelapp" style="background:var(--fare);color:#fff;margin:4px 0 0">${u}</span>`:""}</span>
+        <span style="text-align:right;flex:none">
+          <span class="s" style="margin:0">${t}</span>
+          ${u?`<br><span class="merkelapp" style="background:var(--merke);color:#fff;margin:3px 0 0">${u}</span>`:""}</span>
       </button>`).join("")}
     <div class="luft"></div>
   </div></div>
@@ -586,12 +649,11 @@ chat: () => `${topp()}
 samtale: () => `
   <header class="topp">
     <button class="meg-knapp" data-gaa="chat" aria-label="Tilbake til chattene">${I.venstre}</button>
-    <button class="turknapp" data-gaa="chatside" style="flex:1">
-      <span class="nv">Brussel, Paris og Normandie</span>${I.hoyre}
-    </button>
+    <button class="turknapp" data-gaa="chatside">
+      <span class="nv">Brussel, Paris og Normandie</span>${I.hoyre}</button>
   </header>
   <div class="rull" style="display:flex;flex-direction:column">
-    <div class="meldinger">
+    <div class="meldinger skjerm-anim">
       <div class="melding"><span class="hvem">Marit Aasen · reiseleder</span>
         <div class="boble">Husk å møte 09:15 i lobbyen. Bussen går presis 09:30.</div>
         <span class="stempel">09:02</span></div>
@@ -612,21 +674,21 @@ samtale: () => `
   </form>`,
 
 sitteplasser: () => `${topp()}
-  <div class="rull"><div class="inn">
-    <h2 class="sidetittel">Sitteplasser</h2>
-    <p class="underlinje">Buss · Oslo–Brussel · du har <b style="color:var(--ink)">${esc(S.sete)}</b></p>
+  <div class="rull"><div class="inn skjerm-anim">
+    <h1 class="tittel" style="font-size:22px">Sitteplasser</h1>
+    <p class="underlinje">Buss · Oslo–Brussel · du har <b style="color:var(--blekk)">${esc(S.sete)}</b></p>
     <div class="bolk"><h3>Rad 13–16</h3>
-      <span style="font-size:13.5px;color:var(--ink-2)">${
+      <span style="font-size:13.5px;color:var(--blekk-2)">${
         SETER.filter(s => s && !s[1] && s[0] !== S.sete).length} ledige</span></div>
     <div class="setekart">
       ${SETER.map(s => {
-        if (!s) return '<div class="gang"></div>';
+        if (!s) return '<div class="gang"><span>gang</span></div>';
         const [n,hvem] = s;
         const mitt = n === S.sete;
         const opptatt = Boolean(hvem) && !mitt;
-        return `<button class="sete ${mitt?"min":(opptatt?"tatt":"")}"
-          data-sete="${n}" data-opptatt="${opptatt?1:0}"
-          aria-pressed="${mitt}" aria-label="Sete ${n}${opptatt?", tatt av "+hvem:(mitt?", ditt":", ledig")}">
+        return `<button class="sete ${mitt?"min":(opptatt?"tatt":"")} ${mitt&&S.nyttSete===n?"nytt":""}"
+          data-sete="${n}" data-opptatt="${opptatt?1:0}" aria-pressed="${mitt}"
+          aria-label="Sete ${n}${opptatt?", tatt av "+hvem:(mitt?", ditt":", ledig")}">
           <span class="n">${n}</span>
           ${mitt?'<span class="hvem">Deg</span>':(hvem?`<span class="hvem">${esc(hvem)}</span>`:"")}</button>`;
       }).join("")}
@@ -636,87 +698,94 @@ sitteplasser: () => `${topp()}
   ${faner("hjem")}`,
 
 pakkeliste: () => `${topp()}
-  <div class="rull"><div class="inn">
-    <h2 class="sidetittel">Pakkeliste</h2>
-    <p class="underlinje">${S.kryss.size} av ${PAKKELISTE.flatMap(b => b[1]).length} krysset av · bare du ser dine kryss</p>
+  <div class="rull"><div class="inn skjerm-anim">
+    <h1 class="tittel" style="font-size:22px">Pakkeliste</h1>
+    <p class="underlinje">${S.kryss.size} av ${ANTALL_PAKK} krysset av · bare du ser dine kryss</p>
     ${PAKKELISTE.map(([b,rader]) => `
       <div class="bolk"><h3>${b}</h3></div>
       ${rader.map(n => { const av = S.kryss.has(n); return `
         <button class="rad ${av?"av":""}" data-kryss="${esc(n)}" aria-pressed="${av}">
-          <span class="hake">${av?I.hake:""}</span><span class="grow"><span class="nv">${esc(n)}</span></span>
+          <span class="hake">${I.hake}</span><span class="grow"><span class="nv">${esc(n)}</span></span>
         </button>`; }).join("")}`).join("")}
     <div class="luft"></div>
   </div></div>
   ${faner("hjem")}`,
 
 filer: () => `${topp()}
-  <div class="rull"><div class="inn">
-    <h2 class="sidetittel">Filer</h2>
+  <div class="rull"><div class="inn skjerm-anim">
+    <h1 class="tittel" style="font-size:22px">Filer</h1>
     <p class="underlinje">Alt som er lagt ut på turen, samlet</p>
     <div class="bolk"><h3>Fra reiselederne</h3></div>
     ${[["PDF","Program Brussel–Paris.pdf","Marit · 12. sep"],
        ["DOC","Pakkeliste og regler.docx","Marit · 12. sep"],
        ["PDF","Bussbilletter.pdf","Jonas · 16. sep"],
        ["PNG","Romfordeling.png","Marit · i går"]].map(([t,n,s]) => `
-      <button class="rad"><span class="filtype">${t}</span>
+      <button class="rad" data-apne="${esc(n)}"><span class="filtype">${t}</span>
         <span class="grow"><span class="nv">${esc(n)}</span><span class="s">${esc(s)}</span></span>
-        <span class="pil" style="color:var(--ink-3)">${I.hoyre}</span></button>`).join("")}
+        <span class="pil" style="color:var(--blekk-3)">${I.hoyre}</span></button>`).join("")}
     <div class="bolk"><h3>Delt i chatten</h3></div>
     ${[["PNG","Kart over Montmartre.png","Ada · i går"],
        ["PDF","Billetter Disneyland.pdf","Marit · 14. sep"],
        ["XLS","Kontaktliste foresatte.xlsx","Bare reiseledere"]].map(([t,n,s]) => `
-      <button class="rad"><span class="filtype">${t}</span>
+      <button class="rad" data-apne="${esc(n)}"><span class="filtype">${t}</span>
         <span class="grow"><span class="nv">${esc(n)}</span><span class="s">${esc(s)}</span></span>
-        <span class="pil" style="color:var(--ink-3)">${I.hoyre}</span></button>`).join("")}
+        <span class="pil" style="color:var(--blekk-3)">${I.hoyre}</span></button>`).join("")}
     <div class="luft"></div>
   </div></div>
   ${faner("hjem")}`,
 
 deltakere: () => `${topp()}
-  <div class="rull"><div class="inn">
-    <h2 class="sidetittel">Deltakere</h2>
+  <div class="rull"><div class="inn skjerm-anim">
+    <h1 class="tittel" style="font-size:22px">Deltakere</h1>
     <p class="underlinje">${S.antall} med på turen${S.ventende?" · 1 venter på svar":""}</p>
     ${S.ventende ? `
       <div class="bolk"><h3>Venter på godkjenning</h3></div>
-      <div class="rad" style="align-items:center">
-        <span class="init">EN</span>
-        <span class="grow"><span class="nv">Emma Nygård</span><span class="s">ba om å bli med i går</span></span>
-      </div>
-      <div style="display:flex;gap:9px;padding:0 0 14px">
-        <button class="btn" data-svar="nei">Avslå</button>
-        <button class="btn primar" data-svar="ja">Slipp inn</button>
+      <div id="ventende">
+        <div class="rad" style="align-items:center;border-bottom:0">
+          <span class="init">EN</span>
+          <span class="grow"><span class="nv">Emma Nygård</span><span class="s">ba om å bli med i går</span></span>
+        </div>
+        <div style="display:flex;gap:9px;padding:0 0 10px">
+          <button class="btn" data-svar="nei">Avslå</button>
+          <button class="btn primar" data-svar="ja">Slipp inn</button>
+        </div>
       </div>` : ""}
     <div class="bolk"><h3>Reiseledere</h3></div>
     ${[["MA","Marit Aasen"],["PK","Per Kvamme"]].map(([i,n]) => `
-      <button class="rad"><span class="init">${i}</span>
+      <button class="rad" data-apne="${esc(n)}"><span class="init">${i}</span>
         <span class="grow"><span class="nv">${esc(n)}</span></span>
-        <span class="pil" style="color:var(--ink-3)">${I.hoyre}</span></button>`).join("")}
+        <span class="pil" style="color:var(--blekk-3)">${I.hoyre}</span></button>`).join("")}
     <div class="bolk"><h3>Elever</h3></div>
-    ${[["AF","Ada Fjell",""],["JR","Jonas Robstad","deg"],["LS","Leo Sand",""],["MB","Mia Berge",""],["NH","Noah Hole",""],["SR","Sara Rime",""]].map(([i,n,s]) => `
-      <button class="rad"><span class="init">${i}</span>
+    ${[["AF","Ada Fjell",""],["JR","Jonas Robstad","deg"],["LS","Leo Sand",""],
+       ["MB","Mia Berge",""],["NH","Noah Hole",""],["SR","Sara Rime",""]].map(([i,n,s]) => `
+      <button class="rad" data-apne="${esc(n)}"><span class="init">${i}</span>
         <span class="grow"><span class="nv">${esc(n)}</span>${s?`<span class="s">${s}</span>`:""}</span>
-        <span class="pil" style="color:var(--ink-3)">${I.hoyre}</span></button>`).join("")}
+        <span class="pil" style="color:var(--blekk-3)">${I.hoyre}</span></button>`).join("")}
     <div class="luft"></div>
   </div></div>
   ${faner("hjem")}`,
 
 meg: () => `${topp()}
-  <div class="rull"><div class="inn">
-    <h2 class="sidetittel">Jonas Robstad</h2>
+  <div class="rull"><div class="inn skjerm-anim">
+    <h1 class="tittel" style="font-size:22px">Jonas Robstad</h1>
     <p class="underlinje">Deltaker · jonas@eksempel.no</p>
     <div class="bolk"><h3>Varsler</h3></div>
-    <button class="rad"><span class="grow"><span class="nv">Varsler er ikke slått på</span>
+    <button class="rad" data-apne="Varsler slås på"><span class="grow">
+      <span class="nv">Varsler er ikke slått på</span>
       <span class="s">Du går glipp av beskjeder fra reiselederne</span></span>
       <span class="merkelapp">Slå på</span></button>
-    <button class="rad"><span class="grow"><span class="nv">Hva du varsles om</span>
-      <span class="s">Alt i hele turen</span></span><span class="pil">${I.hoyre}</span></button>
-    <div class="bolk"><h3>Appen</h3></div>
-    <button class="rad"><span class="grow"><span class="nv">Kart</span>
-      <span class="s">Google Maps · til fots</span></span><span class="pil">${I.hoyre}</span></button>
-    <button class="rad"><span class="grow"><span class="nv">Konto</span>
-      <span class="s">Innlogget med e-post</span></span><span class="pil">${I.hoyre}</span></button>
-    <button class="rad"><span class="grow"><span class="nv">Om appen og personvern</span></span>
+    <button class="rad" data-apne="Hva du varsles om"><span class="grow">
+      <span class="nv">Hva du varsles om</span><span class="s">Alt i hele turen</span></span>
       <span class="pil">${I.hoyre}</span></button>
+    <div class="bolk"><h3>Appen</h3></div>
+    <button class="rad" data-apne="Kart"><span class="grow">
+      <span class="nv">Kart</span><span class="s">Google Maps · til fots</span></span>
+      <span class="pil">${I.hoyre}</span></button>
+    <button class="rad" data-apne="Konto"><span class="grow">
+      <span class="nv">Konto</span><span class="s">Innlogget med e-post</span></span>
+      <span class="pil">${I.hoyre}</span></button>
+    <button class="rad" data-apne="Om TripMate"><span class="grow">
+      <span class="nv">Om TripMate og personvern</span></span><span class="pil">${I.hoyre}</span></button>
     <div class="luft"></div>
   </div></div>
   ${faner("meg")}`,
@@ -726,14 +795,15 @@ chatside: () => `
     <button class="meg-knapp" data-gaa="samtale" aria-label="Tilbake til samtalen">${I.venstre}</button>
     <span class="turknapp"><span class="nv">Om chatten</span></span>
   </header>
-  <div class="rull"><div class="inn">
-    <h2 class="sidetittel">Brussel, Paris og Normandie</h2>
+  <div class="rull"><div class="inn skjerm-anim">
+    <h1 class="tittel" style="font-size:22px">Brussel, Paris og Normandie</h1>
     <p class="underlinje">Åpen for hele turen · 28 med</p>
     <div class="bolk"><h3>Innstillinger</h3></div>
-    <button class="rad"><span class="grow"><span class="nv">Varsler</span>
-      <span class="s">Alt</span></span><span class="pil">${I.hoyre}</span></button>
-    <button class="rad"><span class="grow"><span class="nv">Endre navn</span>
-      <span class="s">Bare reiseledere</span></span><span class="pil">${I.hoyre}</span></button>
+    <button class="rad" data-apne="Varsler for chatten"><span class="grow">
+      <span class="nv">Varsler</span><span class="s">Alt</span></span><span class="pil">${I.hoyre}</span></button>
+    <button class="rad" data-apne="Endre navn"><span class="grow">
+      <span class="nv">Endre navn</span><span class="s">Bare reiseledere</span></span>
+      <span class="pil">${I.hoyre}</span></button>
     <div class="bolk"><h3>Deltakere</h3>
       <button class="lenke" data-gaa="deltakere">Se alle 28</button></div>
     ${[["MA","Marit Aasen","reiseleder"],["AF","Ada Fjell",""],["JR","Jonas Robstad","deg"]].map(([i,n,s]) => `
@@ -743,13 +813,12 @@ chatside: () => `
   </div></div>`
 };
 
-/* ═══ rullegardinen ═══ */
 const MENY = () => [
   ["hjem","I dag","",I.hjem],
   ["program","Program","",I.program],
   ["chat","Chat","",I.chat,3],
   ["filer","Filer","7 stk.",I.fil],
-  ["pakkeliste","Pakkeliste",`${S.kryss.size} av ${PAKKELISTE.flatMap(b=>b[1]).length}`,I.sekk],
+  ["pakkeliste","Pakkeliste",`${S.kryss.size} av ${ANTALL_PAKK}`,I.sekk],
   ["sitteplasser","Sitteplasser","Sete "+S.sete,I.sete],
   ["deltakere","Deltakere",S.antall+" med",I.folk,S.ventende?1:0],
   null,
@@ -757,12 +826,12 @@ const MENY = () => [
   ["bytt","Bytt tur","",I.bytt]
 ];
 
-function gardin(bak) {
-  return `${bak}
+function gardinHtml() {
+  return `
     <button class="slor" data-gaa="lukk" aria-label="Lukk menyen"></button>
     <div class="gardin" role="dialog" aria-label="Meny">
-      <div class="tit">${esc(TUR.navn)}</div>
-      <div class="sub">${esc(TUR.klasse)} · 17.–24. september</div>
+      <div class="hode">${MERKE()}<span class="tit">TripMate</span></div>
+      <div class="sub">${esc(TUR.navn)} · ${esc(TUR.klasse)}</div>
       ${MENY().map(m => {
         if (!m) return '<div class="mskille"></div>';
         const [id,navn,verdi,ikon,tall] = m;
@@ -774,167 +843,188 @@ function gardin(bak) {
 }
 
 /* ═══ motor ═══ */
-let naavaerende = "hjem";
+let naavaerende = "hjem", forrige = "hjem";
 const tlf = document.getElementById("telefon");
 const notat = document.getElementById("notat");
 
 const NOTATER = {
-  hjem:"<b>Hjem.</b> Hilsenen er h1 i serif, og dagstripa under er det ene elementet bare TourFlow har.",
-  program:"<b>Program.</b> Dagene ruller sidelengs i sin egen rad — aldri hele siden.",
+  hjem:"<b>I dag.</b> Logoens oransje prikk er «nå» i dagstripa — merket og tidspunktet er samme ting.",
+  program:"<b>Program.</b> Dagen med prikk under er i dag. Tomme dager står tomme, ikke skjult.",
   chat:"<b>Chat.</b> Navnet står i blekk, ikke grått: identitet skal aldri bleknes bort.",
-  samtale:"<b>Samtale.</b> Skrivefeltet er 44 px høyt og 16 px tekst, så iPhone ikke zoomer.",
-  sitteplasser:"<b>Sitteplasser.</b> Ditt sete er den eneste fylte fargen på skjermen.",
-  pakkeliste:"<b>Pakkeliste.</b> Avkrysset blir grått og strøket, ikke borte.",
+  samtale:"<b>Samtale.</b> Dine egne meldinger bruker den bleke merketonen, ikke full oransje.",
+  sitteplasser:"<b>Sitteplasser.</b> Ditt sete er det eneste med full merkefarge på skjermen.",
+  pakkeliste:"<b>Pakkeliste.</b> Haken tegnes, den dukker ikke opp ferdig.",
   filer:"<b>Filer.</b> Filtypen står som tekst, ikke som et farget ikon i en boks.",
-  deltakere:"<b>Deltakere.</b> Den som venter på svar står øverst, med handlingen i raden.",
-  meg:"<b>Meg.</b> Fire rader. Det som haster — varsler av — står først og er gult, ikke rødt.",
-  meny:"<b>Rullegardinen.</b> Alt på ett sted, med tallene med. Trykk utenfor for å lukke.",
+  deltakere:"<b>Deltakere.</b> Den som venter står øverst. Svarer du, glir raden ut.",
+  meg:"<b>Meg.</b> Det som haster står først, med merkelappen i merketonen.",
+  meny:"<b>Rullegardinen.</b> Faller ned med skuffkurven, 260 ms. Trykk utenfor for å lukke.",
   chatside:"<b>Om chatten.</b> Du kom hit ved å trykke på navnet øverst i samtalen."
 };
 
-/* ═══ glass ═══
-   I den ekte appen slås dette på av seg selv: iPhone, lagt til på
-   hjemskjermen, og en nettleser som kan uskarphet. Her kan det også
-   slås på for hånd, så det går an å se uten å installere noe. */
-const ERIPHONE = /iPhone|iPad|iPod/.test(navigator.userAgent);
-const PAAHJEMSKJERM = window.navigator.standalone === true
-  || matchMedia("(display-mode: standalone)").matches;
-const KANUSKARPHET = CSS.supports("backdrop-filter","blur(1px)")
-  || CSS.supports("-webkit-backdrop-filter","blur(1px)");
-
-/* Måler de ekte stripene og gir innholdet nøyaktig den plassen de tar.
-   Høyden avhenger av safe-area, skriftstørrelse og nettleser, så den
-   skal leses av skjermen — ikke regnes ut på forhånd. */
 function maalOppStripene() {
-  const topp = tlf.querySelector(".topp");
-  const faner = tlf.querySelector(".faner");
+  const topp = tlf.querySelector(".topp"), faner = tlf.querySelector(".faner");
   const paa = document.documentElement.classList.contains("glass");
-
-  // Null ut først, så gamle verdier ikke blir hengende igjen.
   tlf.querySelectorAll(".rull, .inn, .dager, .meldinger").forEach(el => {
-    el.style.paddingTop = "";
-    el.style.paddingBottom = "";
+    el.style.paddingTop = ""; el.style.paddingBottom = "";
   });
   if (!paa || !topp) return;
-
   const etter = topp.nextElementSibling;
   if (etter) etter.style.paddingTop = topp.offsetHeight + "px";
-
   if (faner) {
     const rull = tlf.querySelector(".rull");
-    // Kapselen svever, så innholdet trenger plass til både den og lufta
-    // under den — ellers skjuler den siste rad i lista.
     const under = tlf.getBoundingClientRect().bottom - faner.getBoundingClientRect().bottom;
     if (rull) rull.style.paddingBottom = Math.round(faner.offsetHeight + under * 2) + "px";
   }
 }
 
-function settGlass(paa) {
-  document.documentElement.classList.toggle("glass", Boolean(paa) && KANUSKARPHET);
-  const m = document.querySelector('meta[name="theme-color"]');
-  if (m) m.setAttribute("content", "#FFFFFF");
-}
+const ERIPHONE = /iPhone|iPad|iPod/.test(navigator.userAgent);
+const PAAHJEMSKJERM = window.navigator.standalone === true || matchMedia("(display-mode: standalone)").matches;
+const KANUSKARPHET = CSS.supports("backdrop-filter","blur(1px)") || CSS.supports("-webkit-backdrop-filter","blur(1px)");
+function settGlass(paa){ document.documentElement.classList.toggle("glass", Boolean(paa) && KANUSKARPHET); }
 settGlass(ERIPHONE && PAAHJEMSKJERM);
 
-function tegn() {
-  const vis = naavaerende === "meny" ? "hjem" : naavaerende;
-  const html = (SKJERM[vis] || SKJERM.hjem)();
-  tlf.innerHTML = naavaerende === "meny" ? gardin(html) : html;
+function tegn(behold) {
+  const vis = naavaerende === "meny" ? forrige : naavaerende;
+  tlf.innerHTML = (SKJERM[vis] || SKJERM.hjem)();
+  if (S.menyAapen || S.gardinLukker) {
+    tlf.insertAdjacentHTML("beforeend", gardinHtml());
+    const g = tlf.querySelector(".gardin"), s = tlf.querySelector(".slor");
+    if (S.gardinLukker) {
+      // Den lukker: tegn den åpen med én gang, så den har noe å gli fra.
+      if (g) g.classList.add("vis");
+      if (s) s.classList.add("vis");
+    } else {
+      // Den åpner: to bilder, ellers er det ingenting å gli fra.
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        if (g) g.classList.add("vis");
+        if (s) s.classList.add("vis");
+      }));
+    }
+  }
   maalOppStripene();
   const paa = document.documentElement.classList.contains("glass");
   notat.innerHTML = (NOTATER[naavaerende] || "")
-    + ` <button id="glassbryter" style="margin-left:6px;border:1px solid #3A3D44;background:${paa?"#D8DBE0":"transparent"};`
-    + `color:${paa?"#15161A":"#8E9199"};border-radius:999px;padding:2px 9px;font-size:11px;cursor:pointer">`
+    + ` <button id="glassbryter" style="margin-left:6px;border:1px solid #2A4751;background:${paa?"#D7E3E7":"transparent"};`
+    + `color:${paa?"#0B2029":"#7D959E"};border-radius:999px;padding:2px 9px;font-size:11px;cursor:pointer">`
     + `Glass ${paa?"på":"av"}</button>`;
   const r = tlf.querySelector(".rull");
-  if (r) r.scrollTop = 0;
+  if (r && behold !== undefined) r.scrollTop = behold;
+  S.nyttSete = null;
 }
 
-/* Snur telefonen eller tastaturet kommer opp, endrer stripene høyde. */
-addEventListener("resize", maalOppStripene);
-addEventListener("orientationchange", () => setTimeout(maalOppStripene, 200));
-
-notat.addEventListener("click", e => {
-  if (e.target.id !== "glassbryter") return;
-  if (!KANUSKARPHET) return;
-  settGlass(!document.documentElement.classList.contains("glass"));
-  tegn();
-});
-
-let forrige = "hjem";
-
-/* En kort beskjed nederst, for det som ville åpnet noe vi ikke har tegnet. */
 let beskjedtimer = null;
 function si(tekst) {
-  let b = document.getElementById("beskjed");
-  if (!b) {
-    b = document.createElement("div");
-    b.id = "beskjed";
-    b.setAttribute("role", "status");
-    b.style.cssText = "position:absolute;left:50%;bottom:78px;transform:translateX(-50%);z-index:12;"
-      + "background:var(--ink);color:#fff;border-radius:var(--r-kontroll);padding:9px 16px;"
-      + "font-size:13.5px;white-space:nowrap;max-width:88%;overflow:hidden;text-overflow:ellipsis";
-    tlf.appendChild(b);
-  }
+  let b = tlf.querySelector(".beskjed");
+  if (!b) { b = document.createElement("div"); b.className = "beskjed"; b.setAttribute("role","status"); tlf.appendChild(b); }
   b.textContent = tekst;
+  requestAnimationFrame(() => b.classList.add("vis"));
   clearTimeout(beskjedtimer);
-  beskjedtimer = setTimeout(() => b.remove(), 1800);
+  beskjedtimer = setTimeout(() => {
+    b.classList.remove("vis");
+    setTimeout(() => b.remove(), 220);
+  }, 1700);
+}
+
+/* Menyen går ut samme vei som den kom inn. Men navigasjonen venter
+   ikke på den: trykker du «Filer», er Filer der med én gang, og
+   gardinen glir av oppå den nye skjermen. Å vente 240 ms på en
+   animasjon før noe skjer er det motsatte av responsivt. */
+function skyvGardinenUt() {
+  requestAnimationFrame(() => {
+    const g = tlf.querySelector(".gardin"), s = tlf.querySelector(".slor");
+    if (g) g.classList.remove("vis");
+    if (s) s.classList.remove("vis");
+    setTimeout(() => {
+      S.gardinLukker = false;
+      const g2 = tlf.querySelector(".gardin"), s2 = tlf.querySelector(".slor");
+      if (g2) g2.remove();
+      if (s2) s2.remove();
+    }, 280);
+  });
+}
+
+function lukkMeny() {
+  if (!S.menyAapen && !S.gardinLukker) return;
+  S.menyAapen = false;
+  S.gardinLukker = true;
+  naavaerende = forrige;
+  tegn();
+  skyvGardinenUt();
+}
+
+function velgFraMeny(mal) {
+  S.menyAapen = false;
+  S.gardinLukker = true;
+  naavaerende = mal;
+  tegn();                 // den nye skjermen er der nå, ikke om 240 ms
+  skyvGardinenUt();
 }
 
 tlf.addEventListener("click", e => {
   const k = e.target.closest("[data-gaa],[data-dag],[data-kryss],[data-sete],[data-svar],[data-apne]");
   if (!k) {
-    // En rad uten mål skal si fra om hva den ville åpnet, ikke stå død.
     const rad = e.target.closest("button.rad, button.post");
-    if (rad) {
-      const navn = (rad.querySelector(".nv, .h") || {}).textContent;
-      si(navn ? "«" + navn.trim() + "» åpnes her" : "Denne er ikke tegnet ennå");
-    }
+    if (rad) { const n = (rad.querySelector(".nv, .h")||{}).textContent; si(n ? "«"+n.trim()+"» åpnes her" : "Ikke tegnet ennå"); }
     return;
   }
   const d = k.dataset;
 
-  /* ── navigasjon ── */
   if (d.gaa) {
-    if (d.gaa === "lukk")  { naavaerende = forrige; return tegn(); }
-    if (d.gaa === "meny")  { forrige = naavaerende; naavaerende = "meny"; return tegn(); }
-    if (d.gaa === "bytt")  { si("Du har bare én tur akkurat nå."); return; }
-    if (SKJERM[d.gaa]) { naavaerende = d.gaa; tegn(); }
+    if (d.gaa === "lukk") return lukkMeny();
+    if (d.gaa === "meny") {
+      if (S.menyAapen) return lukkMeny();
+      forrige = naavaerende; S.menyAapen = true; naavaerende = "meny"; return tegn();
+    }
+    if (d.gaa === "bytt") { lukkMeny(); return si("Du har bare én tur akkurat nå."); }
+    if (SKJERM[d.gaa]) {
+      if (S.menyAapen) return velgFraMeny(d.gaa);
+      naavaerende = d.gaa; tegn();
+    }
     return;
   }
 
-  /* ── velg dag ── */
   if (d.dag !== undefined) { S.dag = Number(d.dag); return tegn(); }
 
-  /* ── kryss av på pakkelista ── */
   if (d.kryss !== undefined) {
     S.kryss.has(d.kryss) ? S.kryss.delete(d.kryss) : S.kryss.add(d.kryss);
     const r = tlf.querySelector(".rull");
-    const topp = r ? r.scrollTop : 0;            // listen skal ikke hoppe
-    tegn();
-    const r2 = tlf.querySelector(".rull");
-    if (r2) r2.scrollTop = topp;
-    return;
+    return tegn(r ? r.scrollTop : 0);
   }
 
-  /* ── bytt sete ── */
   if (d.sete) {
     if (d.opptatt === "1") return si("Setet er tatt.");
-    S.sete = d.sete;
-    tegn();
+    if (d.sete === S.sete) return;
+    S.sete = d.sete; S.nyttSete = d.sete;
+    const r = tlf.querySelector(".rull");
+    tegn(r ? r.scrollTop : 0);
     return si("Du har sete " + d.sete + " nå.");
   }
 
-  /* ── slipp inn eller avslå ── */
   if (d.svar) {
-    S.ventende = false;
-    if (d.svar === "ja") { S.antall += 1; tegn(); return si("Emma er med på turen."); }
-    tegn();
-    return si("Emma fikk avslag.");
+    const boks = tlf.querySelector("#ventende");
+    const ja = d.svar === "ja";
+    if (boks) {
+      boks.classList.add("gaar-ut");
+      setTimeout(() => {
+        S.ventende = false;
+        if (ja) S.antall += 1;
+        tegn();
+        si(ja ? "Emma er med på turen." : "Emma fikk avslag.");
+      }, 200);
+    }
+    return;
   }
 
-  /* ── noe som ville åpnet en fil eller et ark ── */
   if (d.apne) return si(d.apne);
+});
+
+addEventListener("resize", maalOppStripene);
+addEventListener("orientationchange", () => setTimeout(maalOppStripene, 200));
+
+notat.addEventListener("click", e => {
+  if (e.target.id !== "glassbryter" || !KANUSKARPHET) return;
+  settGlass(!document.documentElement.classList.contains("glass"));
+  tegn();
 });
 
 tegn();
