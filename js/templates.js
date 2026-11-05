@@ -116,6 +116,59 @@ const TEMPLATES = [
       { name:"Gruppe museum", sub:"Onsdag" },
       { name:"Reiseledere", sub:"Kun ledere" }
     ]
+  },
+
+  /* En tur som alt er i gang. De to andre malene starter om to og tre
+     uker, og da viser «I dag» bare en nedtelling — dagstripa og
+     nå-kortet får ingenting å vise. Denne startet i går, så i dag er
+     dag 2 og skjermen er i full drift. Til å prøve appen med. */
+  {
+    key: "test",
+    name: "Testtur — pågår nå",
+    org: "Testklasse",
+    startInDays: -1,
+    lengthLabel: "4 dager, dag 2 i dag",
+    blurb: "Startet i går, så «I dag» har program, dagstripe og neste punkt med én gang. Bruk denne til å prøve appen.",
+
+    places: {
+      hotell:  { name:"Hotel Bedford", addr:"Rue du Midi 135, 1000 Bruxelles, Belgia", kind:"Hotell" },
+      atomium: { name:"Atomium", addr:"Square de l'Atomium 1, 1020 Bruxelles, Belgia", kind:"Attraksjon" },
+      parl:    { name:"Europaparlamentet", addr:"Rue Wiertz 60, 1047 Bruxelles, Belgia", kind:"Museum" },
+      grote:   { name:"Grand-Place", addr:"Grote Markt, 1000 Bruxelles, Belgia", kind:"Attraksjon" },
+      osl:     { name:"Oslo lufthavn, terminal 2", addr:"Edvard Munchs veg, 2061 Gardermoen", kind:"Flyplass" },
+      bru:     { name:"Brussels Airport", addr:"1930 Zaventem, Belgia", kind:"Flyplass" }
+    },
+
+    days: [
+      { offset:0, hotel:"hotell", items:[
+        { t:"05:30", title:"Oppmøte innsjekk", place:"osl" },
+        { t:"08:20", title:"Fly til Brussel", place:"osl" },
+        { t:"11:05", title:"Ankomst og buss til hotellet", place:"bru" },
+        { t:"18:00", title:"Middag og innsjekk", place:"hotell" }
+      ]},
+      { offset:1, hotel:"hotell", items:[
+        { t:"08:00", title:"Frokost på hotellet", place:"hotell" },
+        { t:"09:30", title:"Avreise med buss", place:"hotell" },
+        { t:"12:30", title:"Lunsj ved Atomium", place:"atomium" },
+        { t:"14:00", title:"Omvisning i parlamentet", place:"parl", note:"Ta med legitimasjon" },
+        { t:"17:30", title:"Fri tid i sentrum", place:"grote", note:"Møt ved bussen 19:15" },
+        { t:"20:00", title:"Middag på hotellet", place:"hotell" }
+      ]},
+      { offset:2, hotel:"hotell", items:[
+        { t:"09:00", title:"Grand-Place og sentrum", place:"grote" },
+        { t:"13:00", title:"Fritid i grupper", note:"Minst tre sammen" },
+        { t:"19:30", title:"Felles middag", place:"hotell" }
+      ]},
+      { offset:3, hotel:"hotell", items:[
+        { t:"08:00", title:"Utsjekk", place:"hotell" },
+        { t:"12:40", title:"Fly til Oslo", place:"bru" }
+      ]}
+    ],
+
+    channels: [
+      { name:"Rom 204", sub:"Rommet" },
+      { name:"Reiseledere", sub:"Kun ledere" }
+    ]
   }
 ];
 
