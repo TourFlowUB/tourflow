@@ -1445,20 +1445,107 @@ const UI = (() => {
 
     // Fanerada er i veien når du skriver i en samtale.
     $("tabbar").hidden = Boolean(conv);
+    tegnFaner();
+    maalOey();
+  }
+
+  /* ───────────────── øya ─────────────────
+     Fanelinja flyter over innholdet som en kapsel, slik Apple beskriver
+     fanelinja i iOS 26. Den bygges én gang og oppdateres etterpå:
+     bygde vi den på nytt for hver tegning, fantes det ikke noe for
+     pilla å gli fra — og det er pilla som viser hvor du kom fra og hvor
+     du havnet. */
+  const FANER = [["idag","I dag","hjem"], ["program","Program","cal"],
+                 ["chat","Chat","chat"], ["meg","Meg","me"]];
+
+  function tegnFaner() {
+    const bar = $("tabbar");
+    if (!bar.firstElementChild) {
+      bar.innerHTML = `<span class="pille" aria-hidden="true"></span>` +
+        FANER.map(([id, navn, ikon]) =>
+          `<button role="tab" data-tab="${id}" aria-selected="false">
+             <span class="ikon">${ICON[ikon]}<span class="varsel" hidden></span></span>
+             <span>${navn}</span></button>`).join("");
+      dragbarOey(bar);
+    }
     // Merket på Meg teller både ting reiselederen må ordne og at varsler
     // ikke er slått på — begge deler er noe som venter på deg.
-    const antall = oppgaver().length + (varslerErAv() ? 1 : 0) + (S.ventende ? 1 : 0);
-    const uleste = Api.antallUleste(S.trip.id);
-    const merke = id =>
-      id === "meg" && antall ? `<span class="varsel">${antall}</span>`
-      : id === "chat" && uleste ? `<span class="varsel">${uleste}</span>` : "";
-    $("tabbar").innerHTML = [
-      ["idag","I dag",ICON.hjem], ["program","Program",ICON.cal], ["chat","Chat",ICON.chat], ["meg","Meg",ICON.me]
-    ].map(([id,label,ic]) =>
-      `<button role="tab" aria-selected="${S.tab === id}" data-tab="${id}">
-        <span class="ikon">${ic}${merke(id)}</span>
-        <span>${label}</span></button>`
-    ).join("");
+    const tall = {
+      meg: oppgaver().length + (varslerErAv() ? 1 : 0) + (S.ventende ? 1 : 0),
+      chat: Api.antallUleste(S.trip.id)
+    };
+    visFane(S.tab);
+    FANER.forEach(([id], i) => {
+      const m = bar.children[i + 1].querySelector(".varsel");
+      m.hidden = !tall[id];
+      if (tall[id]) m.textContent = tall[id];
+    });
+  }
+
+  /* Flytter pilla og fargen, og ingenting annet. Brukes både når en fane
+     er valgt og mens fingeren drar langs øya. */
+  function visFane(id) {
+    const bar = $("tabbar");
+    FANER.forEach(([fid], i) => {
+      const valgt = fid === id;
+      bar.children[i + 1].setAttribute("aria-selected", String(valgt));
+      if (valgt) bar.style.setProperty("--oy-i", String(i));
+    });
+  }
+
+  /* Øya ligger over lista, så lista må ha plass til å bli blad helt ned.
+     Høyden måles i stedet for å regnes ut: forsøket med calc() og
+     safe-area traff ikke likt i alle nettlesere. */
+  function maalOey() {
+    const app = $("appScreen"), bar = $("tabbar");
+    const plass = bar.hidden ? 0
+      : Math.max(0, Math.round(app.getBoundingClientRect().bottom - bar.getBoundingClientRect().top) + 8);
+    app.style.setProperty("--oy-plass", plass + "px");
+    app.style.setProperty("--oy-slor", bar.hidden ? "0" : "1");
+  }
+
+  /* Du kan dra langs øya: pilla følger fingeren, og fanen byttes først
+     når du slipper. Samme oppførsel som en segmentkontroll på iOS — og
+     grunnen til at teksten på øya ikke kan markeres. Et langt trykk der
+     er et tak i baren, ikke en markering. */
+  function dragbarOey(bar) {
+    let nede = false, pekt = null;
+    const faneVed = (x, y) => {
+      const r = bar.getBoundingClientRect();
+      // Drar du langt vekk fra baren og slipper, har du ombestemt deg.
+      if (y < r.top - 56 || y > r.bottom + 56) return null;
+      const i = Math.floor(((x - r.left - 6) / (r.width - 12)) * FANER.length);
+      return FANER[Math.min(FANER.length - 1, Math.max(0, i))][0];
+    };
+    const flytt = e => {
+      if (!nede) return;
+      const id = faneVed(e.clientX, e.clientY);
+      if (id === pekt) return;
+      pekt = id;
+      visFane(id || S.tab);
+    };
+    bar.addEventListener("pointerdown", e => {
+      if (!e.target.closest("button")) return;
+      nede = true; pekt = null;
+      try { bar.setPointerCapture(e.pointerId); } catch { /* ikke viktig */ }
+      flytt(e);
+    });
+    bar.addEventListener("pointermove", flytt);
+    const slipp = () => {
+      if (!nede) return;
+      nede = false;
+      if (pekt && pekt !== S.tab) byttFane(pekt);
+      else visFane(S.tab);
+      pekt = null;
+    };
+    bar.addEventListener("pointerup", slipp);
+    bar.addEventListener("pointercancel", slipp);
+  }
+
+  function byttFane(id) {
+    if (S.tab === id && !S.openChat && !S.side) return;
+    S.tab = id; S.openChat = null; S.side = null;
+    render();
   }
 
   /* ───────────────── åpne og lukke en samtale ───────────────── */
@@ -3351,7 +3438,7 @@ const UI = (() => {
     }
 
     if (t.dataset.opentrip) { closeSheet(); S.tab = "program"; return openTrip(t.dataset.opentrip).catch(() => toast("Klarte ikke åpne turen.")); }
-    if (t.dataset.tab) { S.tab = t.dataset.tab; S.openChat = null; S.side = null; return render(); }
+    if (t.dataset.tab) return byttFane(t.dataset.tab);
     // Kommer du fra et ark eller fra programmet, må arket lukkes og
     // fanen byttes — ellers åpnes chatten bak det du står i, og det ser
     // ut som om knappen ikke gjorde noe.
@@ -3648,6 +3735,10 @@ const UI = (() => {
       btn.disabled = false; btn.textContent = "Bli med på turen";
     }
   });
+
+  /* Snur telefonen seg, eller kommer tastaturet opp, flytter øya seg —
+     og da stemmer ikke plassen under lista lenger. */
+  addEventListener("resize", () => { if (S.trip) maalOey(); });
 
   return { boot };
 })();
