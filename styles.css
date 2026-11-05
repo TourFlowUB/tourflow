@@ -78,7 +78,10 @@ button,input,select,textarea{font:inherit;color:inherit}
 .btn.danger{color:var(--danger);border-color:var(--line)}
 .btn.big{width:100%;font-size:16px;padding:14px}
 .btn svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;flex:none}
-.linkbtn{background:none;border:0;padding:0;color:var(--blue);font-weight:600;cursor:pointer;text-decoration:underline;font-size:inherit}
+/* En tekstlenke er rundt 19 px høy, og det er for lite å treffe på.
+   Trykkflaten strekkes med polstring og trekkes inn igjen med like
+   stor negativ marg, så ingenting flytter seg. */
+.linkbtn{background:none;border:0;padding:11px 0;margin:-11px 0;color:var(--blue);font-weight:600;cursor:pointer;text-decoration:underline;font-size:inherit}
 
 /* ---------- join ---------- */
 .join{height:100%;overflow-y:auto;overscroll-behavior:contain;display:grid;place-items:center;padding:28px 20px calc(28px + var(--safe-b));background:var(--ground)}
@@ -112,8 +115,14 @@ button,input,select,textarea{font:inherit;color:inherit}
 .tripname{display:block;font-family:"DM Sans",sans-serif;font-weight:700;font-size:18px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .tripname::after{content:" ▾";color:var(--ink-3);font-weight:500}
 .tripsub{display:block;font-size:12.5px;color:var(--ink-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.avatar{width:38px;height:38px;border-radius:50%;border:0;background:var(--blue-soft);color:var(--blue-ink);
-  display:grid;place-items:center;font-family:"DM Sans",sans-serif;font-weight:600;font-size:14px;flex:none;cursor:pointer}
+/* Apple ber om 44 px å treffe på. Knappen er 44; sirkelen inni er 38,
+   så den ser like stor ut som før. */
+.avatar{width:44px;height:44px;border:0;background:none;padding:0;flex:none;cursor:pointer;
+  display:grid;place-items:center}
+.avatar > span{
+  width:38px;height:38px;border-radius:50%;background:var(--blue-soft);color:var(--blue-ink);
+  display:grid;place-items:center;font-family:"DM Sans",sans-serif;font-weight:600;font-size:14px;
+}
 
 .screen{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;padding:16px;display:flex;flex-direction:column;gap:16px;-webkit-overflow-scrolling:touch}
 .screen>*{min-width:0;flex-shrink:0}
@@ -837,7 +846,10 @@ label.person span{flex:1;min-width:0}
 .oppgave{border-bottom:1px solid var(--line-soft)}
 .oppgave:last-child{border-bottom:0}
 .oppgave .listrow{border-bottom:0;padding-bottom:4px}
-.skjulknapp{font-size:12.5px;padding:2px 0 12px;color:var(--ink-3);text-decoration:none;border-bottom:1px dashed var(--line)}
+/* Streken under skal ligge der den lå; polstringen over og under er
+   bare trykkflate, og trekkes inn igjen med marg. */
+.skjulknapp{font-size:12.5px;padding:13px 0 12px;margin:-11px 0 0;color:var(--ink-3);
+  text-decoration:none;border-bottom:1px dashed var(--line)}
 
 /* «eller»-skille på innloggingsskjermen */
 .skille{display:flex;align-items:center;gap:12px;margin:22px 0;color:var(--ink-3);
