@@ -118,14 +118,24 @@ self.addEventListener("fetch", e => {
   const req = e.request;
   if (req.method !== "GET") return;
 
-  // Selve siden hentes alltid ferskt, utenom nettleserens mellomlager.
-  // Uten cache:"reload" kan en gammel index.html bli liggende i timevis.
+  // Selve siden kom tidligere alltid over nettet, og da ventet alle på
+  // nettet hver eneste gang appen ble åpnet. Nå vises den lagrede med en
+  // gang, og den ferske hentes i bakgrunnen. Ny versjon når likevel
+  // fram: siden spør etter ny sw.js ved hver start og hver gang den
+  // hentes fram igjen, og laster seg selv på nytt når den har tatt over.
   if (req.mode === "navigate") {
-    e.respondWith(
-      fetch(new Request(req.url, { cache: "reload" }))
-        .catch(() => caches.match("index.html", { ignoreSearch: true }))
-        .then(r => r || caches.match("./"))
-    );
+    e.respondWith((async () => {
+      const cache = await caches.open(CACHE);
+      const lagret = await cache.match("index.html", { ignoreSearch: true })
+                  || await cache.match("./");
+      const nett = fetch(new Request(req.url, { cache: "reload" }))
+        .then(res => {
+          if (res && res.ok) cache.put("index.html", res.clone());
+          return res;
+        })
+        .catch(() => null);
+      return lagret || (await nett) || Response.error();
+    })());
     return;
   }
 

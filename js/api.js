@@ -76,7 +76,10 @@ const Api = (() => {
         data = { session: res.data.session };
       }
       userId = data.session.user.id;
-      await lesInnlogging();
+      // Brukeren ligger alt i økta. Før spurte vi serveren om den på
+      // nytt her, og det kallet lå først i køen — alt annet i oppstarten
+      // ventet på et svar vi allerede hadde.
+      await lesInnlogging(data.session.user);
       return { ok: true };
     } catch (e) {
       return { ok: false, reason: "nettverk", error: String(e.message || e) };
@@ -1369,10 +1372,13 @@ const Api = (() => {
 
   const minEpost = () => cache.epost || null;
 
-  async function lesInnlogging() {
+  async function lesInnlogging(kjent) {
     if (!sb) return null;
-    const { data } = await sb.auth.getUser();
-    const u = data && data.user;
+    let u = kjent;
+    if (!u) {
+      const { data } = await sb.auth.getUser();
+      u = data && data.user;
+    }
     // Logger man inn med e-post, blir man en annen bruker enn gjesten man
     // var. Uten dette spør appen fortsatt etter den gamle IDen, finner
     // ingen turer, og sender deg tilbake til skjemaet.
@@ -1511,7 +1517,7 @@ const Api = (() => {
     init, online, fmtDay,
     getProfile, setProfile, getLastTrip, setLastTrip, getLastChannel, setLastChannel,
     myTrips, joinByCode, createTrip, updateTrip, doppChat, flyttTur, antallVentende, glemTur,
-    kartValg, settKartValg, reisemaate, settReisemaate, loadTrip, currentTrip, isLeader, leaveTrip, deleteTrip,
+    kartValg, settKartValg, reisemaate, settReisemaate, loadTrip, lagretTur: loadSnapshot, currentTrip, isLeader, leaveTrip, deleteTrip,
     messages, loadMessages, loadMoreMessages, harEldre, loadRecent, lastByChannel,
     settLest, erUlest, antallUleste,
     subscribeTrip, subscribeChannel, unsubscribeChannel, kobleFra,

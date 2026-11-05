@@ -7,7 +7,7 @@
 
 const UI = (() => {
 
-  const S = { trip: null, tab: "idag", day: null, openChat: null, loadingChat: false, trips: [], edit: false, offline: false, svarTil: null, kart: {}, sisteChat: null, tilBunn: false,
+  const S = { trip: null, tab: "idag", day: null, openChat: null, loadingChat: false, trips: [], turerHentet: false, edit: false, offline: false, svarTil: null, kart: {}, sisteChat: null, tilBunn: false,
     nye: 0, sistAntall: 0, beholdSkroll: null,
     side: null, varselStatus: null, varselEnheter: null, varselTest: null,
     folk: null, folkFeil: false, sisteVisning: null,
@@ -230,7 +230,7 @@ const UI = (() => {
 
     const profile = Api.getProfile(), last = Api.getLastTrip();
     if (profile && last) {
-      try { return await openTrip(last); }
+      try { return await openTrip(last, Api.lagretTur(last)); }
       catch { /* turen finnes ikke lenger */ }
     }
 
@@ -328,16 +328,21 @@ const UI = (() => {
     toast(melding || "Du er ikke med på turen lenger.");
   }
 
-  async function openTrip(tripId) {
-    $("bootMsg").innerHTML = venter("Henter turen");
-
-    let trip;
-    try { trip = await Api.loadTrip(tripId); }
-    catch (e) {
-      // Fjernet fra turen: da skal ikke appen bli stående med en gammel
-      // kopi og se ut som om nettet er nede. Kopien er alt slettet.
-      if (e && e.utmeldt) return utmeldt(e.message);
-      throw e;
+  /* «lagret» er turen slik den lå på telefonen fra sist. Får vi den
+     med, tegnes appen med én gang og det ferske hentes i bakgrunnen —
+     i stedet for at alle skal se på en spinner mens seks spørringer går
+     over nettet. */
+  async function openTrip(tripId, lagret) {
+    let trip = lagret;
+    if (!trip) {
+      $("bootMsg").innerHTML = venter("Henter turen");
+      try { trip = await Api.loadTrip(tripId); }
+      catch (e) {
+        // Fjernet fra turen: da skal ikke appen bli stående med en gammel
+        // kopi og se ut som om nettet er nede. Kopien er alt slettet.
+        if (e && e.utmeldt) return utmeldt(e.message);
+        throw e;
+      }
     }
     if (!trip) throw new Error("Fant ikke turen");
 
@@ -383,7 +388,25 @@ const UI = (() => {
       Api.varselStatus().then(s => { if (s !== S.varselStatus) { S.varselStatus = s; render(); } });
       S.svarTil = null;
     }
-    Api.myTrips().then(t => { S.trips = t; }).catch(() => {});
+    // Uten tegningen her ble «Henter turene dine…» stående for alltid
+    // på Meg: lista kom, men ingen ba skjermen om å vise den.
+    Api.myTrips().then(t => {
+      S.trips = t;
+      S.turerHentet = true;
+      if (S.trip && S.tab === "meg" && !S.side) render();
+    }).catch(() => { S.turerHentet = true; });
+
+    if (lagret) {
+      // Den lagrede kopien kan være gammel. Det ferske byttes inn uten
+      // at noen ser en spinner — og er du kastet ut av turen imens, sier
+      // appen fra i stedet for å vise en kopi som om alt var som før.
+      Api.loadTrip(tripId).then(fersk => {
+        if (!fersk || !S.trip || S.trip.id !== fersk.id) return;
+        S.trip = fersk;
+        S.offline = Boolean(fersk.stale);
+        render();
+      }).catch(e => { if (e && e.utmeldt) utmeldt(e.message); });
+    }
   }
 
   /* ───────────────── program ───────────────── */
@@ -1161,6 +1184,8 @@ const UI = (() => {
           <div class="grow"><div class="nm">${esc(t.name)}</div>
             <div class="sub">${esc([t.org, t.dates].filter(Boolean).join(" · "))}${t.role === "leader" ? " · du er reiseleder" : ""}</div></div>
           <span class="chev">${ICON.chev}</span></button>`).join("")
+      : S.turerHentet
+      ? `<p class="muted" style="padding:12px 0">Fant ingen andre turer.</p>`
       : `<p class="muted" style="padding:12px 0">Henter turene dine…</p>`;
 
     return `
@@ -2103,11 +2128,27 @@ const UI = (() => {
 
 
   function sheetTrips() {
-    const rows = S.trips.map(t => `<button class="listrow" data-opentrip="${esc(t.id)}" aria-current="${t.id === S.trip.id}">
+    const rader = () => S.trips.map(t => `<button class="listrow" data-opentrip="${esc(t.id)}" aria-current="${t.id === S.trip.id}">
       <div class="grow"><div class="nm">${esc(t.name)}</div><div class="sub">${esc(t.dates || t.org || "")}</div></div>
       <span class="chev">${ICON.chev}</span></button>`).join("");
+    const rows = rader();
+
+    // Er lista ikke hentet ennå, fylles den inn her når den kommer. Før
+    // ble «Henter turene dine» stående til arket ble lukket.
+    if (!rows) {
+      Api.myTrips().then(t => { S.trips = t; })
+        .catch(() => { /* uten nett har vi ingen liste å vise */ })
+        .then(() => {
+          S.turerHentet = true;
+          const liste = $("turliste");
+          if (!liste) return;
+          liste.innerHTML = rader()
+            || `<p class="muted" style="padding:12px 0">Fant ingen turer på denne kontoen.</p>`;
+        });
+    }
+
     openSheet(`<h3>Dine turer</h3>
-      <div class="list" style="margin-top:8px">${rows || venter("Henter turene dine")}</div>
+      <div class="list" id="turliste" style="margin-top:8px">${rows || venter("Henter turene dine")}</div>
       <div class="stack" style="margin-top:12px">
         <button class="btn" data-sheet="jointrip">Bli med på en ny tur</button>
         <button class="btn" data-sheet="newtrip">Lag en ny tur</button>
