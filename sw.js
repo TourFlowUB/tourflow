@@ -1,4 +1,4 @@
-/* © 2026 TourFlow UB. Alle rettigheter forbeholdt / All rights reserved.
+/* © 2026 TripMate UB. Alle rettigheter forbeholdt / All rights reserved.
    Koden ligger åpent fordi en nettside må sende koden sin til alle som
    besøker den. Det gir ingen rett til å kopiere, endre eller ta den i
    bruk. Se LICENSE. */
@@ -10,9 +10,9 @@
    endrer noe, så får alle den nye versjonen: nye filadresser går utenom
    både service workeren og nettleserens eget mellomlager. */
 
-const BUILD = 87;
-const CACHE = "tourflow-b" + BUILD;
-const MAALCACHE = "tourflow-maal";   // chatten et varsel peker til
+const BUILD = 88;
+const CACHE = "tripmate-b" + BUILD;
+const MAALCACHE = "tripmate-maal";   // chatten et varsel peker til
 
 const SHELL = [
   "./",
@@ -74,7 +74,7 @@ self.addEventListener("push", e => {
 
     return self.registration.showNotification(d.t || "TripMate", {
       body: d.b || "",
-      tag: d.tag || "tourflow",        // nytt varsel om samme chat erstatter det gamle
+      tag: d.tag || "tripmate",        // nytt varsel om samme chat erstatter det gamle
       icon: "icons/icon-192.png",
       badge: "icons/icon-192.png",
       data: { url: d.u || "./" }

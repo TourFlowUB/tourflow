@@ -1,4 +1,4 @@
-/* © 2026 TourFlow UB. Alle rettigheter forbeholdt / All rights reserved.
+/* © 2026 TripMate UB. Alle rettigheter forbeholdt / All rights reserved.
    Koden ligger åpent fordi en nettside må sende koden sin til alle som
    besøker den. Det gir ingen rett til å kopiere, endre eller ta den i
    bruk. Se LICENSE. */

@@ -1,4 +1,4 @@
-/* © 2026 TourFlow UB. Alle rettigheter forbeholdt / All rights reserved.
+/* © 2026 TripMate UB. Alle rettigheter forbeholdt / All rights reserved.
    Koden ligger åpent fordi en nettside må sende koden sin til alle som
    besøker den. Det gir ingen rett til å kopiere, endre eller ta den i
    bruk. Se LICENSE. */
@@ -124,14 +124,20 @@ const UI = (() => {
      appen var klar — da ligger målet her og venter i stedet for å gå tapt. */
   async function ventendeMaal() {
     if (!("caches" in window)) return null;
-    try {
-      const c = await caches.open("tourflow-maal");
-      const r = await c.match("maal");
-      if (!r) return null;
-      await c.delete("maal");
-      const t = (await r.text()).replace(/^[^?]*\??/, "");
-      return t ? lenkemaal(t) : null;
-    } catch { return null; }
+    // Navnet byttet da appen ble TripMate. Et varsel noen trykket på rett
+    // før oppdateringen ligger fortsatt under det gamle navnet, så vi ser
+    // i begge — ellers går det målet tapt.
+    for (const navn of ["tripmate-maal", "tourflow-maal"]) {
+      try {
+        const c = await caches.open(navn);
+        const r = await c.match("maal");
+        if (!r) continue;
+        await c.delete("maal");
+        const t = (await r.text()).replace(/^[^?]*\??/, "");
+        if (t) return lenkemaal(t);
+      } catch { /* prøv neste navn */ }
+    }
+    return null;
   }
 
   async function aapneFraVarsel(maal) {
@@ -1633,7 +1639,7 @@ const UI = (() => {
     try {
       const blob = await fetch(url).then(r => r.ok ? r.blob() : null);
       if (!blob) return null;
-      const fil = new File([blob], "tourflow.jpg", { type: blob.type || "image/jpeg" });
+      const fil = new File([blob], "tripmate.jpg", { type: blob.type || "image/jpeg" });
       bildefiler.set(sti, fil);
       return fil;
     } catch { return null; }
@@ -1652,7 +1658,7 @@ const UI = (() => {
     }
     const a = document.createElement("a");
     a.href = URL.createObjectURL(fil);
-    a.download = "tourflow.jpg";
+    a.download = "tripmate.jpg";
     document.body.appendChild(a);
     a.click();
     a.remove();

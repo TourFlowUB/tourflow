@@ -1,10 +1,10 @@
-# TourFlow
+# TripMate
 
 Program, gruppechat og veibeskrivelse for klasseturer. Nettside som kan legges til på
 hjemskjermen (PWA) og virker uten nett. Ingen byggesteg — rene statiske filer på GitHub
 Pages, med Supabase som database.
 
-© 2026 TourFlow UB. Alle rettigheter forbeholdt — se [LICENSE](LICENSE). Koden ligger
+© 2026 TripMate UB. Alle rettigheter forbeholdt — se [LICENSE](LICENSE). Koden ligger
 åpent fordi en nettside må sende koden sin til alle som besøker den. Det er ikke det
 samme som at den er fri å bruke.
 
