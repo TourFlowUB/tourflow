@@ -11,7 +11,9 @@ import { readFile, stat } from "node:fs/promises";
 import { join, extname, normalize } from "node:path";
 import { fileURLToPath } from "node:url";
 
-const ROT = fileURLToPath(new URL(".", import.meta.url));
+// Rota er prosjektmappa, ikke design-mappa: da ligger appen på / og
+// utkastet på /design/v2/, akkurat som på det ekte nettstedet.
+const ROT = fileURLToPath(new URL("../", import.meta.url));
 const PORT = Number(process.env.PORT) || 4321;
 
 const TYPER = {
@@ -50,6 +52,6 @@ createServer(async (req, res) => {
     res.end("Fant ikke " + bane);
   }
 }).listen(PORT, () => {
-  console.log(`Designmappa ligger på http://localhost:${PORT}/`);
-  console.log(`Nytt utkast:          http://localhost:${PORT}/v2/`);
+  console.log(`Appen:                http://localhost:${PORT}/`);
+  console.log(`Utkastet:             http://localhost:${PORT}/design/v2/`);
 });

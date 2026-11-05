@@ -230,7 +230,7 @@ const UI = (() => {
 
   function bootSetup() {
     $("bootMsg").innerHTML = `
-      <b style="font-family:Archivo,sans-serif">Appen mangler serveroppsett</b><br>
+      <b style="font-family:"DM Sans",sans-serif">Appen mangler serveroppsett</b><br>
       <span style="font-size:14px;color:var(--ink-2)">Fyll inn prosjektadresse og anon-nøkkel i
       <code>js/config.js</code>, og kjør <code>supabase/schema.sql</code> i Supabase-prosjektet.
       Framgangsmåten står i README.</span>`;
@@ -1032,7 +1032,7 @@ const UI = (() => {
            I nettlesermenyen finner du <b>Installer</b> eller <b>Legg til på startsiden</b>.</p>`;
 
     return `<div class="card pad" style="padding-block:15px;border-left:3px solid var(--blue)">
-      <b style="font-family:Archivo,sans-serif;font-size:14.5px">Legg TourFlow på hjemskjermen</b>
+      <b style="font-family:"DM Sans",sans-serif;font-size:14.5px">Legg TripMate på hjemskjermen</b>
       <p style="margin:7px 0 0;font-size:13.5px;color:var(--ink-2)">
         Da åpnes den som en app, husker deg${iOS
           ? ", og varsler begynner å virke — på iPhone finnes de bare for apper på hjemskjermen"
@@ -2534,7 +2534,7 @@ const UI = (() => {
           <svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="21"/><path d="M31 17 20.5 21 17 31.5 27.5 27.5 31 17Z"/></svg>
         </div>` : `<button class="tilbake" id="authTilbake">${ICON.chevL} Tilbake</button>`}
 
-      <h1>${start ? "TourFlow" : harAlt ? "Bytt e-postadresse" : kobler ? "Sikre kontoen" : "Logg inn"}</h1>
+      <h1>${start ? "TripMate" : harAlt ? "Bytt e-postadresse" : kobler ? "Sikre kontoen" : "Logg inn"}</h1>
       <p class="lede">${start
         ? "Program, beskjeder og veibeskrivelse for klasseturen. Skriv e-posten din, så sender vi en kode — ingen passord å huske."
         : harAlt
@@ -2838,23 +2838,23 @@ const UI = (() => {
       ? venter("Sjekker")
       : iOS && !paaHjem
       ? `<div class="card pad" style="padding-block:14px;border-left:3px solid var(--amber)">
-           <b style="font-family:Archivo,sans-serif;font-size:14px">Legg appen på hjemskjermen først</b>
+           <b style="font-family:"DM Sans",sans-serif;font-size:14px">Legg appen på hjemskjermen først</b>
            <p style="margin:7px 0 0;font-size:13.5px;color:var(--ink-2)">
              På iPhone kan bare apper som ligger på hjemskjermen gi varsler — det er Apple som
              bestemmer det. Trykk delingsknappen nederst i Safari, velg
-             <b>Legg til på Hjem-skjerm</b>, og åpne TourFlow derfra. Da dukker knappen opp her.</p>
+             <b>Legg til på Hjem-skjerm</b>, og åpne TripMate derfra. Da dukker knappen opp her.</p>
          </div>`
       : st === "umulig"
       ? `<div class="card pad" style="padding-block:14px">
            <p class="muted" style="margin:0">Denne nettleseren kan ikke vise varsler.</p></div>`
       : st === "avslaatt"
       ? `<div class="card pad" style="padding-block:14px;border-left:3px solid var(--amber)">
-           <b style="font-family:Archivo,sans-serif;font-size:14px">Varsler er blokkert</b>
+           <b style="font-family:"DM Sans",sans-serif;font-size:14px">Varsler er blokkert</b>
            <p style="margin:7px 0 0;font-size:13.5px;color:var(--ink-2)">
              Du har sagt nei én gang, og da spør ikke nettleseren igjen. Det må slås på
              der appen ble lagt til fra:</p>
            <ul style="margin:8px 0 0;padding-left:18px;font-size:13.5px;color:var(--ink-2)">
-             <li><b>iPhone:</b> Innstillinger → Varsler → TourFlow.</li>
+             <li><b>iPhone:</b> Innstillinger → Varsler → TripMate.</li>
              <li><b>Android:</b> både i nettleseren appen ble lagt til fra
                (innstillinger → nettstedsinnstillinger → varsler → tourflowub.github.io)
                <i>og</i> for nettleseren selv under Android-innstillinger → Apper.</li>
@@ -2995,7 +2995,7 @@ const UI = (() => {
       try {
         if (Notification.permission !== "granted") throw new Error("Slå på varsler først.");
         const reg = await navigator.serviceWorker.ready;
-        await reg.showNotification("TourFlow", {
+        await reg.showNotification("TripMate", {
           body: "Slik ser et varsel ut.", icon: "icons/icon-192.png", tag: "test"
         });
         S.varselTest = { ok: true, tekst: "Telefonen viste varselet. Da virker alt på denne enheten — står det stille likevel når andre skriver, ligger feilen på serveren." };
@@ -3178,7 +3178,7 @@ const UI = (() => {
   function sheetAbout() {
     openSheet(`<h3>Om appen</h3>
       <p style="margin:10px 0;font-size:14.5px;color:var(--ink-2)">
-        TourFlow samler program, beskjeder og veibeskrivelser for én klassetur. Når noen avtaler
+        TripMate samler program, beskjeder og veibeskrivelser for én klassetur. Når noen avtaler
         et møtested i chatten, kobler appen det mot programmet og finner riktig adresse for den dagen.</p>
       <div class="card pad" style="padding-block:12px;margin-top:6px">
         <dl class="kv">

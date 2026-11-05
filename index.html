@@ -3,18 +3,23 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<title>TourFlow</title>
+<title>TripMate</title>
 <meta name="description" content="Program, gruppechat og veibeskrivelse for klasseturen.">
 <link rel="manifest" href="manifest.webmanifest">
-<meta name="theme-color" content="#14508C">
+<meta name="theme-color" content="#FAF8F6">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="TourFlow">
+<meta name="apple-mobile-web-app-title" content="TripMate">
 <link rel="apple-touch-icon" href="icons/icon-180.png">
 <link rel="icon" href="icons/icon-192.png" sizes="192x192">
+<link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=Source+Sans+3:wght@400;600&family=IBM+Plex+Mono:wght@500;600&display=swap">
-<link rel="stylesheet" href="styles.css?v=84">
+<!-- Skriftfila skal ikke holde igjen tegningen av appen. -->
+<link rel="stylesheet" media="print" onload="this.media='all'"
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap">
+<noscript><link rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap"></noscript>
+<link rel="stylesheet" href="styles.css?v=85">
 </head>
 <body>
 
@@ -22,7 +27,7 @@
 <section id="bootScreen" class="join">
   <div class="join-inner" style="text-align:center">
     <div class="mark" style="margin:0 auto 18px" aria-hidden="true">
-      <svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="21"/><path d="M31 17 20.5 21 17 31.5 27.5 27.5 31 17Z"/></svg>
+      <svg viewBox="0 0 24 24"><path d="M11.4 7.4V20.5"/><path d="M3.6 8.9c2.6-1.9 5.6-2.9 8.6-2.6"/><circle cx="15.6" cy="5.6" r="2.9" fill="var(--merke)" stroke="none"/></svg>
     </div>
     <p class="muted" id="bootMsg">Kobler til…</p>
   </div>
@@ -33,7 +38,7 @@
   <div class="join-inner">
     <button class="tilbake" id="joinTilbake" hidden>&#8249; Tilbake</button>
     <div class="mark" aria-hidden="true">
-      <svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="21"/><path d="M31 17 20.5 21 17 31.5 27.5 27.5 31 17Z"/></svg>
+      <svg viewBox="0 0 24 24"><path d="M11.4 7.4V20.5"/><path d="M3.6 8.9c2.6-1.9 5.6-2.9 8.6-2.6"/><circle cx="15.6" cy="5.6" r="2.9" fill="var(--merke)" stroke="none"/></svg>
     </div>
     <h1>Bli med på turen</h1>
     <p class="lede">Skriv navnet ditt og turkoden du fikk av reiselederen.</p>
@@ -71,6 +76,9 @@
 </section>
 <section id="appScreen" class="app" hidden>
   <header class="apphead" id="apphead">
+    <span class="hodemerke" aria-hidden="true">
+      <svg viewBox="0 0 24 24"><path d="M11.4 7.4V20.5"/><path d="M3.6 8.9c2.6-1.9 5.6-2.9 8.6-2.6"/><circle cx="15.6" cy="5.6" r="2.9"/></svg>
+    </span>
     <button class="tripbtn" id="tripBtn" aria-haspopup="dialog">
       <span class="tripname" id="tripName">—</span>
       <span class="tripsub" id="tripSub">—</span>
@@ -100,12 +108,12 @@
 
 <div class="toast" id="toast" hidden></div>
 
-<script src="js/config.js?v=84"></script>
-<script src="vendor/supabase.js?v=84"></script>
-<script src="js/templates.js?v=84"></script>
-<script src="js/api.js?v=84"></script>
-<script src="js/parse.js?v=84"></script>
-<script src="js/ui.js?v=84"></script>
+<script src="js/config.js?v=85"></script>
+<script src="vendor/supabase.js?v=85"></script>
+<script src="js/templates.js?v=85"></script>
+<script src="js/api.js?v=85"></script>
+<script src="js/parse.js?v=85"></script>
+<script src="js/ui.js?v=85"></script>
 <script>
 
 // Safari regner 100dvh litt feil, og da blir appen kortere enn skjermen —

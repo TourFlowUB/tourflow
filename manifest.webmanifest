@@ -1,13 +1,13 @@
 {
-  "name": "TourFlow",
-  "short_name": "TourFlow",
+  "name": "TripMate",
+  "short_name": "TripMate",
   "description": "Program, gruppechat og veibeskrivelse for klasseturen.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#FFFFFF",
-  "theme_color": "#14508C",
+  "background_color": "#FAF8F6",
+  "theme_color": "#FAF8F6",
   "lang": "nb",
   "dir": "ltr",
   "icons": [

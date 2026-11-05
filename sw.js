@@ -10,7 +10,7 @@
    endrer noe, så får alle den nye versjonen: nye filadresser går utenom
    både service workeren og nettleserens eget mellomlager. */
 
-const BUILD = 84;
+const BUILD = 85;
 const CACHE = "tourflow-b" + BUILD;
 const MAALCACHE = "tourflow-maal";   // chatten et varsel peker til
 
@@ -72,7 +72,7 @@ self.addEventListener("push", e => {
       return;
     }
 
-    return self.registration.showNotification(d.t || "TourFlow", {
+    return self.registration.showNotification(d.t || "TripMate", {
       body: d.b || "",
       tag: d.tag || "tourflow",        // nytt varsel om samme chat erstatter det gamle
       icon: "icons/icon-192.png",
