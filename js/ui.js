@@ -7,7 +7,7 @@
 
 const UI = (() => {
 
-  const S = { trip: null, tab: "program", day: null, openChat: null, loadingChat: false, trips: [], edit: false, offline: false, svarTil: null, kart: {}, sisteChat: null, tilBunn: false,
+  const S = { trip: null, tab: "idag", day: null, openChat: null, loadingChat: false, trips: [], edit: false, offline: false, svarTil: null, kart: {}, sisteChat: null, tilBunn: false,
     nye: 0, sistAntall: 0, beholdSkroll: null,
     side: null, varselStatus: null, varselEnheter: null, varselTest: null,
     folk: null, folkFeil: false, sisteVisning: null,
@@ -71,6 +71,7 @@ const UI = (() => {
     `<a class="btn ${klasse}" href="${kartLenke(p)}" target="_blank" rel="noopener">${ICON.nav} Veibeskrivelse</a>`;
 
   const ICON = {
+    hjem:'<svg viewBox="0 0 24 24"><path d="M4 11.2 12 4.5l8 6.7"/><path d="M6.2 10v9.5h11.6V10"/></svg>',
     pin:'<svg viewBox="0 0 24 24"><path d="M12 21s7-6.2 7-11a7 7 0 1 0-14 0c0 4.8 7 11 7 11Z"/><circle cx="12" cy="10" r="2.6"/></svg>',
     nav:'<svg viewBox="0 0 24 24"><path d="M3 11 21 3l-8 18-2-7-8-3Z"/></svg>',
     spark:'<svg viewBox="0 0 24 24"><path d="M12 3v5M12 16v5M3 12h5M16 12h5M6.3 6.3l3 3M14.7 14.7l3 3M17.7 6.3l-3 3M9.3 14.7l-3 3"/></svg>',
@@ -365,6 +366,90 @@ const UI = (() => {
   }
 
   /* ───────────────── program ───────────────── */
+  /* ───────────────── I dag ─────────────────
+     Hjemskjermen. Den svarer på det ene spørsmålet alle har hele tiden:
+     hva skjer nå, og hvor. Programmet for hele turen ligger én fane
+     unna; her står bare dagen du er i. */
+  function viewIDag() {
+    const trip = S.trip;
+    const ne = nextEvent(trip);
+    const idag = trip.days.find(x => x.date === today());
+    const naa = new Date().toTimeString().slice(0, 5);
+
+    /* Dagstripa: dagen som en avgangstavle. Logoens oransje prikk er
+       «nå» — merket og tidspunktet er den samme tingen. */
+    let stripe = "";
+    if (idag && idag.items.filter(i => i.t).length > 1) {
+      const med = idag.items.filter(i => i.t);
+      const naaIdx = med.findIndex(i => i.t > naa);
+      const gaatt = naaIdx < 0 ? 1 : (med.length > 1 ? naaIdx / (med.length - 1) : 0);
+      stripe = `<div class="stripe" aria-label="Dagen i oversikt">
+        <div class="akse"></div>
+        <div class="gaatt" style="transform:scaleX(${gaatt.toFixed(3)})"></div>
+        <div class="punkter">
+          ${med.map((i, k) => `
+            <div class="pk ${i.t <= naa ? "ferdig" : ""} ${k === naaIdx ? "aktiv" : ""}">
+              <span class="kl">${esc(i.t)}</span><span class="mk"></span>
+              <span class="nvn">${esc(i.title.split(/[\s,]+/)[0])}</span>
+            </div>`).join("")}
+        </div>
+      </div>`;
+    }
+
+    /* Hilsenen navngir dagen og dagens ene faktum. */
+    const dagnavn = idag
+      ? cap(new Date(idag.date).toLocaleDateString("nb-NO", { weekday: "long" }))
+      : "Turen";
+    const nr = idag ? trip.days.findIndex(x => x.date === idag.date) + 1 : 0;
+    const sted = idag ? dagensSted(idag) : null;
+    const stedNavn = sted ? trip.places[sted] : null;
+    const tittel = stedNavn ? `${dagnavn} i ${stedNavn.name.split(/[\s,]/)[0]}` : dagnavn;
+
+    let kort = "";
+    if (ne) {
+      const p = ne.item.place ? trip.places[ne.item.place] : null;
+      kort = `<section class="naakort">
+        <div class="merk"><i></i>${ne.day.date === today() ? "Nå snart" : "Neste · " + esc(ne.day.label)}</div>
+        <div class="kl">${esc(ne.item.t || "—")}</div>
+        <div class="hva">${esc(ne.item.title)}${vaerMerke(ne.item.place, ne.day.date, ne.item.t, dagensSted(ne.day))}</div>
+        ${p ? `<div class="hvor">${esc(p.name)}${p.addr ? " · " + esc(p.addr) : ""}</div>` : ""}
+        <div class="knapper">
+          ${p ? kartKnapp(p, "primar") : ""}
+          <button class="btn" data-tab="program">Hele dagen</button>
+        </div>
+      </section>`;
+    } else {
+      kort = `<section class="naakort"><div class="merk"><i></i>Ferdig</div>
+        <div class="hva" style="margin-top:2px">Turen er over</div>
+        <div class="hvor">Programmet ligger her så lenge du er med.</div></section>`;
+    }
+
+    const senere = idag ? idag.items.filter(i => !i.t || i.t > naa) : [];
+
+    return `
+      <div>
+        <h1 class="daghilsen">${esc(tittel)}</h1>
+        <p class="dagunder">${idag ? `Dag ${nr} av ${trip.days.length}` : esc(trip.name)}</p>
+      </div>
+      ${stripe}
+      ${kort}
+      ${senere.length ? `
+        <div>
+          <div class="eyebrow" style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:2px">
+            <span>Senere i dag</span>
+            <button class="linkbtn" style="font-size:12.5px" data-tab="program">Hele programmet</button>
+          </div>
+          ${senere.map(i => {
+            const p = i.place ? trip.places[i.place] : null;
+            return `<button class="post" data-item="${esc(i.id)}">
+              <span class="t">${i.t ? esc(i.t) : "—"}</span>
+              <span><span class="h">${esc(i.title)}</span>
+                ${p ? `<span class="s">${esc(p.name)}</span>` : (i.note ? `<span class="s">${esc(i.note)}</span>` : "")}</span>
+              <span class="pil">${ICON.chev}</span></button>`;
+          }).join("")}
+        </div>` : ""}`;
+  }
+
   function nextEvent(trip) {
     const t = new Date().toTimeString().slice(0, 5);
     const d = trip.days.find(x => x.date === today());
@@ -1246,6 +1331,7 @@ const UI = (() => {
     $("screen").innerHTML = side === "varsler" ? viewVarsler()
                           : side === "chat" ? viewChatside()
                           : side === "deltakere" ? viewDeltakere()
+                          : S.tab === "idag" ? viewIDag()
                           : S.tab === "program" ? viewProgram()
                           : S.tab === "chat" ? viewChat()
                           : viewMe();
@@ -1346,7 +1432,7 @@ const UI = (() => {
       id === "meg" && antall ? `<span class="varsel">${antall}</span>`
       : id === "chat" && uleste ? `<span class="varsel">${uleste}</span>` : "";
     $("tabbar").innerHTML = [
-      ["program","Program",ICON.cal], ["chat","Chat",ICON.chat], ["meg","Meg",ICON.me]
+      ["idag","I dag",ICON.hjem], ["program","Program",ICON.cal], ["chat","Chat",ICON.chat], ["meg","Meg",ICON.me]
     ].map(([id,label,ic]) =>
       `<button role="tab" aria-selected="${S.tab === id}" data-tab="${id}">
         <span class="ikon">${ic}${merke(id)}</span>

@@ -10,7 +10,7 @@
    endrer noe, så får alle den nye versjonen: nye filadresser går utenom
    både service workeren og nettleserens eget mellomlager. */
 
-const BUILD = 85;
+const BUILD = 86;
 const CACHE = "tourflow-b" + BUILD;
 const MAALCACHE = "tourflow-maal";   // chatten et varsel peker til
 
