@@ -206,7 +206,7 @@ function lagApi() {
     varselStatus: lover("paa"),
     slaaPaaVarsler: lover(undefined), slaaAvVarsler: lover(undefined),
     varselEnheter: lover([]), testVarsel: lover(undefined), varmVarsler: ingen,
-    lastVarselvalg: lover(undefined), varselvalg: () => ({}), varselNiva: () => "alt",
+    lastVarselvalg: lover(undefined), varselvalg: () => ({ tur: "viktig", chat: {} }), varselNiva: () => "alt",
     settVarselNiva: lover(undefined),
     lesInnlogging: lover({ epost: "jonas@example.no", anonym: false }),
     erAnonym: () => false,

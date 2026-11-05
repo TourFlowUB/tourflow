@@ -81,7 +81,7 @@ button,input,select,textarea{font:inherit;color:inherit}
 /* En tekstlenke er rundt 19 px høy, og det er for lite å treffe på.
    Trykkflaten strekkes med polstring og trekkes inn igjen med like
    stor negativ marg, så ingenting flytter seg. */
-.linkbtn{background:none;border:0;padding:11px 0;margin:-11px 0;color:var(--blue);font-weight:600;cursor:pointer;text-decoration:underline;font-size:inherit}
+.linkbtn{background:none;border:0;padding:15px 5px;margin:-15px -5px;color:var(--blue);font-weight:600;cursor:pointer;text-decoration:underline;font-size:inherit}
 
 /* ---------- join ---------- */
 .join{height:100%;overflow-y:auto;overscroll-behavior:contain;display:grid;place-items:center;padding:28px 20px calc(28px + var(--safe-b));background:var(--ground)}

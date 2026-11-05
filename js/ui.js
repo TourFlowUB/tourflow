@@ -3863,9 +3863,13 @@ const UI = (() => {
       const ddx = t.clientX - startX, ddy = t.clientY - startY;
 
       if (!avklart) {
-        if (Math.abs(ddx) < 10 && Math.abs(ddy) < 10) return;
+        const ax = Math.abs(ddx), ay = Math.abs(ddy);
         // Mer opp og ned enn sidelengs: dette er blaing, ikke et sveip.
-        if (Math.abs(ddy) >= Math.abs(ddx)) { drar = false; return; }
+        if (ay > 10 && ay >= ax) { drar = false; return; }
+        // Et vanlig trykk flytter fingeren noen piksler. Skal det bli et
+        // sveip, må det være tydelig sidelengs — ellers spiser sveipet
+        // trykket, og raden under ser ut som om den ikke virker.
+        if (ax < 18 || ax < ay * 1.4) return;
         avklart = true;
         retning = ddx < 0 ? 1 : -1;            // mot venstre = neste fane
         bredde = skjerm.getBoundingClientRect().width;
