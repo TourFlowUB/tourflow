@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="nb">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>TripMate — demo uten server</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap">
+<link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+<script>
+/* ══ demo.html — den ekte appen, uten database ══════════════════════
+   Appen kommer ikke forbi oppstart uten Supabase, og da er det ingen
+   ting å se på mens man jobber med utseendet. Denne sida henter
+   markupen fra index.html, bytter ut Api med en som svarer fra en mal,
+   og kjører ellers akkurat samme js/ui.js som telefonen gjør.
+
+   Alt som rører serveren gjør ingenting her. Det som tegnes — program,
+   «I dag», chatlista, Meg, øya og sveipet mellom fanene — er ekte.
+
+   Den er ikke med i appen: den ligger i design/ og lastes aldri av
+   index.html. Kjør den på http://localhost:4321/design/demo.html */
+
+(async function demo() {
+  // ── markupen, hentet fra den ekte sida så den aldri kommer i utakt ──
+  const svar = await fetch("../index.html");
+  const doc = new DOMParser().parseFromString(await svar.text(), "text/html");
+  for (const s of doc.body.querySelectorAll("script")) s.remove();
+  // Åpningsanimasjonen hører til oppstarten av den ekte appen og styres
+  // av skriptet vi nettopp fjernet. Her ville den blitt liggende.
+  const aap = doc.body.querySelector(".aapning"); if (aap) aap.remove();
+  document.body.innerHTML = doc.body.innerHTML;
+
+  // Høyden appen regner ut selv i index.html.
+  const settHoyde = () => document.documentElement.style
+    .setProperty("--app-h", (window.innerHeight || 800) + "px");
+  settHoyde();
+  addEventListener("resize", settHoyde);
+
+  window.CONFIG = { ready: true, supabaseUrl: "", supabaseAnonKey: "", vapidPublicKey: "" };
+
+  await last("../js/templates.js");
+  await last("../js/parse.js");
+  lagApi();
+  await last("../js/ui.js");
+
+  function last(src) {
+    return new Promise((ja, nei) => {
+      const s = document.createElement("script");
+      s.src = src; s.onload = ja; s.onerror = nei;
+      document.head.appendChild(s);
+    });
+  }
+})();
+
+/* ══ en Api som svarer fra malen ══════════════════════════════════ */
+function lagApi() {
+  const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
+  const fmtDay = date => {
+    const d = new Date(date + "T12:00:00");
+    return {
+      chip: cap(d.toLocaleDateString("nb-NO", { weekday: "short" }).replace(".", "")),
+      num: d.toLocaleDateString("nb-NO", { day: "numeric", month: "short" }).replace(".", ""),
+      label: d.toLocaleDateString("nb-NO", { weekday: "long", day: "numeric", month: "long" })
+    };
+  };
+
+  const tpl = TEMPLATES.find(t => t.key === "test") || TEMPLATES[0];
+  const { dates, label } = templateDates(tpl);
+
+  const places = {};
+  Object.entries(tpl.places).forEach(([navn, p], i) => {
+    places[navn] = {
+      id: "sted" + i, name: p.name, addr: p.addr, kind: p.kind, url: "",
+      lat: null, lon: null, ignorer: false, alias: [p.name.toLowerCase()]
+    };
+  });
+  let teller = 0;
+  const days = tpl.days.map((d, i) => Object.assign({
+    id: "dag" + i, date: dates[i],
+    hotel: d.hotel ? places[d.hotel].id : null, ignorerHotell: false,
+    items: d.items.map(it => ({
+      id: "pkt" + (teller++), t: it.t || "", title: it.title,
+      place: it.place ? places[it.place].id : null, note: it.note || null, src: null,
+      paamelding: false, plasser: null, paaChat: null, sort: null
+    }))
+  }, fmtDay(dates[i])));
+
+  const stedMap = {};
+  Object.values(places).forEach(p => { stedMap[p.id] = p; });
+
+  const TUR = {
+    id: "demo", code: "DEMO12", name: tpl.name, org: tpl.org,
+    krevGodkjenning: false, bilder: true, venter: false, dates: label,
+    role: "leader", erAdmin: false, erEier: true,
+    places: stedMap, days,
+    channels: tpl.channels.map((c, i) => ({
+      id: "kanal" + i, name: c.name, sub: c.sub || null,
+      private: /leder/i.test(c.name), min: true
+    }))
+  };
+
+  const naa = Date.now();
+  const MELDINGER = {
+    kanal0: [
+      { id: "m1", channel_id: "kanal0", user_id: "u2", who: "Emma Nygård", txt: "Noen som vet når vi møtes i morgen?", ts: new Date(naa - 5400e3).toISOString(), bilde: null, svar_til: null },
+      { id: "m2", channel_id: "kanal0", user_id: "meg", who: "Jonas Robstad", txt: "09:30 ved bussen. Står i programmet.", ts: new Date(naa - 5100e3).toISOString(), bilde: null, svar_til: "m1" },
+      { id: "m3", channel_id: "kanal0", user_id: "u3", who: "Mathias Lund", txt: "Takk!", ts: new Date(naa - 900e3).toISOString(), bilde: null, svar_til: null }
+    ],
+    kanal1: [
+      { id: "m4", channel_id: "kanal1", user_id: "u4", who: "Kari Reiseleder", txt: "Husk å telle ved avreise.", ts: new Date(naa - 7200e3).toISOString(), bilde: null, svar_til: null }
+    ]
+  };
+
+  const tom = () => [];
+  const ingen = () => undefined;
+  const lover = v => () => Promise.resolve(v);
+
+  window.Api = {
+    // ── oppstart ──
+    init: lover({ ok: true }),
+    online: () => true,
+    fmtDay,
+    getProfile: () => ({ first: "Jonas", last: "Robstad", name: "Jonas Robstad", initials: "JR" }),
+    setProfile: (f, l) => ({ first: f, last: l, name: f + " " + l, initials: (f[0] || "") + (l[0] || "") }),
+    getLastTrip: () => "demo",
+    setLastTrip: ingen,
+    getLastChannel: () => null,
+    setLastChannel: ingen,
+    lagretTur: () => TUR,
+    loadTrip: lover(TUR),
+    currentTrip: () => TUR,
+    isLeader: () => true,
+    myTrips: lover([{ id: "demo", code: "DEMO12", name: TUR.name, org: TUR.org, dates: label, role: "leader" }]),
+
+    // ── meldinger ──
+    messages: id => MELDINGER[id] || [],
+    loadMessages: lover([]),
+    loadMoreMessages: lover([]),
+    harEldre: () => false,
+    loadRecent: lover(undefined),
+    // Kart over siste melding i hver kanal — ikke et oppslag per kanal.
+    lastByChannel: () => {
+      const ut = {};
+      for (const [kanal, liste] of Object.entries(MELDINGER)) {
+        const m = liste[liste.length - 1];
+        if (m) ut[kanal] = { who: m.who, txt: m.txt, mine: m.user_id === "meg", ts: m.ts, bilde: null };
+      }
+      return ut;
+    },
+    settLest: ingen,
+    erUlest: () => false,
+    antallUleste: () => 0,
+    sendMessage: lover(undefined),
+    deleteMessage: lover(undefined),
+    onChange: ingen,
+    subscribeTrip: ingen, subscribeChannel: ingen, unsubscribeChannel: ingen, kobleFra: ingen,
+
+    // ── reaksjoner, bilder, vær ──
+    reactions: () => ({}),
+    toggleReaction: lover(undefined),
+    lastReaksjoner: lover(undefined),
+    vaerFor: () => null,
+    vaerPunkt: () => null,
+    lastVaer: ingen,
+    lastOppBilde: lover(null),
+    bildeUrl: () => null,
+    bildeAdresse: () => null,
+    slettBilde: lover(undefined),
+    slettTekst: lover(undefined),
+    ryddGamleBilder: ingen,
+    setBilderPaa: lover(undefined),
+
+    // ── kart ──
+    kartValg: () => "auto",
+    settKartValg: ingen,
+    reisemaate: () => "auto",
+    settReisemaate: ingen,
+
+    // ── folk og kanaler ──
+    tripMembers: lover([
+      { id: "meg", name: "Jonas Robstad", role: "leader", status: "ok" },
+      { id: "u2", name: "Emma Nygård", role: "member", status: "ok" },
+      { id: "u3", name: "Mathias Lund", role: "member", status: "ok" }
+    ]),
+    channelMembers: lover([]),
+    addChannel: lover(undefined), deleteChannel: lover(undefined), doppChat: lover(undefined),
+    addChannelMember: lover(undefined), removeChannelMember: lover(undefined),
+    setMemberRole: lover(undefined), setKrevGodkjenning: lover(undefined),
+    godkjennDeltaker: lover(undefined), avvisDeltaker: lover(undefined), fjernDeltaker: lover(undefined),
+    antallVentende: lover(0),
+    erHer: ingen, ikkeHer: ingen,
+
+    // ── program ──
+    addPlace: lover(undefined), updatePlace: lover(undefined), setIgnorer: lover(undefined),
+    addDay: lover(undefined), setHotel: lover(undefined), addItem: lover(undefined),
+    updateItem: lover(undefined), deleteItem: lover(undefined), deleteDay: lover(undefined),
+    updateTrip: lover(undefined), flyttTur: lover(undefined), createTrip: lover(TUR),
+    joinByCode: lover(TUR), leaveTrip: lover(undefined), deleteTrip: lover(undefined),
+    applyTemplate: lover(TUR), lesProgramFraPdf: lover([]),
+    lastPaameldinger: ingen, paameldte: tom, meldPaa: lover(undefined), meldAv: lover(undefined),
+
+    // ── varsler og konto ──
+    varselStatus: lover("paa"),
+    slaaPaaVarsler: lover(undefined), slaaAvVarsler: lover(undefined),
+    varselEnheter: lover([]), testVarsel: lover(undefined), varmVarsler: ingen,
+    lastVarselvalg: lover(undefined), varselvalg: () => ({}), varselNiva: () => "alt",
+    settVarselNiva: lover(undefined),
+    lesInnlogging: lover({ epost: "jonas@example.no", anonym: false }),
+    erAnonym: () => false,
+    minEpost: () => "jonas@example.no",
+    sendKode: lover(undefined), bekreftKode: lover(undefined),
+    koblePaaEpost: lover(undefined), bekreftKobling: lover(undefined),
+    hentNavnFraTurer: lover(null), loggUt: lover(undefined), signOutLocal: lover(undefined),
+    glemTur: ingen
+  };
+}
+</script>
+</body>
+</html>

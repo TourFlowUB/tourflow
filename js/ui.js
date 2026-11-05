@@ -8,7 +8,7 @@
 const UI = (() => {
 
   const S = { trip: null, tab: "idag", day: null, openChat: null, loadingChat: false, trips: [], turerHentet: false, edit: false, offline: false, svarTil: null, kart: {}, sisteChat: null, tilBunn: false,
-    nye: 0, sistAntall: 0, beholdSkroll: null,
+    nye: 0, sistAntall: 0, beholdSkroll: null, sveiper: false,
     side: null, varselStatus: null, varselEnheter: null, varselTest: null,
     folk: null, folkFeil: false, sisteVisning: null,
     sideChat: null, chatFolk: null, ventende: 0, vedlegg: null, sender: false, sisteComposer: null };
@@ -409,6 +409,21 @@ const UI = (() => {
     }
   }
 
+  /* Byen dagen foregår i. Navnet på overnattingsstedet er ikke et
+     stedsnavn — «Hotel Bedford» ble til «Torsdag i Hotel». Adressen vet
+     hvor man er: postnummeret står foran byen, og det er det eneste
+     som holder på tvers av land. Finner vi den ikke, sier vi bare
+     hvilken dag det er, i stedet for å gjette. */
+  function byen(sted) {
+    if (!sted || !sted.addr) return null;
+    const deler = String(sted.addr).split(",").map(s => s.trim()).filter(Boolean);
+    for (const d of deler) {
+      const m = d.match(/^\d{4,6}\s+(.+)$/);
+      if (m) return m[1].trim();
+    }
+    return deler.length > 1 ? deler[1] : null;
+  }
+
   /* ───────────────── program ───────────────── */
   /* ───────────────── I dag ─────────────────
      Hjemskjermen. Den svarer på det ene spørsmålet alle har hele tiden:
@@ -446,8 +461,8 @@ const UI = (() => {
       : "Turen";
     const nr = idag ? trip.days.findIndex(x => x.date === idag.date) + 1 : 0;
     const sted = idag ? dagensSted(idag) : null;
-    const stedNavn = sted ? trip.places[sted] : null;
-    const tittel = stedNavn ? `${dagnavn} i ${stedNavn.name.split(/[\s,]/)[0]}` : dagnavn;
+    const by = sted ? byen(trip.places[sted]) : null;
+    const tittel = by ? `${dagnavn} i ${by}` : dagnavn;
 
     let kort = "";
     if (ne) {
@@ -1377,10 +1392,7 @@ const UI = (() => {
     $("screen").innerHTML = side === "varsler" ? viewVarsler()
                           : side === "chat" ? viewChatside()
                           : side === "deltakere" ? viewDeltakere()
-                          : S.tab === "idag" ? viewIDag()
-                          : S.tab === "program" ? viewProgram()
-                          : S.tab === "chat" ? viewChat()
-                          : viewMe();
+                          : visningFor(S.tab);
     if (side === "varsler") settOppVarsler();
     if (byttetVisning && !conv) $("screen").scrollTop = 0;
 
@@ -3776,6 +3788,147 @@ const UI = (() => {
       btn.disabled = false; btn.textContent = "Bli med på turen";
     }
   });
+
+  /* Skjermen til én fane. Trengs to steder: når fanen tegnes, og når
+     naboen skal ligge klar ved siden av under et sveip. */
+  function visningFor(fane) {
+    return fane === "idag" ? viewIDag()
+         : fane === "program" ? viewProgram()
+         : fane === "chat" ? viewChat()
+         : viewMe();
+  }
+
+  /* ───────────────── sveip mellom fanene ─────────────────
+     Fanene ligger ved siden av hverandre, og du kan dra deg mellom dem.
+     Siden følger fingeren hele veien, og slipper du halvveis, glir den
+     tilbake dit den kom fra. Det er direkte manipulasjon slik Apple
+     beskriver den: ingenting avgjøres før du har bestemt deg, og du kan
+     ombestemme deg underveis.
+
+     Bevegelsen er motivert av at fanene faktisk ligger side om side.
+     Derfor sveiper du ikke når en samtale eller en egen side er åpen:
+     da ligger det ingenting ved siden av. Og ytterst i rekka gir det
+     etter i stedet for å flytte seg — strikken sier at her er det
+     slutt, uten at det må skrives. */
+  function settOppSveip() {
+    const skjerm = $("screen"), app = $("appScreen");
+    let startX = 0, startY = 0, dx = 0, retning = 0;
+    let drar = false, avklart = false, skygge = null, bredde = 0, t0 = 0;
+
+    const kanSveipe = () => Boolean(S.trip) && !S.openChat && !S.side && !S.sveiper;
+    const naboIndeks = r => FANER.findIndex(([f]) => f === S.tab) + r;
+
+    const rydd = () => {
+      drar = false; avklart = false; retning = 0; dx = 0;
+      skjerm.style.transition = ""; skjerm.style.transform = "";
+      if (skygge) { skygge.remove(); skygge = null; }
+    };
+
+    // Naboen tegnes i en kopi av skjermen, lagt nøyaktig der skjermen
+    // ligger. Er det ingen nabo, er det ingenting å legge fram.
+    const lagSkygge = r => {
+      const i = naboIndeks(r);
+      if (i < 0 || i >= FANER.length) return null;
+      const rk = skjerm.getBoundingClientRect(), ra = app.getBoundingClientRect();
+      const el = document.createElement("main");
+      el.className = "screen skygge";
+      el.setAttribute("aria-hidden", "true");
+      el.innerHTML = visningFor(FANER[i][0]);
+      el.style.top = (rk.top - ra.top) + "px";
+      el.style.left = (rk.left - ra.left) + "px";
+      el.style.width = rk.width + "px";
+      el.style.height = rk.height + "px";
+      app.insertBefore(el, skjerm.nextSibling);
+      return el;
+    };
+
+    skjerm.addEventListener("touchstart", e => {
+      if (e.touches.length !== 1 || !kanSveipe()) return;
+      const t = e.touches[0];
+      // iOS har sin egen kantsveip tilbake. Den skal ikke slåss med vår.
+      if (t.clientX < 24) return;
+      // Et punkt som dras til en ny plass, og noe som selv kan blas
+      // sidelengs, eier bevegelsen sin.
+      if (e.target.closest("[data-drag]")) return;
+      for (let n = e.target; n && n !== skjerm; n = n.parentElement) {
+        if (n.scrollWidth > n.clientWidth + 1) return;
+      }
+      startX = t.clientX; startY = t.clientY; t0 = Date.now();
+      dx = 0; drar = true; avklart = false; retning = 0;
+    }, { passive: true });
+
+    skjerm.addEventListener("touchmove", e => {
+      if (!drar || e.touches.length !== 1) return;
+      const t = e.touches[0];
+      const ddx = t.clientX - startX, ddy = t.clientY - startY;
+
+      if (!avklart) {
+        if (Math.abs(ddx) < 10 && Math.abs(ddy) < 10) return;
+        // Mer opp og ned enn sidelengs: dette er blaing, ikke et sveip.
+        if (Math.abs(ddy) >= Math.abs(ddx)) { drar = false; return; }
+        avklart = true;
+        retning = ddx < 0 ? 1 : -1;            // mot venstre = neste fane
+        bredde = skjerm.getBoundingClientRect().width;
+        skygge = lagSkygge(retning);
+        skjerm.style.transition = "none";
+        if (skygge) skygge.style.transition = "none";
+      }
+
+      // Bare den veien du valgte. Er det ingen nabo, gir det etter.
+      let x = retning === 1 ? Math.min(0, ddx) : Math.max(0, ddx);
+      if (!skygge) x = x / 4;
+      dx = x;
+      skjerm.style.transform = "translateX(" + x + "px)";
+      if (skygge) skygge.style.transform = "translateX(" + (x + retning * bredde) + "px)";
+      if (e.cancelable) e.preventDefault();
+    }, { passive: false });
+
+    const slipp = () => {
+      if (!drar) return;
+      drar = false;
+      if (!avklart) return rydd();
+
+      // Enten langt nok, eller fort nok. Et raskt kast skal telle like
+      // mye som et langt drag — ellers må man dra hele veien hver gang.
+      const fart = Math.abs(dx) / Math.max(1, Date.now() - t0);
+      const ja = Boolean(skygge) && (Math.abs(dx) > bredde * 0.28 || fart > 0.5);
+
+      if (!ja) {
+        const tid = 240;
+        skjerm.style.transition = "transform " + tid + "ms var(--ease-ut)";
+        skjerm.style.transform = "translateX(0px)";
+        if (skygge) {
+          skygge.style.transition = skjerm.style.transition;
+          skygge.style.transform = "translateX(" + (retning * bredde) + "px)";
+        }
+        setTimeout(rydd, tid + 20);
+        return;
+      }
+
+      // Resten av veien, i tid som står til det som er igjen: slipper du
+      // nesten framme, skal det ikke bruke like lang tid som fra midten.
+      S.sveiper = true;
+      const ny = FANER[naboIndeks(retning)][0];
+      const igjen = Math.max(0, bredde - Math.abs(dx));
+      const tid = Math.max(140, Math.min(320, Math.round((igjen / bredde) * 320)));
+      skjerm.style.transition = "transform " + tid + "ms var(--ease-skuff)";
+      skjerm.style.transform = "translateX(" + (-retning * bredde) + "px)";
+      skygge.style.transition = skjerm.style.transition;
+      skygge.style.transform = "translateX(0px)";
+      // Pilla på øya glir samtidig, ikke etterpå: baren og siden hører
+      // sammen og skal bevege seg som én ting.
+      visFane(ny);
+      setTimeout(() => {
+        S.sveiper = false;
+        rydd();
+        byttFane(ny);
+      }, tid + 20);
+    };
+
+    skjerm.addEventListener("touchend", slipp);
+    skjerm.addEventListener("touchcancel", slipp);
+  }
+  settOppSveip();
 
   /* Snur telefonen seg, eller kommer tastaturet opp, flytter øya seg —
      og da stemmer ikke plassen under lista lenger. */
