@@ -168,6 +168,17 @@ const UI = (() => {
     });
   }
 
+  /* Åpningsanimasjonen ligger over appen til det er noe å vise bak
+     den. Dette er signalet om at det er det — turen, skjemaet,
+     innloggingen eller en feilmelding. Uten dette ville den ligget til
+     taket sitt og holdt appen skjult lenger enn nødvendig. */
+  let harSagtKlar = false;
+  function appKlar() {
+    if (harSagtKlar) return;
+    harSagtKlar = true;
+    dispatchEvent(new Event("tripmate:klar"));
+  }
+
   /* ───────────────── oppstart ───────────────── */
   async function boot() {
     if (!CONFIG.ready) return bootSetup();
@@ -181,6 +192,7 @@ const UI = (() => {
         S.offline = true;
         return openTrip(last);
       }
+      appKlar();
       $("bootMsg").innerHTML = `Fikk ikke kontakt med serveren.<br>
         <span style="font-size:13px;color:var(--ink-3)">${esc(res.error || res.reason)}</span><br>
         <button class="btn" style="margin-top:14px" onclick="location.reload()">Prøv igjen</button>`;
@@ -244,6 +256,7 @@ const UI = (() => {
   }
 
   function showJoin() {
+    appKlar();
     $("bootScreen").hidden = true;
     $("appScreen").hidden = true;
     $("authScreen").hidden = true;
@@ -269,6 +282,7 @@ const UI = (() => {
   /* Venter på at reiselederen slipper deg inn. Du ser navnet på turen,
      men ingenting av innholdet — det sørger reglene i basen for. */
   function visVenter(trip) {
+    appKlar();
     $("joinScreen").hidden = true;
     $("appScreen").hidden = true;
     $("bootScreen").hidden = true;
@@ -353,6 +367,7 @@ const UI = (() => {
     $("avatarText").textContent = p ? p.initials : "–";
 
     render();
+    appKlar();
     if (!S.offline) {
       Api.subscribeTrip(tripId);
       Api.loadRecent(tripId).then(() => { if (S.tab === "chat" && !S.openChat) render(); }).catch(() => {});
@@ -2612,6 +2627,7 @@ const UI = (() => {
      er den eneste identiteten som overlever en ny telefon. Gjest ligger
      under — den krever ingenting, men bor bare i denne nettleseren. */
   function visAuth(modus) {
+    appKlar();
     const start = modus === "start";
     const kobler = modus === "koble";
     const harAlt = kobler && !Api.erAnonym();

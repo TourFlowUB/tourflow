@@ -932,3 +932,53 @@ label.person span{flex:1;min-width:0}
   .kartboks .kartstripe,.kartboks .kartstripe svg,
   .kartboks .kartmerke,.kartboks .kartkort{animation:none}
 }
+
+/* ---------- åpningen ----------
+   Den ene plassen i appen der glede får koste noe. Den ses én gang per
+   oppstart, ikke tjue ganger om dagen, og da gjelder andre regler enn
+   for en fane man trykker på hele tiden.
+
+   Den har også en jobb: appen bruker et øyeblikk på å logge inn og
+   hente turen. Før lå det et «Kobler til…» og blinket der. Nå ligger
+   åpningen over, og ventetiden går med til noe som forklarer hva appen
+   heter. Rekkefølgen følger logoen: streken tegnes, prikken lander,
+   «ripMate» kommer ut fra bak T-en. 1,18 sekund, og et trykk hopper
+   over. */
+.aapning{
+  position:fixed;inset:0;z-index:60;background:var(--ground);
+  display:grid;place-items:center;cursor:pointer;
+  -webkit-user-select:none;user-select:none;-webkit-touch-callout:none;
+  transition:opacity 280ms var(--ease-ut);
+}
+.aapning[hidden]{display:none}
+.aapning.ut{opacity:0;pointer-events:none}
+.aapning .ord{display:flex;align-items:center;gap:0;color:var(--ink)}
+.aapning .merkeT{width:54px;height:54px;flex:none}
+.aapning .T-stem,.aapning .T-arm{
+  stroke-dasharray:40;stroke-dashoffset:40;
+  animation:strek-tegn 420ms var(--ease-ut) forwards;
+}
+.aapning .T-arm{animation-delay:150ms}
+.aapning .T-dot{
+  transform:scale(0);transform-origin:15.6px 5.6px;
+  animation:prikk-land 260ms var(--ease-ut) 430ms forwards;
+}
+.aapning .resten{
+  font-family:"DM Sans",system-ui,sans-serif;
+  font-size:40px;font-weight:700;letter-spacing:-.03em;line-height:1;margin-left:-13px;
+  /* Ordet skyves ut fra bak T-en: masken åpner seg, teksten følger. */
+  clip-path:inset(0 100% 0 0);transform:translateX(-10px);opacity:0;
+  animation:ord-ut 460ms var(--ease-ut) 520ms forwards;
+}
+@keyframes strek-tegn{to{stroke-dashoffset:0}}
+@keyframes prikk-land{0%{transform:scale(0)}65%{transform:scale(1.18)}100%{transform:scale(1)}}
+@keyframes ord-ut{to{clip-path:inset(0 0 0 0);transform:none;opacity:1}}
+
+/* Uten bevegelse står merket ferdig tegnet. Det må settes her, ikke
+   bare slås av: den globale regelen stopper animasjonen, og da ville
+   streken blitt stående usynlig. */
+@media (prefers-reduced-motion:reduce){
+  .aapning .T-stem,.aapning .T-arm{stroke-dasharray:none;stroke-dashoffset:0}
+  .aapning .T-dot{transform:none}
+  .aapning .resten{clip-path:none;transform:none;opacity:1}
+}

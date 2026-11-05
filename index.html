@@ -23,6 +23,58 @@
 </head>
 <body>
 
+<!-- ============ ÅPNINGEN ============
+     Ligger rett etter <body> og utenfor appen, så den er tegnet med en
+     gang — ikke etter at ui.js har kjørt. -->
+<div class="aapning" id="aapning" aria-hidden="true">
+  <div class="ord">
+    <svg class="merkeT" viewBox="0 0 24 24">
+      <path class="T-stem" d="M11.4 7.4V20.5" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" fill="none"/>
+      <path class="T-arm" d="M3.6 8.9c2.6-1.9 5.6-2.9 8.6-2.6" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" fill="none"/>
+      <circle class="T-dot" cx="15.6" cy="5.6" r="2.9" fill="#F06629"/>
+    </svg>
+    <span class="resten">ripMate</span>
+  </div>
+</div>
+<script>
+(function aapningen() {
+  const a = document.getElementById("aapning");
+  if (!a) return;
+
+  // Én gang per oppstart. Laster appen seg selv på nytt fordi service
+  // workeren fikk en ny versjon, skal den ikke spilles om igjen.
+  let sett = false;
+  try { sett = Boolean(sessionStorage.getItem("tm.sett")); } catch {}
+  if (sett) return a.remove();
+  try { sessionStorage.setItem("tm.sett", "1"); } catch {}
+
+  const mindre = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const LENGDE = mindre ? 420 : 1180;   // så lenge tegningen varer
+  const TAK = 4000;                     // og aldri lenger enn dette
+
+  let ferdig = false;
+  const avslutt = () => {
+    if (ferdig) return;
+    ferdig = true;
+    a.classList.add("ut");
+    setTimeout(() => a.remove(), 300);
+  };
+  a.addEventListener("click", avslutt);        // trykk for å hoppe over
+
+  // Animasjonen skal aldri klippes av midt i, og appen skal aldri bli
+  // stående ferdig bak den. Derfor: gå tegningen ut, og bli så liggende
+  // til appen sier den har noe å vise. Taket er der fordi en feil også
+  // skal fram — står det stille i fire sekunder, er det noe galt.
+  const start = Date.now();
+  let klar = false;
+  addEventListener("tripmate:klar", () => {
+    klar = true;
+    setTimeout(avslutt, Math.max(0, LENGDE - (Date.now() - start)));
+  }, { once: true });
+  setTimeout(() => { if (!klar) avslutt(); }, TAK);
+})();
+</script>
+
 <!-- ============ OPPSTART ============ -->
 <section id="bootScreen" class="join">
   <div class="join-inner" style="text-align:center">
