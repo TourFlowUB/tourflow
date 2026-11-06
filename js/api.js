@@ -168,6 +168,8 @@ const Api = (() => {
     if (m.includes("eier_kan_ikke_fjernes")) return k("Den som laget turen kan ikke fjernes.");
     if (m.includes("kan_ikke_endres")) return k("Denne deltakeren kan ikke endres herfra.");
     if (m.includes("fullt")) return k("Det er fullt — alle plassene er tatt.");
+    if (m.includes("sete_tatt")) return k("Den plassen ble tatt av noen andre.");
+    if (m.includes("ugyldig_sete")) return k("Det setet finnes ikke.");
     if (m.includes("ikke_paamelding")) return k("Dette punktet har ikke påmelding.");
     if (m.includes("ukjent_punkt")) return k("Fant ikke programpunktet.");
     if (m.includes("for_mange_meldinger")) return k("Du skriver fort. Vent et lite øyeblikk.");
@@ -259,6 +261,7 @@ const Api = (() => {
     return {
       id: trip.id, code: trip.code, name: trip.name, org: trip.org,
       krevGodkjenning: trip.require_approval === true,
+      seter: trip.seter == null ? null : trip.seter,
       bilder: trip.bilder !== false,
       venter: member ? member.status === "pending" : false,
       dates: days.length ? datoSpenn(days[0].date, days[days.length - 1].date) : "",
@@ -1155,6 +1158,80 @@ const Api = (() => {
     return svar.data.id;
   }
 
+  /* ───────── pakkeliste og sitteplasser ─────────
+     Begge hentes når siden åpnes, ikke ved oppstart. De hører til et
+     sted man går inn i, og skal ikke koste noe for dem som aldri gjør
+     det. Tallene til «Meg» er tre tellinger, ikke tre lister. */
+  async function pakkeliste(tripId) {
+    const [punkter, kryss] = await Promise.all([
+      sb.from("pakk").select("id, txt, sort").eq("trip_id", tripId).order("sort"),
+      sb.from("pakk_kryss").select("pakk_id")
+    ]);
+    if (punkter.error) throw friendly(punkter.error);
+    // Radsikkerheten gjør at kryssene du får er dine egne, ingen andres.
+    const mine = new Set((kryss.data || []).map(r => r.pakk_id));
+    return (punkter.data || []).map(p => ({ id: p.id, txt: p.txt, sort: p.sort, kryss: mine.has(p.id) }));
+  }
+
+  async function kryssPakk(pakkId, paa) {
+    const { error } = paa
+      ? await sb.from("pakk_kryss").insert({ pakk_id: pakkId, user_id: userId })
+      : await sb.from("pakk_kryss").delete().eq("pakk_id", pakkId).eq("user_id", userId);
+    if (error) throw friendly(error);
+  }
+
+  async function nyttPakkPunkt(tripId, txt, sort) {
+    const { error } = await sb.from("pakk").insert({ trip_id: tripId, txt, sort });
+    if (error) throw friendly(error);
+  }
+
+  async function slettPakkPunkt(id) {
+    const { error } = await sb.from("pakk").delete().eq("id", id);
+    if (error) throw friendly(error);
+  }
+
+  /* Hvem som sitter hvor. Navn henter vi ikke: kartet skal vise ledig,
+     tatt og din egen plass, og det er det det brukes til. */
+  async function seter(tripId) {
+    const { data, error } = await sb.from("seter").select("nr, user_id").eq("trip_id", tripId);
+    if (error) throw friendly(error);
+    return (data || []).map(r => ({ nr: r.nr, meg: r.user_id === userId }));
+  }
+
+  /* Gjennom basen, ikke gjennom appen: to som trykker på samme sete
+     innenfor samme sekund skal ikke begge få det. */
+  async function taSete(tripId, nr) {
+    const { error } = await sb.rpc("ta_sete", { p_trip: tripId, p_nr: nr });
+    if (error) throw friendly(error);
+  }
+
+  async function slippSete(tripId) {
+    const { error } = await sb.from("seter").delete().eq("trip_id", tripId).eq("user_id", userId);
+    if (error) throw friendly(error);
+  }
+
+  async function settSeteantall(tripId, antall) {
+    const { error } = await sb.from("trips").update({ seter: antall }).eq("id", tripId);
+    if (error) throw friendly(error);
+  }
+
+  /* Tallene «Meg» viser. Feiler de — for eksempel fordi tabellene ikke
+     finnes ennå — skal fana vise seg likevel, bare uten tall. */
+  async function megTall(tripId) {
+    if (!online()) return null;
+    const [p, k, s2] = await Promise.all([
+      sb.from("pakk").select("id", { count: "exact", head: true }).eq("trip_id", tripId),
+      sb.from("pakk_kryss").select("pakk_id, pakk!inner(trip_id)", { count: "exact", head: true })
+        .eq("pakk.trip_id", tripId),
+      sb.from("seter").select("nr").eq("trip_id", tripId).eq("user_id", userId).maybeSingle()
+    ]);
+    return {
+      pakkTotalt: p.count || 0,
+      pakkKrysset: k.count || 0,
+      mittSete: s2.data ? s2.data.nr : null
+    };
+  }
+
   /* ───────── påmelding ─────────
      Hvem som har meldt seg på hva. Hentes for hele turen på én gang —
      programlista skal kunne vise «6 av 20» uten å spørre per punkt. */
@@ -1528,6 +1605,8 @@ const Api = (() => {
     setKrevGodkjenning, godkjennDeltaker, avvisDeltaker, fjernDeltaker,
     addPlace, updatePlace, setIgnorer, addDay, setHotel, addItem, updateItem, deleteItem, deleteDay,
     lastPaameldinger, paameldte, meldPaa, meldAv,
+    pakkeliste, kryssPakk, nyttPakkPunkt, slettPakkPunkt,
+    seter, taSete, slippSete, settSeteantall, megTall,
     applyTemplate, lesProgramFraPdf, signOutLocal,
     varselStatus, slaaPaaVarsler, slaaAvVarsler, varselEnheter, testVarsel, varmVarsler,
     erHer, ikkeHer,

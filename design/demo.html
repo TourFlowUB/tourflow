@@ -56,6 +56,18 @@
 })();
 
 /* ══ en Api som svarer fra malen ══════════════════════════════════ */
+const pakk = [
+  { id: "p1", txt: "Pass", sort: 1, kryss: true },
+  { id: "p2", txt: "Europeisk helsetrygdkort", sort: 2, kryss: true },
+  { id: "p3", txt: "Reiseforsikring — bevis", sort: 3, kryss: false },
+  { id: "p4", txt: "Regnjakke", sort: 4, kryss: true },
+  { id: "p5", txt: "Gode sko til mye gåing", sort: 5, kryss: false },
+  { id: "p6", txt: "Pent antrekk til middagen", sort: 6, kryss: false },
+  { id: "p7", txt: "Lader og powerbank", sort: 7, kryss: true },
+  { id: "p8", txt: "Reiseadapter", sort: 8, kryss: false }
+];
+const seter = [{ nr: 14, meg: true }, { nr: 3 }, { nr: 4 }, { nr: 9 }, { nr: 22 }, { nr: 23 }];
+
 function lagApi() {
   const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
   const fmtDay = date => {
@@ -95,6 +107,7 @@ function lagApi() {
     id: "demo", code: "DEMO12", name: tpl.name, org: tpl.org,
     krevGodkjenning: false, bilder: true, venter: false, dates: label,
     role: "leader", erAdmin: false, erEier: true,
+    seter: 56,
     places: stedMap, days,
     channels: tpl.channels.map((c, i) => ({
       id: "kanal" + i, name: c.name, sub: c.sub || null,
@@ -206,6 +219,22 @@ function lagApi() {
     varselStatus: lover("paa"),
     slaaPaaVarsler: lover(undefined), slaaAvVarsler: lover(undefined),
     varselEnheter: lover([]), testVarsel: lover(undefined), varmVarsler: ingen,
+    pakkeliste: () => Promise.resolve(pakk.map(p => ({ ...p }))),
+    kryssPakk: (id, paa) => { const p = pakk.find(x => x.id === id); if (p) p.kryss = paa; return Promise.resolve(); },
+    nyttPakkPunkt: (t, txt, sort) => { pakk.push({ id: "p" + (pakk.length + 1), txt, sort, kryss: false }); return Promise.resolve(); },
+    slettPakkPunkt: id => { const i = pakk.findIndex(x => x.id === id); if (i >= 0) pakk.splice(i, 1); return Promise.resolve(); },
+    seter: () => Promise.resolve(seter.map(s2 => ({ ...s2 }))),
+    taSete: (t, nr) => {
+      if (seter.some(s2 => s2.nr === nr)) return Promise.reject(new Error("Den plassen ble tatt av noen andre."));
+      const i = seter.findIndex(s2 => s2.meg); if (i >= 0) seter.splice(i, 1);
+      seter.push({ nr, meg: true }); return Promise.resolve();
+    },
+    slippSete: () => { const i = seter.findIndex(s2 => s2.meg); if (i >= 0) seter.splice(i, 1); return Promise.resolve(); },
+    settSeteantall: (t, n) => { TUR.seter = n; return Promise.resolve(); },
+    megTall: () => Promise.resolve({
+      pakkTotalt: pakk.length, pakkKrysset: pakk.filter(p => p.kryss).length,
+      mittSete: (seter.find(s2 => s2.meg) || {}).nr || null
+    }),
     lastVarselvalg: lover(undefined), varselvalg: () => ({ tur: "viktig", chat: {} }), varselNiva: () => "alt",
     settVarselNiva: lover(undefined),
     lesInnlogging: lover({ epost: "jonas@example.no", anonym: false }),
