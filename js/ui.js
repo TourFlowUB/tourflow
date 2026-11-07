@@ -2966,12 +2966,12 @@ const UI = (() => {
 
       <h1>${start ? "TripMate" : harAlt ? "Bytt e-postadresse" : kobler ? "Sikre kontoen" : "Logg inn"}</h1>
       <p class="lede">${start
-        ? "Program, beskjeder og veibeskrivelse for klasseturen. Skriv e-posten din, så sender vi en kode — ingen passord å huske."
+        ? "Program, beskjeder og veibeskrivelse for klasseturen."
         : harAlt
         ? `Du er innlogget som <b>${esc(Api.minEpost() || "")}</b>. Skriv den nye adressen, så sender vi en kode dit.`
         : kobler
         ? "Du beholder turene og rollene dine. Med e-post kan du logge inn på en annen telefon, og mister ikke alt om denne blir borte."
-        : "Vi sender en sekssifret kode. Ingen passord å huske."}</p>
+        : "Vi sender en kode på e-post. Ingen passord å huske."}</p>
 
       <form id="authForm" novalidate>
         <div class="field">
@@ -2979,8 +2979,7 @@ const UI = (() => {
           <input id="aPost" type="email" inputmode="email" autocomplete="email"
                  autocapitalize="none" spellcheck="false" placeholder="navn@eksempel.no">
           <small style="display:block;margin-top:6px;font-size:12.5px;color:var(--ink-3)">
-            Bruk en privat adresse. Skolemailen til Tryggheim slipper ikke inn e-post utenfra,
-            så koden kommer aldri fram dit.</small>
+            Bruk en privat adresse — skolemailen blokkerer ofte koden.</small>
         </div>
         <p class="err" id="aFeil" hidden></p>
         <button class="btn primary big" type="submit" id="aSend">
@@ -2991,7 +2990,7 @@ const UI = (() => {
         <div class="skille"><span>eller</span></div>
         <button class="btn" style="width:100%" id="gjestKnapp">Fortsett som gjest</button>
         <p class="muted" style="margin-top:9px;text-align:center">
-          Som gjest bor kontoen bare i denne nettleseren. Bytter du telefon, er turene borte.</p>
+          Som gjest bor kontoen bare på denne telefonen.</p>
         <p style="text-align:center;margin-top:22px;font-size:14.5px;color:var(--ink-2)">
           Er du reiseleder? <button type="button" class="linkbtn" id="gjestOgLag">Lag en ny tur</button>
         </p>` : ""}`;
@@ -3029,18 +3028,14 @@ const UI = (() => {
       <button class="tilbake" id="authTilbake">${ICON.chevL} Bruk en annen adresse</button>
       <h1>Sjekk e-posten</h1>
       <p class="lede">Vi sendte en kode til <b>${esc(epost)}</b>. Den er gyldig i en time.</p>
-      <p class="soppelpost"><b>Finner du den ikke?</b> Se i søppelpost — automatiske e-poster
-        havner ofte der. I Gmail, sjekk også fanen «Kampanjer».<br><br>
-        <b>Skolemailen virker ikke.</b> Tryggheim sperrer e-post utenfra, så koden kommer
-        aldri fram dit. Bruk en privat adresse — Gmail, iCloud, Outlook eller liknende.</p>
+      <p class="soppelpost"><b>Finner du den ikke?</b> Se i søppelpost. Skolemailen blokkerer
+        ofte engangskoder, eller legger dem der — bruk heller Gmail, iCloud eller Outlook.</p>
 
       <form id="kodeForm" novalidate>
         <div class="field">
           <label for="aKode">Kode</label>
           <input id="aKode" inputmode="numeric" autocomplete="one-time-code" maxlength="8"
                  class="kodefelt" placeholder="00000000" enterkeyhint="go">
-          <small style="display:block;margin-top:6px;font-size:12.5px;color:var(--ink-3)">
-            Du kan lime inn koden rett fra e-posten.</small>
         </div>
         <p class="err" id="kFeil" hidden></p>
         <button class="btn primary big" type="submit" id="kSend">Logg inn</button>
