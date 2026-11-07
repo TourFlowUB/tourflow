@@ -86,7 +86,8 @@ function lagApi() {
   Object.entries(tpl.places).forEach(([navn, p], i) => {
     places[navn] = {
       id: "sted" + i, name: p.name, addr: p.addr, kind: p.kind, url: "",
-      lat: null, lon: null, ignorer: false, alias: [p.name.toLowerCase()]
+      lat: p.lat == null ? null : p.lat, lon: p.lon == null ? null : p.lon,
+      ignorer: false, alias: [p.name.toLowerCase()]
     };
   });
   let teller = 0;

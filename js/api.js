@@ -1102,9 +1102,10 @@ const Api = (() => {
     const { error } = await sb.rpc("fjern_deltaker", { p_trip: tripId, p_user: personId });
     if (error) throw friendly(error);
   }
-  async function addPlace(tripId, { name, addr, kind, url }) {
+  async function addPlace(tripId, { name, addr, kind, url, lat, lon }) {
     const { data, error } = await sb.from("places")
-      .insert({ trip_id: tripId, name, addr: addr || "", kind: kind || "Sted", url: url || "" }).select().single();
+      .insert({ trip_id: tripId, name, addr: addr || "", kind: kind || "Sted", url: url || "",
+               lat: lat == null ? null : lat, lon: lon == null ? null : lon }).select().single();
     if (error) throw error;
     cache.vaerUtdatert = true;      // nytt sted trenger et oppslag
     return data.id;
@@ -1335,7 +1336,7 @@ const Api = (() => {
   async function applyTemplate(tripId, tpl, dates) {
     const ids = {};
     for (const [key, p] of Object.entries(tpl.places)) {
-      ids[key] = await addPlace(tripId, { name: p.name, addr: p.addr, kind: p.kind });
+      ids[key] = await addPlace(tripId, { name: p.name, addr: p.addr, kind: p.kind, lat: p.lat, lon: p.lon });
     }
     for (let n = 0; n < tpl.days.length; n++) {
       const d = tpl.days[n];

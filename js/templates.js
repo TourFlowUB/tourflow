@@ -17,14 +17,14 @@ const TEMPLATES = [
     blurb: "To hoteller, bytte til Potsdam underveis — viser hvordan «hotellet» betyr ulike steder ulike dager.",
 
     places: {
-      moabit: { name:"Hotel Moabit Plaza", addr:"Stromstraße 62, 10551 Berlin", kind:"Hotell" },
-      havel:  { name:"Pension Havelblick", addr:"Zeppelinstraße 136, 14471 Potsdam", kind:"Hotell" },
-      brand:  { name:"Brandenburger Tor", addr:"Pariser Platz, 10117 Berlin", kind:"Attraksjon" },
-      mauer:  { name:"Gedenkstätte Berliner Mauer", addr:"Bernauer Straße 111, 13355 Berlin", kind:"Museum" },
-      tech:   { name:"Deutsches Technikmuseum", addr:"Trebbiner Straße 9, 10963 Berlin", kind:"Museum" },
-      hbf:    { name:"Berlin Hauptbahnhof", addr:"Europaplatz 1, 10557 Berlin", kind:"Stasjon" },
-      sans:   { name:"Schloss Sanssouci", addr:"Maulbeerallee, 14469 Potsdam", kind:"Slott" },
-      osl:    { name:"Oslo lufthavn, terminal 2", addr:"Edvard Munchs veg, 2061 Gardermoen", kind:"Flyplass" }
+      moabit: { name:"Hotel Moabit Plaza", addr:"Stromstraße 62, 10551 Berlin", kind:"Hotell", lat:52.5265, lon:13.339 },
+      havel:  { name:"Pension Havelblick", addr:"Zeppelinstraße 136, 14471 Potsdam", kind:"Hotell", lat:52.393, lon:13.032 },
+      brand:  { name:"Brandenburger Tor", addr:"Pariser Platz, 10117 Berlin", kind:"Attraksjon", lat:52.5163, lon:13.3777 },
+      mauer:  { name:"Gedenkstätte Berliner Mauer", addr:"Bernauer Straße 111, 13355 Berlin", kind:"Museum", lat:52.539, lon:13.39 },
+      tech:   { name:"Deutsches Technikmuseum", addr:"Trebbiner Straße 9, 10963 Berlin", kind:"Museum", lat:52.4985, lon:13.378 },
+      hbf:    { name:"Berlin Hauptbahnhof", addr:"Europaplatz 1, 10557 Berlin", kind:"Stasjon", lat:52.525, lon:13.3694 },
+      sans:   { name:"Schloss Sanssouci", addr:"Maulbeerallee, 14469 Potsdam", kind:"Slott", lat:52.4042, lon:13.0386 },
+      osl:    { name:"Oslo lufthavn, terminal 2", addr:"Edvard Munchs veg, 2061 Gardermoen", kind:"Flyplass", lat:60.1939, lon:11.1004 }
     },
 
     days: [
@@ -74,13 +74,13 @@ const TEMPLATES = [
     blurb: "Gruppedag der halve klassen skal til Eiffeltårnet og halve til Louvre — to gruppechatter på samme tur.",
 
     places: {
-      lafayette: { name:"Hôtel Lafayette Nord", addr:"18 Rue de Dunkerque, 75010 Paris", kind:"Hotell" },
-      eiffel:    { name:"Eiffeltårnet", addr:"Champ de Mars, 5 Avenue Anatole France, 75007 Paris", kind:"Attraksjon" },
-      louvre:    { name:"Musée du Louvre", addr:"Rue de Rivoli, 75001 Paris", kind:"Museum" },
-      orsay:     { name:"Musée d'Orsay", addr:"1 Rue de la Légion d'Honneur, 75007 Paris", kind:"Museum" },
-      sacre:     { name:"Sacré-Cœur", addr:"35 Rue du Chevalier de la Barre, 75018 Paris", kind:"Kirke" },
-      cdg:       { name:"Paris Charles de Gaulle, terminal 2E", addr:"95700 Roissy-en-France", kind:"Flyplass" },
-      osl:       { name:"Oslo lufthavn, terminal 2", addr:"Edvard Munchs veg, 2061 Gardermoen", kind:"Flyplass" }
+      lafayette: { name:"Hôtel Lafayette Nord", addr:"18 Rue de Dunkerque, 75010 Paris", kind:"Hotell", lat:48.88, lon:2.353 },
+      eiffel:    { name:"Eiffeltårnet", addr:"Champ de Mars, 5 Avenue Anatole France, 75007 Paris", kind:"Attraksjon", lat:48.8584, lon:2.2945 },
+      louvre:    { name:"Musée du Louvre", addr:"Rue de Rivoli, 75001 Paris", kind:"Museum", lat:48.8606, lon:2.3376 },
+      orsay:     { name:"Musée d'Orsay", addr:"1 Rue de la Légion d'Honneur, 75007 Paris", kind:"Museum", lat:48.86, lon:2.3266 },
+      sacre:     { name:"Sacré-Cœur", addr:"35 Rue du Chevalier de la Barre, 75018 Paris", kind:"Kirke", lat:48.8867, lon:2.3431 },
+      cdg:       { name:"Paris Charles de Gaulle, terminal 2E", addr:"95700 Roissy-en-France", kind:"Flyplass", lat:49.0045, lon:2.5712 },
+      osl:       { name:"Oslo lufthavn, terminal 2", addr:"Edvard Munchs veg, 2061 Gardermoen", kind:"Flyplass", lat:60.1939, lon:11.1004 }
     },
 
     days: [
@@ -131,12 +131,12 @@ const TEMPLATES = [
     blurb: "Startet i går, så «I dag» har program, dagstripe og neste punkt med én gang. Bruk denne til å prøve appen.",
 
     places: {
-      hotell:  { name:"Hotel Bedford", addr:"Rue du Midi 135, 1000 Bruxelles, Belgia", kind:"Hotell" },
-      atomium: { name:"Atomium", addr:"Square de l'Atomium 1, 1020 Bruxelles, Belgia", kind:"Attraksjon" },
-      parl:    { name:"Europaparlamentet", addr:"Rue Wiertz 60, 1047 Bruxelles, Belgia", kind:"Museum" },
-      grote:   { name:"Grand-Place", addr:"Grote Markt, 1000 Bruxelles, Belgia", kind:"Attraksjon" },
-      osl:     { name:"Oslo lufthavn, terminal 2", addr:"Edvard Munchs veg, 2061 Gardermoen", kind:"Flyplass" },
-      bru:     { name:"Brussels Airport", addr:"1930 Zaventem, Belgia", kind:"Flyplass" }
+      hotell:  { name:"Hotel Bedford", addr:"Rue du Midi 135, 1000 Bruxelles, Belgia", kind:"Hotell", lat:50.8437, lon:4.347 },
+      atomium: { name:"Atomium", addr:"Square de l'Atomium 1, 1020 Bruxelles, Belgia", kind:"Attraksjon", lat:50.8949, lon:4.3415 },
+      parl:    { name:"Europaparlamentet", addr:"Rue Wiertz 60, 1047 Bruxelles, Belgia", kind:"Museum", lat:50.8386, lon:4.3748 },
+      grote:   { name:"Grand-Place", addr:"Grote Markt, 1000 Bruxelles, Belgia", kind:"Attraksjon", lat:50.8467, lon:4.3525 },
+      osl:     { name:"Oslo lufthavn, terminal 2", addr:"Edvard Munchs veg, 2061 Gardermoen", kind:"Flyplass", lat:60.1939, lon:11.1004 },
+      bru:     { name:"Brussels Airport", addr:"1930 Zaventem, Belgia", kind:"Flyplass", lat:50.9014, lon:4.4844 }
     },
 
     days: [
