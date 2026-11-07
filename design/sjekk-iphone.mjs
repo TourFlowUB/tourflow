@@ -16,7 +16,7 @@ const feil = [];
 side.on("pageerror", e => feil.push("pageerror: " + e));
 side.on("console", m => { if (m.type() === "error") feil.push("konsoll: " + m.text()); });
 
-await side.goto("http://localhost:4321/design/demo.html", { waitUntil: "networkidle" });
+await side.goto(`http://localhost:${process.env.PORT || 4321}/design/demo.html`, { waitUntil: "networkidle" });
 await side.waitForSelector("#tabbar button", { timeout: 5000 });
 
 const maal = async navn => side.evaluate(n => {
@@ -56,7 +56,16 @@ const maal = async navn => side.evaluate(n => {
     .map(x => `${x.t} ${x.f.toFixed(2)}:1 (krav ${x.krav})`);
 
   const utenfor = [...skjerm.querySelectorAll("*")]
-    .filter(el => { const r = el.getBoundingClientRect(); return r.width > 0 && (r.right > innerWidth + 1 || r.left < -1); })
+    // Noe som ligger i en stripe man blar sidelengs i, skal stikke utenfor.
+    // Det er poenget med stripa, ikke en feil.
+    .filter(el => {
+      const r = el.getBoundingClientRect();
+      if (!(r.width > 0 && (r.right > innerWidth + 1 || r.left < -1))) return false;
+      for (let n = el; n && n !== document.body; n = n.parentElement) {
+        if (n.scrollWidth > n.clientWidth + 1) return false;
+      }
+      return true;
+    })
     .map(el => el.className || el.tagName).slice(0, 5);
 
   return {
