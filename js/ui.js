@@ -3288,7 +3288,7 @@ const UI = (() => {
            <ul style="margin:8px 0 0;padding-left:18px;font-size:13.5px;color:var(--ink-2)">
              <li><b>iPhone:</b> Innstillinger → Varsler → TripMate.</li>
              <li><b>Android:</b> både i nettleseren appen ble lagt til fra
-               (innstillinger → nettstedsinnstillinger → varsler → tourflowub.github.io)
+               (innstillinger → nettstedsinnstillinger → varsler → ${esc(location.host)})
                <i>og</i> for nettleseren selv under Android-innstillinger → Apper.</li>
            </ul>
            <p style="margin:9px 0 0;font-size:13.5px;color:var(--ink-2)">

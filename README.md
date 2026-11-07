@@ -32,7 +32,7 @@ Appen trenger et Supabase-prosjekt. Gratisplanen holder godt for utprøving.
 1. **Lag prosjekt** på [supabase.com](https://supabase.com) → *New project*.
    Velg en **region i EU** (f.eks. Frankfurt) — dette er elevdata.
 2. **Kjør skjemaet.** Åpne *SQL Editor*, lim inn hele `schema.sql` fra det private repoet
-   [TourFlowUB/tourflow-supabase](https://github.com/TourFlowUB/tourflow-supabase) og kjør. Den lager tabeller, regler for hvem som får lese og skrive, og funksjonene
+   [TourFlowUB/tripmate-supabase](https://github.com/TourFlowUB/tripmate-supabase) og kjør. Den lager tabeller, regler for hvem som får lese og skrive, og funksjonene
    `join_trip` og `create_trip`.
 3. **Slå på anonym pålogging.** *Authentication → Sign In / Providers → Anonymous sign-ins* → på.
    Hver enhet får da en identitet uten at noen må lage passord.
@@ -72,7 +72,7 @@ Alle stier er relative, så appen virker like godt i en undermappe som på eget 
 | `sw.js` | Offline-cache og varsler. Bump `BUILD` sammen med `?v=` i index.html |
 
 Databaseoppsettet og serverfunksjonene ligger i et eget, privat repo:
-[TourFlowUB/tourflow-supabase](https://github.com/TourFlowUB/tourflow-supabase). Denne
+[TourFlowUB/tripmate-supabase](https://github.com/TourFlowUB/tripmate-supabase). Denne
 siden må ligge åpent for at GitHub Pages skal virke — det må ikke serverdelen.
 
 ## Sikkerhet — hva som er på plass
