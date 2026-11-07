@@ -2961,7 +2961,7 @@ const UI = (() => {
 
     $("authInner").innerHTML = `
       ${start ? `<div class="mark" aria-hidden="true">
-          <svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="21"/><path d="M31 17 20.5 21 17 31.5 27.5 27.5 31 17Z"/></svg>
+          <svg viewBox="0 0 24 24"><path class="stamme" d="M11.5 8V21"/><path d="M5.8 10C7.1 9.6 8.1 8.8 11.4 8.05C13.7 7.5 15.6 5.9 17.8 4.85"/><circle cx="17.83" cy="4.83" r="1.83" fill="var(--merke)" stroke="none"/></svg>
         </div>` : `<button class="tilbake" id="authTilbake">${ICON.chevL} Tilbake</button>`}
 
       <h1>${start ? "TripMate" : harAlt ? "Bytt e-postadresse" : kobler ? "Sikre kontoen" : "Logg inn"}</h1>
